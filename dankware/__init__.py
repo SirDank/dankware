@@ -5,20 +5,40 @@ import random
 import time
 import os
 
-def multithread(function, threads: int = 1, list_one: list = [], list_two: list = [], progress_bar: bool = True) -> None:
+def multithread(function, threads = 1, input_one = None, input_two = None, progress_bar = True) -> None:
 
     futures = []
     executor = ThreadPoolExecutor(max_workers=threads)
+    one_isList = type(input_one) is list
+    two_isList = type(input_two) is list
+    one_isNone = type(input_one) is None
+    two_isNone = type(input_two) is None
     
-    if len(list_one) == 0:
+    if one_isNone:
         for i in range(threads):futures.append(executor.submit(function))
-    elif len(list_two) == 0:
-        for item in list_one:futures.append(executor.submit(function, item))
-    elif len(list_one) == len(list_two):
-        for index in range(len(list_one)):futures.append(executor.submit(function, list_one[index], list_two[index]))
-    else:
-        print(f"\n  > MULTITHREAD ERROR! - list_one({len(list_one)}) and list_two({len(list_two)}) do not have the same length!");return
     
+    elif two_isNone:
+
+        if one_isList:
+            for item in input_one:futures.append(executor.submit(function, item))
+        else:
+            for i in range(threads):futures.append(executor.submit(function, input_one))
+
+    elif not one_isNone and not two_isNone:
+
+        if one_isList and two_isList:
+            if len(input_one) != len(input_two):print(f"\n  > MULTITHREAD ERROR! - input_one[{len(input_one)}] and input_two[{len(input_two)}] do not have the same length!");return
+            for index in range(len(input_one)):futures.append(executor.submit(function, input_one[index], input_two[index]))
+            
+        elif one_isList:
+            for index in range(len(input_one)):futures.append(executor.submit(function, input_one[index], input_two))
+            
+        elif two_isList:
+            for index in range(len(input_two)):futures.append(executor.submit(function, input_one, input_two[index]))
+            
+        elif not one_isList and not two_isList:
+            for i in range(threads):futures.append(executor.submit(function, input_one, input_two))
+
     if progress_bar:
         with alive_bar(int(len(futures))) as bar:
             for future in as_completed(futures):
@@ -38,7 +58,7 @@ def clr_banner(banner: str) -> str: # randomized banner color
     colored_chars = [random.choice(colors) + char for char in banner]
     return ''.join(colored_chars)
 
-def align_banner(banner: str, coloured_banner: str = "") -> str: # center align banner with terminal size ( supports coloured and non-coloured )
+def align_banner(banner: str, coloured_banner = "") -> str: # center align banner with terminal size ( supports coloured and non-coloured )
     
     width = os.get_terminal_size().columns
     banner = banner.splitlines()
@@ -60,19 +80,19 @@ def dankware_banner() -> None:
         time.sleep(0.1);print("\n")
     os.system('cls')
     
-def fade(text: str, colour: str = "purple", direction: str = "horizontal") -> str: # credits to https://github.com/venaxyt/gratient & https://github.com/venaxyt/fade <3
+def fade(text: str, colour = "purple", direction = "H") -> str: # credits to https://github.com/venaxyt/gratient & https://github.com/venaxyt/fade <3
     
     colour = colour.lower()
-    direction = direction.lower()
-    available_colours = ['random', 'black', 'red', 'green', 'cyan', 'blue', 'purple', 'pink']
+    direction = str(direction).upper()
+    available_colours = ['black', 'red', 'green', 'cyan', 'blue', 'purple', 'pink', 'random']
     valid_colour = False
     for available in available_colours:
         if colour == available:valid_colour = True
     if not valid_colour:
-        print(f"\n  > FADE_BANNER ERROR! - Invalid colour: {colour} | Available colours: ");return
+        print(f"\n  > FADE ERROR! - Invalid colour: {colour} | Available colours: {', '.join(available_colours)}");return
         
     faded = ""
-    if direction == "horizontal":
+    if direction == "H":
         
         if colour == "black":
             for line in text.splitlines():
@@ -129,10 +149,10 @@ def fade(text: str, colour: str = "purple", direction: str = "horizontal") -> st
                 
         #elif colour == "random":
 
-        else:print(f"\n  > FADE_BANNER ERROR! - [{colour}] is not supported yet for the [horizontal] direction, try [vertical]!")
+        else:print(f"\n  > FADE ERROR! - [{colour}] is not supported yet for the [H] direction, try [V]!")
         return faded
         
-    elif direction == "vertical":
+    elif direction == "V":
         
         if colour == "black":
             red = 0; green = 0; blue = 0
@@ -195,7 +215,7 @@ def fade(text: str, colour: str = "purple", direction: str = "horizontal") -> st
                     faded += (f"\033[38;2;{random.randint(0,255)};{random.randint(0,255)};{random.randint(0,255)}m{character}\033[0m")
                 faded += "\n"
             
-        else:print(f"\n  > FADE_BANNER ERROR! - [{colour}] is not supported yet for the [vertical] direction, try [horizontal]!")
+        else:print(f"\n  > FADE ERROR! - [{colour}] is not supported yet for the [V] direction, try [H]!")
         return faded
         
-    else:print(f"\n  > FADE_BANNER ERROR! - invalid direction: {direction}")
+    else:print(f"\n  > FADE ERROR! - invalid direction: {direction} | Either \"H\" or \"V\"")
