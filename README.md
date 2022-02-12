@@ -1,5 +1,8 @@
 # dankware
- Python module with various features!
+ Python module with various features! Install with the below command!
+```
+pip install dankware
+```
  
 ## Multithreading
 ```py
@@ -157,3 +160,7 @@ print(fade(banner, "pink", "V"))
 print(fade(banner, "random", "V"))
 ```
 > <img width="362" alt="image" src="https://user-images.githubusercontent.com/52797753/153723545-0ea34ea7-1844-4ace-8948-3e71e28c0a30.png">
+
+<p>&nbsp;</p>    
+
+---  
