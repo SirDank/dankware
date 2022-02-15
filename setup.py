@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
   name="dankware",
-  version="1.6",
+  version="1.7",
   author="SirDank",
   author_email="SirDankenstein@protonmail.com",
   description="Python module with various features.",
@@ -14,7 +14,7 @@ setup(
     "Bug Tracker": "https://github.com/SirDank/dankware/issues",
   },
   license="MIT",
-  keywords="dankware",
+  keywords=["dankware","dank"],
   classifiers = [
   "Programming Language :: Python :: 3",
   "License :: OSI Approved :: MIT License",

@@ -1,6 +1,4 @@
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from colorama import init, Fore, Style
-from alive_progress import alive_bar
 import random
 import time
 import os
@@ -11,52 +9,6 @@ magenta = Fore.MAGENTA + Style.BRIGHT
 red = Fore.RED + Style.BRIGHT
 cyan = Fore.CYAN + Style.BRIGHT
 green = Fore.GREEN + Style.BRIGHT
-
-def multithread(function, threads = 1, input_one = None, input_two = None, progress_bar = True) -> None:
-
-    futures = []
-    executor = ThreadPoolExecutor(max_workers=threads)
-    one_isList = type(input_one) is list
-    two_isList = type(input_two) is list
-    if input_one is None:one_isNone = True
-    else:one_isNone = False
-    if input_two is None:two_isNone = True
-    else:two_isNone = False
-
-    if one_isNone:
-        for i in range(threads):futures.append(executor.submit(function))
-    
-    elif two_isNone:
-
-        if one_isList:
-            for item in input_one:futures.append(executor.submit(function, item))
-        else:
-            for i in range(threads):futures.append(executor.submit(function, input_one))
-
-    elif not one_isNone and not two_isNone:
-
-        if one_isList and two_isList:
-            if len(input_one) != len(input_two):print(clr(f"\n  > MULTITHREAD ERROR! - input_one[{len(input_one)}] and input_two[{len(input_two)}] do not have the same length!",2));return
-            for index in range(len(input_one)):futures.append(executor.submit(function, input_one[index], input_two[index]))
-            
-        elif one_isList:
-            for index in range(len(input_one)):futures.append(executor.submit(function, input_one[index], input_two))
-            
-        elif two_isList:
-            for index in range(len(input_two)):futures.append(executor.submit(function, input_one, input_two[index]))
-            
-        elif not one_isList and not two_isList:
-            for i in range(threads):futures.append(executor.submit(function, input_one, input_two))
-
-    if progress_bar:
-        with alive_bar(int(len(futures))) as bar:
-            for future in as_completed(futures):
-                try:future.result();bar()
-                except:bar()
-    else:
-        for future in as_completed(futures):
-            try:future.result()
-            except:pass
 
 def clr(text: str, mode = 1) -> str: # colour chars with magenta and white / red and white
     
