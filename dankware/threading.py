@@ -1,7 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from alive_progress import alive_bar
 
-def multithread(function, threads = 1, input_one = None, input_two = None, progress_bar = True) -> None:
+def multithread(function, threads: int = 1, input_one = None, input_two = None, progress_bar: bool = True) -> None:
 
     futures = []
     executor = ThreadPoolExecutor(max_workers=threads)

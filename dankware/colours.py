@@ -10,7 +10,7 @@ red = Fore.RED + Style.BRIGHT
 cyan = Fore.CYAN + Style.BRIGHT
 green = Fore.GREEN + Style.BRIGHT
 
-def clr(text: str, mode = 1) -> str: # colour chars with magenta and white / red and white
+def clr(text: str, mode: int = 1) -> str: # colour chars with magenta and white / red and white
     
     if mode == 1:
         text = str(text).replace("[",f"{magenta}[{white}").replace("]",f"{magenta}]{white}")
@@ -35,7 +35,7 @@ def clr_banner(banner: str) -> str: # randomized banner color
     colored_chars = [random.choice(colors) + char for char in banner]
     return ''.join(colored_chars)
 
-def align_banner(banner: str, coloured_banner = "") -> str: # center align banner with terminal size ( supports coloured and non-coloured )
+def align_banner(banner: str, coloured_banner: str = "") -> str: # center align banner with terminal size ( supports coloured and non-coloured )
     
     width = os.get_terminal_size().columns
     banner = banner.splitlines()
@@ -57,7 +57,7 @@ def dankware_banner() -> None:
         time.sleep(0.1);print("\n")
     os.system('cls')
     
-def fade(text: str, colour = "purple") -> str: # credits to https://github.com/venaxyt/gratient & https://github.com/venaxyt/fade <3
+def fade(text: str, colour: str = "purple") -> str: # credits to https://github.com/venaxyt/gratient & https://github.com/venaxyt/fade <3
     
     colour = colour.lower()
     available_colours = ['black','red','green','cyan','blue','purple','random','black-v','red-v','green-v','cyan-v','blue-v','purple-v','pink-v']
