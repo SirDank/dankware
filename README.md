@@ -6,7 +6,7 @@ pip install dankware
  
 ## Multithreading
 ```py
-from dankware.threading import multithread
+from dankware import multithread
 import time
 
 a = 0
@@ -21,7 +21,7 @@ multithread(example, 10)
 > <img width="404" alt="image" src="https://user-images.githubusercontent.com/52797753/153721721-0541e26b-f0b2-4c87-8c61-778a817cf80e.png">
 
 ```py
-from dankware.threading import multithread
+from dankware import multithread
 import time
 
 list = [1, 2, 3, 4, 5];sum = 0
@@ -35,7 +35,7 @@ print(sum)
 > <img width="397" alt="image" src="https://user-images.githubusercontent.com/52797753/153748543-07260a2e-5e25-4926-b11f-9d3670d2f3ef.png">
 
 ```py
-from dankware.threading import multithread
+from dankware import multithread
 import time
 
 list1 = [1, 2, 3, 4, 5];list2 = [5, 4, 3, 2, 1]
@@ -48,7 +48,7 @@ multithread(example, 10, list1, list2)
 > <img width="392" alt="image" src="https://user-images.githubusercontent.com/52797753/153749164-d8224ad4-3116-4376-90cd-bc1d093e0942.png">
 
 ```py
-from dankware.threading import multithread
+from dankware import multithread
 import time
 
 list = [1, 2, 3, 4, 5]
@@ -67,19 +67,19 @@ multithread(example, 10, list, 5, progress_bar=False)
 # Colour Specific Chars
 
 ```py
-from dankware.colours import clr
+from dankware import clr
 print(clr("\n  > Hey! Long time no see :)"))
 ```
 > <img width="159" alt="image" src="https://user-images.githubusercontent.com/52797753/153749617-bb0483fe-0385-490b-8695-72f448300c39.png">
 
 ```py
-from dankware.colours import clr
+from dankware import clr
 print(clr("\n  This is a string: True | This is an integer: False"))
 ```
 > <img width="286" alt="image" src="https://user-images.githubusercontent.com/52797753/153749921-3332f3e6-eaa8-4bf1-ab4d-3fe35d245492.png">
 
 ```py
-from dankware.colours import clr
+from dankware import clr
 print(clr("\n  > Error in sector [7] redirecting... | INTEGRITY_CHECK_SUCCESS: TRUE",2))
 ```
 > <img width="389" alt="image" src="https://user-images.githubusercontent.com/52797753/153749821-ae3e4dfd-26dc-4e08-a06e-677ac26457a1.png">
@@ -107,21 +107,21 @@ Y88b 888 888  888 888  888 888 "88b Y88b 888 d88P 888  888 888    Y8b.
 
 ## Colourize Banner (random)
 ```py
-from dankware.colours import clr_banner
+from dankware import clr_banner
 print(clr_banner(banner))
 ```
 > <img width="429" alt="image" src="https://user-images.githubusercontent.com/52797753/153722086-2f372bfa-4872-46a0-81f8-cdf7c2344fd6.png">
 
 ## Align Banner (console center)
 ```py
-from dankware.colours import align_banner
+from dankware import align_banner
 print(align_banner(banner))
 ```
 > <img width="617" alt="image" src="https://user-images.githubusercontent.com/52797753/153722230-1f3b6103-6d8a-4537-9828-1718a6bd3367.png">
 
 ## Align Coloured Banner
 ```py
-from dankware.colours import align_banner, clr_banner
+from dankware import align_banner, clr_banner
 print(align_banner(banner, clr_banner(banner)))
 ```
 > <img width="638" alt="image" src="https://user-images.githubusercontent.com/52797753/153722373-9925dd25-83bb-4d1c-83eb-bfaae1802088.png">
@@ -133,7 +133,7 @@ print(align_banner(banner, clr_banner(banner)))
 # Gradient Reworked [ Originally By @venaxyt ]
 
 ```py
-from dankware.colours import fade
+from dankware import fade
 banner = '''
 
                               888 d8b                   888    
@@ -184,7 +184,7 @@ print(fade(banner, "green-v"))
 
 ## Cyan
 ```py
-from dankware.colours import fade
+from dankware import fade
 print(fade(banner, "cyan"))
 ```
 > <img width="369" alt="image" src="https://user-images.githubusercontent.com/52797753/153723059-b4808365-6006-4726-b427-b6848e0fc0e5.png">
