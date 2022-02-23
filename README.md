@@ -16,7 +16,7 @@ def example():
     print(a)
     time.sleep(5)
         
-multithread(example, 10)
+multithread(example, 10) # func: example | threads: 10 | single: 50 seconds | multi: 5 seconds
 ```
 > <img width="404" alt="image" src="https://user-images.githubusercontent.com/52797753/153721721-0541e26b-f0b2-4c87-8c61-778a817cf80e.png">
 
@@ -27,9 +27,11 @@ import time
 list = [1, 2, 3, 4, 5];sum = 0
 
 def example(num):
-    global sum;sum += num;time.sleep(5)
+    global sum
+    sum += num
+    time.sleep(5)
 
-multithread(example, 10, list)
+multithread(example, 10, list) # input_one: list
 print(sum)
 ```
 > <img width="397" alt="image" src="https://user-images.githubusercontent.com/52797753/153748543-07260a2e-5e25-4926-b11f-9d3670d2f3ef.png">
@@ -38,12 +40,14 @@ print(sum)
 from dankware import multithread
 import time
 
-list1 = [1, 2, 3, 4, 5];list2 = [5, 4, 3, 2, 1]
+list1 = [1, 2, 3, 4, 5]
+list2 = [5, 4, 3, 2, 1]
 
 def example(num1, num2):
-    print(num1 + num2);time.sleep(5)
+    print(num1 + num2)
+    time.sleep(5)
 
-multithread(example, 10, list1, list2)
+multithread(example, 10, list1, list2) # input_one: list1 | input_two: list2
 ```
 > <img width="392" alt="image" src="https://user-images.githubusercontent.com/52797753/153749164-d8224ad4-3116-4376-90cd-bc1d093e0942.png">
 
@@ -54,9 +58,10 @@ import time
 list = [1, 2, 3, 4, 5]
 
 def example(num1, num2):
-    print(num1 * num2);time.sleep(5)
+    print(num1 * num2)
+    time.sleep(5)
 
-multithread(example, 10, list, 5, progress_bar=False)
+multithread(example, 10, list, 5, progress_bar=False) # input_two: 5 | disabled progress bar
 ```
 > <img width="25" alt="image" src="https://user-images.githubusercontent.com/52797753/153749433-95512c4d-afcd-4ad7-9797-caded6e44239.png">
 
@@ -64,7 +69,7 @@ multithread(example, 10, list, 5, progress_bar=False)
 
 ---  
 
-# Colour Specific Chars
+# Colour Special Characters
 
 ```py
 from dankware import clr
@@ -83,6 +88,12 @@ from dankware import clr
 print(clr("\n  > Error in sector [7] redirecting... | INTEGRITY_CHECK_SUCCESS: TRUE",2))
 ```
 > <img width="389" alt="image" src="https://user-images.githubusercontent.com/52797753/153749821-ae3e4dfd-26dc-4e08-a06e-677ac26457a1.png">
+
+```py
+from dankware import clr
+print(clr("\n  > Is this a randomly coloured string: TRUE | As you can see it does not colour True/False",3))
+```
+> <img width="499" alt="image" src="https://user-images.githubusercontent.com/52797753/155293415-7b065b5a-44dd-4fe7-995d-a25582f904cb.png">
 
 <p>&nbsp;</p>    
 
@@ -115,14 +126,14 @@ print(clr_banner(banner))
 ## Align Banner (console center)
 ```py
 from dankware import align_banner
-print(align_banner(banner))
+print(align(banner)) # also works with single text line (even coloured)
 ```
 > <img width="617" alt="image" src="https://user-images.githubusercontent.com/52797753/153722230-1f3b6103-6d8a-4537-9828-1718a6bd3367.png">
 
 ## Align Coloured Banner
 ```py
 from dankware import align_banner, clr_banner
-print(align_banner(banner, clr_banner(banner)))
+print(align(clr_banner(banner)))
 ```
 > <img width="638" alt="image" src="https://user-images.githubusercontent.com/52797753/153722373-9925dd25-83bb-4d1c-83eb-bfaae1802088.png">
 
