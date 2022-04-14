@@ -125,14 +125,14 @@ print(clr_banner(banner))
 
 ## Align Banner (console center)
 ```py
-from dankware import align_banner
+from dankware import align
 print(align(banner)) # also works with single text line (even coloured)
 ```
 > <img width="617" alt="image" src="https://user-images.githubusercontent.com/52797753/153722230-1f3b6103-6d8a-4537-9828-1718a6bd3367.png">
 
 ## Align Coloured Banner
 ```py
-from dankware import align_banner, clr_banner
+from dankware import align, clr_banner
 print(align(clr_banner(banner)))
 ```
 > <img width="638" alt="image" src="https://user-images.githubusercontent.com/52797753/153722373-9925dd25-83bb-4d1c-83eb-bfaae1802088.png">
