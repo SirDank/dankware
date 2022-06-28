@@ -16,7 +16,7 @@ cyan = Fore.CYAN + Style.BRIGHT
 green = Fore.GREEN + Style.BRIGHT
 magenta = Fore.MAGENTA + Style.BRIGHT
 red = Fore.RED + Style.BRIGHT
-reset = + Style.RESET_ALL
+reset = Style.RESET_ALL
 white = Fore.WHITE + Style.BRIGHT
 yellow = Fore.YELLOW + Style.BRIGHT
 
