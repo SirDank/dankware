@@ -266,5 +266,5 @@ def fade(text: str, colour: str = "purple") -> str: # credits to https://github.
 
 def chdir(mode: str) -> None:
 
-    if mode == "script": os.chdir(os.path.dirname(__file__)) # as .py
-    elif mode == "exe": os.chdir(os.path.dirname(sys.argv[0])) # as .exe
+    if mode == "script": return "os.chdir(os.path.dirname(__file__))" # as .py
+    elif mode == "exe": return "os.chdir(os.path.dirname(sys.argv[0]))" # as .exe
