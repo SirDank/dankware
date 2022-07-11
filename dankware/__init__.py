@@ -3,7 +3,9 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from alive_progress import alive_bar
 from colorama import Fore, Style
+import requests
 import random
+import json
 import time
 import sys
 import os
@@ -264,7 +266,28 @@ def fade(text: str, colour: str = "purple") -> str: # credits to https://github.
     if multi_line:faded = faded[:-1]
     return faded
 
-def chdir(mode: str) -> None:
+# functions for executables
+
+def chdir(mode: str) -> str: # changes directory to filepath
 
     if mode == "script": return "os.chdir(os.path.dirname(__file__))" # as .py
     elif mode == "exe": return "os.chdir(os.path.dirname(sys.argv[0]))" # as .exe
+    
+def title(title: str) -> None: # changes title
+    
+    os.system(f"title {title}")
+    
+def error(exception: Exception) -> None: # exception / error handler
+    
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    print(clr(f"\n  > Error: {str(exception)} | {exc_type} | Line: {exc_tb.tb_lineno}",2))
+    
+def github_downloads(url: str) -> list: # extracts download urls from latest release on github and returns as list | example input > https://api.github.com/repos/EXAMPLE/EXAMPLE/releases/latest | example output > ['https://github.com/EXAMPLE/EXAMPLE/releases/download/VERSION/EXAMPLE.TXT']
+
+    if "https://api.github.com/repos/" not in url or "/releases/latest" not in url: print(clr('  > Invalid url! Must contain "https://api.github.com/repos/" and "/releases/latest"',2)); time.sleep(5); sys.exit(1)    
+    while True:
+        try: response = str(json.dumps(requests.get(url).json(), indent=4)).splitlines(); urls = []; break
+        except: wait = input(clr("  > Make sure you are connected to the Internet! Press [ENTER] to try again... ",2))
+    for line in response:
+        if "browser_download_url" in line: urls.append(line.replace('"','').split(' ')[-1])
+    return urls
