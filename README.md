@@ -4,7 +4,7 @@
 pip install dankware
 ```
  
-## Multithreading
+# Multithreading
 ```py
 from dankware import multithread
 import time
@@ -24,14 +24,14 @@ multithread(example, 10) # func: example | threads: 10 | single: 50 seconds | mu
 from dankware import multithread
 import time
 
-list = [1, 2, 3, 4, 5];sum = 0
+new_list = [1, 2, 3, 4, 5]; sum = 0
 
 def example(num):
     global sum
     sum += num
     time.sleep(5)
 
-multithread(example, 10, list) # input_one: list
+multithread(example, 10, new_list) # input_one: list
 print(sum)
 ```
 > <img width="397" alt="image" src="https://user-images.githubusercontent.com/52797753/153748543-07260a2e-5e25-4926-b11f-9d3670d2f3ef.png">
@@ -55,15 +55,27 @@ multithread(example, 10, list1, list2) # input_one: list1 | input_two: list2
 from dankware import multithread
 import time
 
-list = [1, 2, 3, 4, 5]
+new_list = [1, 2, 3, 4, 5]
 
 def example(num1, num2):
     print(num1 * num2)
     time.sleep(5)
 
-multithread(example, 10, list, 5, progress_bar=False) # input_two: 5 | disabled progress bar
+multithread(example, 10, new_list, 5, progress_bar=False) # input_two: 5 | disabled progress bar
 ```
 > <img width="25" alt="image" src="https://user-images.githubusercontent.com/52797753/153749433-95512c4d-afcd-4ad7-9797-caded6e44239.png">
+
+<p>&nbsp;</p>    
+
+---  
+
+# Scraping
+
+```py
+from dankware import github_downloads
+for url in github_downloads("https://api.github.com/repos/EssentialsX/Essentials/releases/latest"): print(url)
+```
+> <img width="548" alt="image" src="https://user-images.githubusercontent.com/52797753/188403861-ba4d5d06-c426-4fb3-b68b-8313faaa3dfc.png">
 
 <p>&nbsp;</p>    
 

@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
   name="dankware",
-  version="1.15",
+  version="1.16",
   author="SirDank",
   author_email="SirDankenstein@protonmail.com",
   description="Python module with various features.",
@@ -26,5 +26,5 @@ setup(
   ],
   package_dir={"": "."},
   packages=find_packages(where="."),
-  install_requires=['alive-progress', 'colorama']
+  install_requires=['alive-progress', 'colorama', 'requests']
 )
