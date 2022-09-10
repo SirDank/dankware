@@ -115,19 +115,6 @@ def clr_banner(banner: str) -> str: # randomized banner color
     colored_chars = [random.choice(colours) + Style.BRIGHT + char if char != ' ' else char for char in banner]
     return str(''.join(colored_chars) + Style.RESET_ALL)
 
-def dankware_banner() -> None:
-
-    banner="\n 8 888888888o.     \n 8 8888    `^888.  \n 8 8888        `88.\n 8 8888         `88\n 8 8888          88\n 8 8888          88\n 8 8888         ,88\n 8 8888        ,88'\n 8 8888    ,o88P'  \n 8 888888888P'     \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n b.             8\n 888o.          8\n Y88888o.       8\n .`Y888888o.    8\n 8o. `Y888888o. 8\n 8`Y8o. `Y88888o8\n 8   `Y8o. `Y8888\n 8      `Y8o. `Y8\n 8         `Y8o.`\n 8            `Yo\n\n\n 8 8888     ,88'\n 8 8888    ,88' \n 8 8888   ,88'  \n 8 8888  ,88'   \n 8 8888 ,88'    \n 8 8888 88'     \n 8 888888<      \n 8 8888 `Y8.    \n 8 8888   `Y8.  \n 8 8888     `Y8.\n\n\n `8.`888b                 ,8'\n  `8.`888b               ,8' \n   `8.`888b             ,8'  \n    `8.`888b     .b    ,8'   \n     `8.`888b    88b  ,8'    \n      `8.`888b .`888b,8'     \n       `8.`888b8.`8888'      \n        `8.`888`8.`88'       \n         `8.`8' `8,`'        \n          `8.`   `8'         \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n 8 888888888o.  \n 8 8888    `88. \n 8 8888     `88 \n 8 8888     ,88 \n 8 8888.   ,88' \n 8 888888888P'  \n 8 8888`8b      \n 8 8888 `8b.    \n 8 8888   `8b.  \n 8 8888     `88.\n\n\n 8 8888888888   \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n 8 8888         \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n "
-    cls(); print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-    for line in align(clr_banner(banner)).splitlines(): time.sleep(0.05); print(line)
-    num_lines = os.get_terminal_size().lines
-    for _ in range(num_lines): time.sleep(0.1); print("\n")
-    print(align(clr("github.com / SirDank")))
-    for _ in range(int(num_lines/4)): time.sleep(0.1); print("\n")
-    time.sleep(4)
-    for _ in range(int(num_lines/2)+5): time.sleep(0.01); print("\n")
-    cls()
-
 def fade(text: str, colour: str = "purple") -> str: # credits to https://github.com/venaxyt/gratient & https://github.com/venaxyt/fade <3
 
     colour = colour.lower(); available_colours = ['black','red','green','cyan','blue','purple','random','black-v','red-v','green-v','cyan-v','blue-v','purple-v','pink-v'] 
@@ -267,15 +254,19 @@ def fade(text: str, colour: str = "purple") -> str: # credits to https://github.
 
 # functions for windows executables [ dankware ]
 
-def chdir(mode: str) -> str: # changes directory to filepath
-
-    if mode == "script": return "os.chdir(os.path.dirname(__file__))" # as .py
-    elif mode == "exe": return "os.chdir(os.path.dirname(sys.argv[0]))" # as .exe
-    
 def title(title: str) -> None: # changes title
     
     os.system(f"title {title}")
     
+def rm_line() -> None: # deletes previous line
+    
+    print("\033[A                             \033[A")
+
+def chdir(mode: str) -> str: # changes directory to filepath
+
+    if mode == "script": return "os.chdir(os.path.dirname(__file__))" # as .py
+    elif mode == "exe": return "os.chdir(os.path.dirname(sys.argv[0]))" # as .exe
+ 
 def error(exception: Exception) -> None: # exception / error handler
     
     exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -290,3 +281,17 @@ def github_downloads(url: str) -> list: # extracts download urls from latest rel
     for line in response:
         if "browser_download_url" in line: urls.append(line.replace('"','').split(' ')[-1])
     return urls
+
+def dankware_banner() -> None: # dankware banner printer with github url
+
+    banner="\n 8 888888888o.     \n 8 8888    `^888.  \n 8 8888        `88.\n 8 8888         `88\n 8 8888          88\n 8 8888          88\n 8 8888         ,88\n 8 8888        ,88'\n 8 8888    ,o88P'  \n 8 888888888P'     \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n b.             8\n 888o.          8\n Y88888o.       8\n .`Y888888o.    8\n 8o. `Y888888o. 8\n 8`Y8o. `Y88888o8\n 8   `Y8o. `Y8888\n 8      `Y8o. `Y8\n 8         `Y8o.`\n 8            `Yo\n\n\n 8 8888     ,88'\n 8 8888    ,88' \n 8 8888   ,88'  \n 8 8888  ,88'   \n 8 8888 ,88'    \n 8 8888 88'     \n 8 888888<      \n 8 8888 `Y8.    \n 8 8888   `Y8.  \n 8 8888     `Y8.\n\n\n `8.`888b                 ,8'\n  `8.`888b               ,8' \n   `8.`888b             ,8'  \n    `8.`888b     .b    ,8'   \n     `8.`888b    88b  ,8'    \n      `8.`888b .`888b,8'     \n       `8.`888b8.`8888'      \n        `8.`888`8.`88'       \n         `8.`8' `8,`'        \n          `8.`   `8'         \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n 8 888888888o.  \n 8 8888    `88. \n 8 8888     `88 \n 8 8888     ,88 \n 8 8888.   ,88' \n 8 888888888P'  \n 8 8888`8b      \n 8 8888 `8b.    \n 8 8888   `8b.  \n 8 8888     `88.\n\n\n 8 8888888888   \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n 8 8888         \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n "
+    cls(); print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+    for line in align(clr_banner(banner)).splitlines(): time.sleep(0.05); print(line)
+
+    num_lines = os.get_terminal_size().lines
+    for _ in range(num_lines): time.sleep(0.1); print("\n")
+    print(align(clr("github.com / SirDank"))); sleep_time = 0.01
+    for _ in range(int(num_lines/4)): time.sleep(sleep_time); sleep_time += 0.025; print("\n")
+    time.sleep(4)
+    for _ in range(int(num_lines/2)+5): time.sleep(0.01); print("\n")
+    cls()
