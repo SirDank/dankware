@@ -1,14 +1,14 @@
 # Please read the documentation on github before using this module > https://github.com/SirDank/dankware
 
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from alive_progress import alive_bar
-from colorama import Fore, Style
-import requests
-import random
-import json
-import time
-import sys
 import os
+import sys
+import time
+import json
+import random
+import requests
+from colorama import Fore, Style
+from alive_progress import alive_bar
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # colorama colours
 
@@ -37,14 +37,12 @@ def multithread(function, threads: int = 1, input_one = None, input_two = None, 
         for _ in range(threads): futures.append(executor.submit(function))
     
     elif two_isNone:
-
         if one_isList:
             for item in input_one: futures.append(executor.submit(function, item))
         else:
             for _ in range(threads): futures.append(executor.submit(function, input_one))
 
     elif not one_isNone and not two_isNone:
-
         if one_isList and two_isList:
             if len(input_one) != len(input_two): print(clr(f"\n  > MULTITHREAD ERROR! - input_one[{len(input_one)}] and input_two[{len(input_two)}] do not have the same length!",2)); return
             for index in range(len(input_one)): futures.append(executor.submit(function, input_one[index], input_two[index]))
@@ -66,23 +64,28 @@ def multithread(function, threads: int = 1, input_one = None, input_two = None, 
             except: pass
 
 def cls() -> None: # clear screen for multi-os
-
+    
+    print(Style.RESET_ALL)
     if os.name == 'nt': _ = os.system('cls')
     else: _ = os.system('clear')
 
 def clr(text: str, mode: int = 1) -> str: # colour special chars: mode = 1 > spl = magenta & text = white | mode=2 > spl = white & text = red
+    
+    chars = ['>','.',',','=','-','!','|','(',')','{','}','/',':','"',"'"]
+    chars_2 = ['true', 'True', 'TRUE']
+    chars_3 = ['false', 'False', 'FALSE']
 
     if mode == 1: # default
         text = str(text).replace("[",f"{magenta}[{white}").replace("]",f"{magenta}]{white}")
-        for char in ['>','.',',','=','-','!','|','(',')','{','}','/',':']: text = text.replace(char, f"{magenta}{char}{white}")
-        for bool in ['true', 'True', 'TRUE']: text = text.replace(bool, f"{green}{bool}{white}")
-        for bool in ['false', 'False', 'FALSE']: text = text.replace(bool, f"{red}{bool}{white}")
+        for char in chars: text = text.replace(char, f"{magenta}{char}{white}")
+        for bool in chars_2: text = text.replace(bool, f"{green}{bool}{white}")
+        for bool in chars_3: text = text.replace(bool, f"{red}{bool}{white}")
         return str(f"{white}{text}" + Style.RESET_ALL)
     
     elif mode == 2: # for error messages
         text = str(text).replace("[",f"{white}[{red}").replace("]",f"{white}]{red}")
-        for char in ['>','.',',','=','-','!','|','(',')','{','}','/',':']: text = text.replace(char, f"{white}{char}{red}")
-        for bool in ['true', 'True', 'TRUE']: text = text.replace(bool, f"{green}{bool}{red}")
+        for char in chars: text = text.replace(char, f"{white}{char}{red}")
+        for bool in chars_2: text = text.replace(bool, f"{green}{bool}{red}")
         return str(f"{red}{text}" + Style.RESET_ALL)
     
     elif mode == 3: # random | TRUE, FALSE will not be coloured!
@@ -91,7 +94,7 @@ def clr(text: str, mode: int = 1) -> str: # colour special chars: mode = 1 > spl
         for _ in range(len(text)):
             char = text[_]
             if char != ' ':
-                if char in ['[',']','>','.',',','=','-','!','|','(',')','{','}','/',':']: text[_] = white + char
+                if char in ( ['[',']'] + chars ): text[_] = white + char
                 else: text[_] = random.choice(colours) + Style.BRIGHT + char
         return str(''.join(text) + Style.RESET_ALL)
 
