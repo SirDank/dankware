@@ -69,18 +69,22 @@ def cls() -> None: # clear screen for multi-os
     if os.name == 'nt': _ = os.system('cls')
     else: _ = os.system('clear')
 
-def clr(text: str, mode: int = 1) -> str: # colour special chars: mode = 1 > spl = magenta & text = white | mode=2 > spl = white & text = red
+def clr(text: str, mode: int = 1) -> str: # colour special chars: mode = 1 > spl = magenta & text = white | mode=2 > spl = white & text = red | mode=3 > spl = white & text = random
     
-    chars = ['>','.',',','=','-','!','|','(',')','{','}','/',':','"',"'"]
+    chars = ['>','.',',','=','-','_','!','|','(',')','{','}','/',':','"',"'"]
     chars_2 = ['true', 'True', 'TRUE']
     chars_3 = ['false', 'False', 'FALSE']
+    colours = [black, blue, cyan, green, magenta, red, white, yellow]
+    colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW"]
+
+    for _ in range(len(colours)):
+        text = text.replace(colours[_], colours_alt[_])
 
     if mode == 1: # default
         text = str(text).replace("[",f"{magenta}[{white}").replace("]",f"{magenta}]{white}")
         for char in chars: text = text.replace(char, f"{magenta}{char}{white}")
         for bool in chars_2: text = text.replace(bool, f"{green}{bool}{white}")
         for bool in chars_3: text = text.replace(bool, f"{red}{bool}{white}")
-        return str(f"{white}{text}" + Style.RESET_ALL)
     
     elif mode == 2: # for error messages
         text = str(text).replace("[",f"{white}[{red}").replace("]",f"{white}]{red}")
@@ -96,9 +100,15 @@ def clr(text: str, mode: int = 1) -> str: # colour special chars: mode = 1 > spl
             if char != ' ':
                 if char in ( ['[',']'] + chars ): text[_] = white + char
                 else: text[_] = random.choice(colours) + Style.BRIGHT + char
-        return str(''.join(text) + Style.RESET_ALL)
 
     else: return str(f"\n  {white}> {red}CLR ERROR{white}! - {red}Wrong mode {white}[{red}{mode}{white}]" + Style.RESET_ALL)
+    
+    for _ in range(len(colours)):
+        text = text.replace(colours_alt[_], colours[_])
+
+    if mode == 1: return str(f"{white}{text}" + Style.RESET_ALL)
+    elif mode == 2: return str(f"{red}{text}" + Style.RESET_ALL)
+    elif mode == 3: return str(''.join(text) + Style.RESET_ALL)
 
 # [NOTE] align supports: clr, clr_banner (colorama), does not support: fade
 
@@ -258,11 +268,11 @@ def fade(text: str, colour: str = "purple") -> str: # credits to https://github.
 # functions for windows executables [ dankware ]
 
 def title(title: str) -> None: # changes title
-    
+
     os.system(f"title {title}")
     
 def rm_line() -> None: # deletes previous line
-    
+
     print("\033[A                             \033[A")
 
 def chdir(mode: str) -> str: # changes directory to filepath
@@ -298,3 +308,4 @@ def dankware_banner() -> None: # dankware banner printer with github url
     time.sleep(4)
     for _ in range(int(num_lines/2)+5): time.sleep(0.01); print("\n")
     cls()
+
