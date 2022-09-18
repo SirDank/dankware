@@ -69,20 +69,38 @@ def cls() -> None: # clear screen for multi-os
     if os.name == 'nt': _ = os.system('cls')
     else: _ = os.system('clear')
 
-def clr(text: str, mode: int = 1) -> str: # colour special chars: mode = 1 > spl = magenta & text = white | mode=2 > spl = white & text = red | mode=3 > spl = white & text = random
+def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     
-    chars = ['>','.',',','=','-','_','!','|','(',')','{','}','/',':','"',"'"]
+    '''
+    
+    this function colours special characters inside the 'chars' list
+    
+    > mode: 1 | to display general text (default)
+    > spl = magenta (default) / specified colour
+    > text = white
+    
+    > mode: 2 | to display error messages
+    > spl = white
+    > text = red
+    
+    > mode: 3
+    > spl = white
+    > text = random
+    
+    '''
+    
+    chars = ['>','.',',','=','-','_','?','!','|','(',')','{','}','/',':','"',"'"]
     chars_2 = ['true', 'True', 'TRUE']
     chars_3 = ['false', 'False', 'FALSE']
-    colours = [black, blue, cyan, green, magenta, red, white, yellow]
+    colours_bright = [black, blue, cyan, green, magenta, red, white, yellow]
     colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW"]
 
-    for _ in range(len(colours)):
-        text = text.replace(colours[_], colours_alt[_])
+    for _ in range(len(colours_bright)):
+        text = str(text).replace(colours_bright[_], colours_alt[_])
 
     if mode == 1: # default
-        text = str(text).replace("[",f"{magenta}[{white}").replace("]",f"{magenta}]{white}")
-        for char in chars: text = text.replace(char, f"{magenta}{char}{white}")
+        text = str(text).replace("[",f"{colour}[{white}").replace("]",f"{colour}]{white}")
+        for char in chars: text = text.replace(char, f"{colour}{char}{white}")
         for bool in chars_2: text = text.replace(bool, f"{green}{bool}{white}")
         for bool in chars_3: text = text.replace(bool, f"{red}{bool}{white}")
     
@@ -103,8 +121,8 @@ def clr(text: str, mode: int = 1) -> str: # colour special chars: mode = 1 > spl
 
     else: return str(f"\n  {white}> {red}CLR ERROR{white}! - {red}Wrong mode {white}[{red}{mode}{white}]" + Style.RESET_ALL)
     
-    for _ in range(len(colours)):
-        text = text.replace(colours_alt[_], colours[_])
+    for _ in range(len(colours_bright)):
+        text = str(text).replace(colours_alt[_], colours_bright[_])
 
     if mode == 1: return str(f"{white}{text}" + Style.RESET_ALL)
     elif mode == 2: return str(f"{red}{text}" + Style.RESET_ALL)
@@ -285,7 +303,17 @@ def error(exception: Exception) -> None: # exception / error handler
     exc_type, exc_obj, exc_tb = sys.exc_info()
     print(clr(f"\n  > Error: {str(exception)} | {exc_type} | Line: {exc_tb.tb_lineno}",2))
     
-def github_downloads(url: str) -> list: # extracts download urls from latest release on github and returns as list | example input > https://api.github.com/repos/EXAMPLE/EXAMPLE/releases/latest | example output > ['https://github.com/EXAMPLE/EXAMPLE/releases/download/VERSION/EXAMPLE.TXT']
+def github_downloads(url: str) -> list:
+
+    '''
+    
+    this function extracts download urls from latest release on github and returns as list
+    
+    Example input: https://api.github.com/repos/EXAMPLE/EXAMPLE/releases/latest
+    
+    Example output: ['https://github.com/EXAMPLE/EXAMPLE/releases/download/VERSION/EXAMPLE.TXT']
+    
+    '''
 
     if "https://api.github.com/repos/" not in url or "/releases/latest" not in url: print(clr('  > Invalid url! Must follow: "https://api.github.com/repos/NAME/NAME/releases/latest"',2)); time.sleep(5); sys.exit(1)    
     while True:
@@ -309,3 +337,4 @@ def dankware_banner() -> None: # dankware banner printer with github url
     for _ in range(int(num_lines/2)+5): time.sleep(0.01); print("\n")
     cls()
 
+print(clr(f"\n  > {magenta}Purple{white} thinks he's better than everyone else :( \n", colour=green))

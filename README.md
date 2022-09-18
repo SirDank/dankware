@@ -1,3 +1,8 @@
+<p align="center">
+  <b>~ Visits ~</b><br><br>
+  <img src="https://profile-counter.glitch.me/dankware/count.svg" />
+</p>
+
 # dankware
  Python module with various features! Install with the below command!
 ```
@@ -94,6 +99,12 @@ from dankware import clr
 print(clr("\n  This is a string: True | This is an integer: False"))
 ```
 > <img width="286" alt="image" src="https://user-images.githubusercontent.com/52797753/153749921-3332f3e6-eaa8-4bf1-ab4d-3fe35d245492.png">
+
+```py
+from dankware import clr, green, magenta # dankware now supports adding custom colours on both the text and the function itself!
+print(clr(f"\n  > {magenta}Purple{white} thinks he's better than everyone else :(", colour=green))
+```
+> <img width="282" alt="image" src="https://user-images.githubusercontent.com/52797753/190898116-750e256e-a1d9-4c8a-a3b2-d0ac209fa0f7.png">
 
 ```py
 from dankware import clr
