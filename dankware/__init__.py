@@ -336,5 +336,3 @@ def dankware_banner() -> None: # dankware banner printer with github url
     time.sleep(4)
     for _ in range(int(num_lines/2)+5): time.sleep(0.01); print("\n")
     cls()
-
-print(clr(f"\n  > {magenta}Purple{white} thinks he's better than everyone else :( \n", colour=green))
