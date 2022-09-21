@@ -75,17 +75,17 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     
     this function colours special characters inside the 'chars' list
     
-    > mode: 1 | to display general text (default)
-    > spl = magenta (default) / specified colour
-    > text = white
+    mode: 1 | to display general text (default)
+    spl = magenta (default) / specified colour
+    text = white
     
-    > mode: 2 | to display error messages
-    > spl = white
-    > text = red
+    mode: 2 | to display error messages
+    spl = white
+    text = red
     
-    > mode: 3
-    > spl = white
-    > text = random
+    mode: 3
+    spl = white
+    text = random
     
     '''
     
@@ -108,7 +108,6 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
         text = str(text).replace("[",f"{white}[{red}").replace("]",f"{white}]{red}")
         for char in chars: text = text.replace(char, f"{white}{char}{red}")
         for bool in chars_2: text = text.replace(bool, f"{green}{bool}{red}")
-        return str(f"{red}{text}" + Style.RESET_ALL)
     
     elif mode == 3: # random | TRUE, FALSE will not be coloured!
         text = [char for char in text]; bad_colours = ['BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET']

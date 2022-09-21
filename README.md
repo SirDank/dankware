@@ -8,6 +8,11 @@
 ```
 pip install dankware
 ```
+
+Update to the latest version with the below command!
+```
+pip install --upgrade dankware
+```
  
 # Multithreading
 ```py
