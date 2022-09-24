@@ -267,3 +267,12 @@ print(fade(banner, "random"))
 <p>&nbsp;</p>    
 
 ---  
+
+# 🚨 Also check out 🚨
+<p href="https://github.com/SirDank/dank.tool" align="center">
+  <img width="700" alt="image" src="https://user-images.githubusercontent.com/52797753/192086704-35f5a0db-3c5d-4782-95a9-6e2756cc8528.png">
+</p>
+
+<p>&nbsp;</p>    
+
+---  
