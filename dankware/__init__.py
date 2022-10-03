@@ -22,7 +22,7 @@ reset = Style.RESET_ALL
 white = Fore.WHITE + Style.BRIGHT
 yellow = Fore.YELLOW + Style.BRIGHT
 
-def multithread(function: function, threads: int = 1, input_one = None, input_two = None, progress_bar: bool = True) -> None:
+def multithread(function, threads: int = 1, input_one = None, input_two = None, progress_bar: bool = True) -> None:
     
     '''
     input one/two can be any of these: None, List, Variable
