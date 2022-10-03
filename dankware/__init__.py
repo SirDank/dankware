@@ -22,7 +22,11 @@ reset = Style.RESET_ALL
 white = Fore.WHITE + Style.BRIGHT
 yellow = Fore.YELLOW + Style.BRIGHT
 
-def multithread(function, threads: int = 1, input_one = None, input_two = None, progress_bar: bool = True) -> None: # input one/two can be any of these: None, List, Variable 
+def multithread(function: function, threads: int = 1, input_one = None, input_two = None, progress_bar: bool = True) -> None:
+    
+    '''
+    input one/two can be any of these: None, List, Variable
+    '''
 
     futures = []
     executor = ThreadPoolExecutor(max_workers=threads)
@@ -63,7 +67,11 @@ def multithread(function, threads: int = 1, input_one = None, input_two = None, 
             try: future.result()
             except: pass
 
-def cls() -> None: # clear screen for multi-os
+def cls() -> None: 
+    
+    '''
+    clear screen for multi-os
+    '''
     
     print(Style.RESET_ALL)
     if os.name == 'nt': _ = os.system('cls')
@@ -89,7 +97,7 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     
     '''
     
-    chars = ['>','.',',','=','-','_','?','!','|','(',')','{','}','/',':','"',"'"]
+    chars = ['>','<','.',',','=','-','_','?','!','|','(',')','{','}','/',':','"',"'"]
     chars_2 = ['true', 'True', 'TRUE']
     chars_3 = ['false', 'False', 'FALSE']
     colours_bright = [black, blue, cyan, green, magenta, red, white, yellow]
@@ -127,9 +135,12 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     elif mode == 2: return str(f"{red}{text}" + Style.RESET_ALL)
     elif mode == 3: return str(''.join(text) + Style.RESET_ALL)
 
-# [NOTE] align supports: clr, clr_banner (colorama), does not support: fade
-
-def align(text: str) -> str: # center align banner / line ( supports both coloured and non-coloured )
+def align(text: str) -> str: 
+    
+    '''
+    center align banner / line ( supports both coloured and non-coloured )
+    [NOTE] align supports: clr, clr_banner (colorama), does not support: fade
+    '''
     
     width = os.get_terminal_size().columns; aligned = text
     for colour in vars(Fore).values(): aligned = aligned.replace(colour,'')
@@ -138,14 +149,23 @@ def align(text: str) -> str: # center align banner / line ( supports both colour
     for _ in range(len(aligned)): aligned[_] = aligned[_].center(width).replace(aligned[_],text[_])
     return str('\n'.join(aligned) + Style.RESET_ALL)
 
-def clr_banner(banner: str) -> str: # randomized banner color
+def clr_banner(banner: str) -> str:
+    
+    '''
+    randomized banner color
+    '''
 
     bad_colours = ['BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET']
     codes = vars(Fore); colours = [codes[colour] for colour in codes if colour not in bad_colours]
     colored_chars = [random.choice(colours) + Style.BRIGHT + char if char != ' ' else char for char in banner]
     return str(''.join(colored_chars) + Style.RESET_ALL)
 
-def fade(text: str, colour: str = "purple") -> str: # credits to https://github.com/venaxyt/gratient & https://github.com/venaxyt/fade <3
+def fade(text: str, colour: str = "purple") -> str:
+    
+    '''
+    credits to https://github.com/venaxyt/gratient & https://github.com/venaxyt/fade <3
+    available_colours = [black,red,green,cyan,blue,purple,random,black-v,red-v,green-v,cyan-v,blue-v,purple-v,pink-v]
+    '''
 
     colour = colour.lower(); available_colours = ['black','red','green','cyan','blue','purple','random','black-v','red-v','green-v','cyan-v','blue-v','purple-v','pink-v'] 
     if colour in available_colours: valid_colour = True
@@ -284,33 +304,41 @@ def fade(text: str, colour: str = "purple") -> str: # credits to https://github.
 
 # functions for windows executables [ dankware ]
 
-def title(title: str) -> None: # changes title
-
-    os.system(f"title {title}")
+def title(title: str) -> None:
     
-def rm_line() -> None: # deletes previous line
+    '''
+    changes title
+    '''
+
+    if os.name == 'nt': os.system(f"title {title}")
+    
+def rm_line() -> None:
+    
+    '''
+    deletes previous line
+    '''
 
     print("\033[A                             \033[A")
 
-def chdir(mode: str) -> str: # changes directory to filepath
+def chdir(mode: str) -> str:
+    
+    '''
+    for changing directory to exe's path: exec(chdir("exe"))
+    for changing directory to script's path: exec(chdir("script"))
+    '''
 
     if mode == "script": return "os.chdir(os.path.dirname(__file__))" # as .py
     elif mode == "exe": return "os.chdir(os.path.dirname(sys.argv[0]))" # as .exe
- 
-def error(exception: Exception) -> None: # exception / error handler
-    
-    exc_type, exc_obj, exc_tb = sys.exc_info()
-    print(clr(f"\n  > Error: {str(exception)} | {exc_type} | Line: {exc_tb.tb_lineno}",2))
-    
+
 def github_downloads(url: str) -> list:
 
     '''
     
     this function extracts download urls from latest release on github and returns as list
     
-    Example input: https://api.github.com/repos/EXAMPLE/EXAMPLE/releases/latest
+    Example Input: https://api.github.com/repos/EXAMPLE/EXAMPLE/releases/latest
     
-    Example output: ['https://github.com/EXAMPLE/EXAMPLE/releases/download/VERSION/EXAMPLE.TXT']
+    Example Output: ['https://github.com/EXAMPLE/EXAMPLE/releases/download/VERSION/EXAMPLE.TXT']
     
     '''
 
@@ -322,7 +350,67 @@ def github_downloads(url: str) -> list:
         if "browser_download_url" in line: urls.append(line.replace('"','').split(' ')[-1])
     return urls
 
-def dankware_banner() -> None: # dankware banner printer with github url
+def github_file_selector(url: str, mode: str, name_list: list) -> list:
+    
+    '''
+    
+    This function is used to filter the output from github_downloads()
+    
+    url = 'USER_NAME/REPO_NAME'
+    mode = 'add' or 'remove'
+    name_list = list of names to be added or removed
+    
+    Example output from github_downloads(): [
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_2.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_3.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_2.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_3.TXT'
+        ]
+        
+    ==================================================================================
+    
+    Example Input: "EX_USER/EX_REPO", "add", ["EXAMPLE"]
+        
+    Example Output: [
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_2.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_3.TXT'
+        ]
+        
+    Note: Only urls with filenames containing "EXAMPLE" were returned.
+
+    ==================================================================================
+
+    Example Input: "EX_USER/EX_REPO", "remove", ["EXAMPLE"]
+    
+    Example Output: [
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_2.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_3.TXT'
+        ]
+    
+    Note: Only urls with filenames not containing "EXAMPLE" were returned.
+    
+    '''
+
+    urls = []
+    for file_url in github_downloads(f"https://api.github.com/repos/{url}/releases/latest"):
+        if mode == "add": valid = False
+        elif mode == "remove": valid = True
+        for name in name_list:
+            if name in file_url.split('/')[-1]:
+                if mode == "add": valid = True
+                elif mode == "remove": valid = False
+        if valid: urls.append(file_url)
+    return urls
+
+def dankware_banner() -> None:
+    
+    '''
+    dankware banner printer with github url
+    '''
 
     banner="\n 8 888888888o.     \n 8 8888    `^888.  \n 8 8888        `88.\n 8 8888         `88\n 8 8888          88\n 8 8888          88\n 8 8888         ,88\n 8 8888        ,88'\n 8 8888    ,o88P'  \n 8 888888888P'     \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n b.             8\n 888o.          8\n Y88888o.       8\n .`Y888888o.    8\n 8o. `Y888888o. 8\n 8`Y8o. `Y88888o8\n 8   `Y8o. `Y8888\n 8      `Y8o. `Y8\n 8         `Y8o.`\n 8            `Yo\n\n\n 8 8888     ,88'\n 8 8888    ,88' \n 8 8888   ,88'  \n 8 8888  ,88'   \n 8 8888 ,88'    \n 8 8888 88'     \n 8 888888<      \n 8 8888 `Y8.    \n 8 8888   `Y8.  \n 8 8888     `Y8.\n\n\n `8.`888b                 ,8'\n  `8.`888b               ,8' \n   `8.`888b             ,8'  \n    `8.`888b     .b    ,8'   \n     `8.`888b    88b  ,8'    \n      `8.`888b .`888b,8'     \n       `8.`888b8.`8888'      \n        `8.`888`8.`88'       \n         `8.`8' `8,`'        \n          `8.`   `8'         \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n 8 888888888o.  \n 8 8888    `88. \n 8 8888     `88 \n 8 8888     ,88 \n 8 8888.   ,88' \n 8 888888888P'  \n 8 8888`8b      \n 8 8888 `8b.    \n 8 8888   `8b.  \n 8 8888     `88.\n\n\n 8 8888888888   \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n 8 8888         \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n "
     cls(); print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
