@@ -3,9 +3,9 @@
 import os
 import sys
 import time
-import json
 import random
-import requests
+from json import dumps
+from requests import get
 from colorama import Fore, Style
 from alive_progress import alive_bar
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -302,6 +302,37 @@ def fade(text: str, colour: str = "purple") -> str:
     if multi_line: faded = faded[:-1]
     return faded
 
+def random_ip() -> str:
+    
+    '''
+    generates a random valid computer ip
+    [NOTE] https://github.com/robertdavidgraham/masscan/blob/master/data/exclude.conf
+    '''
+    
+    while True:
+
+        ip = f"{random.randint(1,223)}.{random.randint(1,255)}.{random.randint(1,255)}.{random.randint(1,255)}"
+
+        for _ in ["6.","7.","10.","11.","21.","22.","26.","28.","29.","30.","33.","55.","100.64.","127.","129.123.","132.206.9.","132.206.123.","132.206.125.","144.39.","153.11.","165.160.","169.254.","192.88.99.","192.168.","198.18.","198.51.100.","204.113.91.","205.","214.","215."]:
+            if ip.startswith(_): continue
+
+        if ip.startswith("172."):
+            temp_num = 16;
+            while temp_num < 32:
+                if ip.startswith(f"172.{temp_num}."): break
+                temp_num += 1
+            if not temp_num == 32: continue
+        elif ip.startswith("192."):
+            if ip.endswith(".170"): continue
+            elif ip.endswith(".171"): continue
+            elif ip.split('.')[2] == "2": continue
+        elif ip.startswith("203.") and ip.split('.')[2] == "113": continue
+        elif ip.endswith(".255.255.255"): continue
+
+        break
+        
+    return ip
+
 # functions for windows executables [ dankware ]
 
 def title(title: str) -> None:
@@ -344,7 +375,7 @@ def github_downloads(url: str) -> list:
 
     if "https://api.github.com/repos/" not in url or "/releases/latest" not in url: print(clr('  > Invalid url! Must follow: "https://api.github.com/repos/NAME/NAME/releases/latest"',2)); time.sleep(5); sys.exit(1)    
     while True:
-        try: response = str(json.dumps(requests.get(url).json(), indent=4)).splitlines(); urls = []; break
+        try: response = str(dumps(get(url).json(), indent=4)).splitlines(); urls = []; break
         except: wait = input(clr("  > Make sure you are connected to the Internet! Press [ENTER] to try again... ",2))
     for line in response:
         if "browser_download_url" in line: urls.append(line.replace('"','').split(' ')[-1])
