@@ -6,6 +6,7 @@ import time
 import random
 from json import dumps
 from requests import get
+from datetime import datetime
 from colorama import Fore, Style
 from alive_progress import alive_bar
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -67,15 +68,112 @@ def multithread(function, threads: int = 1, input_one = None, input_two = None, 
             try: future.result()
             except: pass
 
-def cls() -> None: 
-    
-    '''
-    clear screen for multi-os
+def github_downloads(url: str) -> list:
+
     '''
     
-    print(Style.RESET_ALL)
-    if os.name == 'nt': _ = os.system('cls')
-    else: _ = os.system('clear')
+    this function extracts download urls from latest release on github and returns as list
+    
+    Example Input: https://api.github.com/repos/EXAMPLE/EXAMPLE/releases/latest
+    
+    Example Output: ['https://github.com/EXAMPLE/EXAMPLE/releases/download/VERSION/EXAMPLE.TXT']
+    
+    '''
+
+    if "https://api.github.com/repos/" not in url or "/releases/latest" not in url: print(clr('  > Invalid url! Must follow: "https://api.github.com/repos/NAME/NAME/releases/latest"',2)); time.sleep(5); sys.exit(1)    
+    while True:
+        try: response = str(dumps(get(url).json(), indent=4)).splitlines(); urls = []; break
+        except: wait = input(clr("  > Make sure you are connected to the Internet! Press [ENTER] to try again... ",2))
+    for line in response:
+        if "browser_download_url" in line: urls.append(line.replace('"','').split(' ')[-1])
+    return urls
+
+def github_file_selector(url: str, mode: str, name_list: list) -> list:
+    
+    '''
+    
+    This function is used to filter the output from github_downloads()
+    
+    url = 'USER_NAME/REPO_NAME'
+    mode = 'add' or 'remove'
+    name_list = list of names to be added or removed
+    
+    Example output from github_downloads(): [
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_2.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_3.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_2.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_3.TXT'
+        ]
+        
+    ==================================================================================
+    
+    Example Input: "EX_USER/EX_REPO", "add", ["EXAMPLE"]
+        
+    Example Output: [
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_2.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_3.TXT'
+        ]
+        
+    Note: Only urls with filenames containing "EXAMPLE" were returned.
+
+    ==================================================================================
+
+    Example Input: "EX_USER/EX_REPO", "remove", ["EXAMPLE"]
+    
+    Example Output: [
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_2.TXT'
+        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_3.TXT'
+        ]
+    
+    Note: Only urls with filenames not containing "EXAMPLE" were returned.
+    
+    '''
+
+    urls = []
+    for file_url in github_downloads(f"https://api.github.com/repos/{url}/releases/latest"):
+        if mode == "add": valid = False
+        elif mode == "remove": valid = True
+        for name in name_list:
+            if name in file_url.split('/')[-1]:
+                if mode == "add": valid = True
+                elif mode == "remove": valid = False
+        if valid: urls.append(file_url)
+    return urls
+
+def random_ip() -> str:
+    
+    '''
+    generates a random valid computer ip
+    [NOTE] https://github.com/robertdavidgraham/masscan/blob/master/data/exclude.conf
+    '''
+    
+    while True:
+
+        ip = f"{random.randint(1,223)}.{random.randint(1,255)}.{random.randint(1,255)}.{random.randint(1,255)}"
+
+        for _ in ["6.","7.","10.","11.","21.","22.","26.","28.","29.","30.","33.","55.","100.64.","127.","129.123.","132.206.9.","132.206.123.","132.206.125.","144.39.","153.11.","165.160.","169.254.","192.88.99.","192.168.","198.18.","198.51.100.","204.113.91.","205.","214.","215."]:
+            if ip.startswith(_): continue
+
+        if ip.startswith("172."):
+            temp_num = 16;
+            while temp_num < 32:
+                if ip.startswith(f"172.{temp_num}."): break
+                temp_num += 1
+            if not temp_num == 32: continue
+        elif ip.startswith("192."):
+            if ip.endswith(".170"): continue
+            elif ip.endswith(".171"): continue
+            elif ip.split('.')[2] == "2": continue
+        elif ip.startswith("203.") and ip.split('.')[2] == "113": continue
+        elif ip.endswith(".255.255.255"): continue
+
+        break
+        
+    return ip
 
 def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     
@@ -152,13 +250,13 @@ def align(text: str) -> str:
 def clr_banner(banner: str) -> str:
     
     '''
-    randomized banner color
+    randomized banner colour
     '''
 
     bad_colours = ['BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET']
     codes = vars(Fore); colours = [codes[colour] for colour in codes if colour not in bad_colours]
-    colored_chars = [random.choice(colours) + Style.BRIGHT + char if char != ' ' else char for char in banner]
-    return str(''.join(colored_chars) + Style.RESET_ALL)
+    coloured_chars = [random.choice(colours) + Style.BRIGHT + char if char != ' ' else char for char in banner]
+    return str(''.join(coloured_chars) + Style.RESET_ALL)
 
 def fade(text: str, colour: str = "purple") -> str:
     
@@ -302,38 +400,62 @@ def fade(text: str, colour: str = "purple") -> str:
     if multi_line: faded = faded[:-1]
     return faded
 
-def random_ip() -> str:
-    
+def get_duration(then, now = datetime.now(), interval = "default"):
+
     '''
-    generates a random valid computer ip
-    [NOTE] https://github.com/robertdavidgraham/masscan/blob/master/data/exclude.conf
+    Returns a duration as specified by variable interval
+    Functions, except totalDuration, returns [quotient, remainder]
     '''
+
+    duration = now - then # For build-in functions
+    duration_in_s = duration.total_seconds() 
     
-    while True:
+    def years():
+      return divmod(duration_in_s, 31536000) # Seconds in a year=31536000.
 
-        ip = f"{random.randint(1,223)}.{random.randint(1,255)}.{random.randint(1,255)}.{random.randint(1,255)}"
+    def days(seconds = None):
+      return divmod(seconds if seconds != None else duration_in_s, 86400) # Seconds in a day = 86400
 
-        for _ in ["6.","7.","10.","11.","21.","22.","26.","28.","29.","30.","33.","55.","100.64.","127.","129.123.","132.206.9.","132.206.123.","132.206.125.","144.39.","153.11.","165.160.","169.254.","192.88.99.","192.168.","198.18.","198.51.100.","204.113.91.","205.","214.","215."]:
-            if ip.startswith(_): continue
+    def hours(seconds = None):
+      return divmod(seconds if seconds != None else duration_in_s, 3600) # Seconds in an hour = 3600
 
-        if ip.startswith("172."):
-            temp_num = 16;
-            while temp_num < 32:
-                if ip.startswith(f"172.{temp_num}."): break
-                temp_num += 1
-            if not temp_num == 32: continue
-        elif ip.startswith("192."):
-            if ip.endswith(".170"): continue
-            elif ip.endswith(".171"): continue
-            elif ip.split('.')[2] == "2": continue
-        elif ip.startswith("203.") and ip.split('.')[2] == "113": continue
-        elif ip.endswith(".255.255.255"): continue
+    def minutes(seconds = None):
+      return divmod(seconds if seconds != None else duration_in_s, 60) # Seconds in a minute = 60
 
-        break
-        
-    return ip
+    def seconds(seconds = None):
+      if seconds != None:
+        return divmod(seconds, 1)   
+      return duration_in_s
+
+    def totalDuration():
+        y = years()
+        d = days(y[1]) # Use remainder to calculate next variable
+        h = hours(d[1])
+        m = minutes(h[1])
+        s = seconds(m[1])
+
+        return "Time between dates: {} years, {} days, {} hours, {} minutes and {} seconds".format(int(y[0]), int(d[0]), int(h[0]), int(m[0]), int(s[0]))
+
+    return {
+        'years': int(years()[0]),
+        'days': int(days()[0]),
+        'hours': int(hours()[0]),
+        'minutes': int(minutes()[0]),
+        'seconds': int(seconds()),
+        'default': totalDuration()
+    }[interval]
 
 # functions for windows executables [ dankware ]
+
+def cls() -> None: 
+    
+    '''
+    clear screen for multi-os
+    '''
+    
+    print(Style.RESET_ALL)
+    if os.name == 'nt': _ = os.system('cls')
+    else: _ = os.system('clear')
 
 def title(title: str) -> None:
     
@@ -361,81 +483,16 @@ def chdir(mode: str) -> str:
     if mode == "script": return "os.chdir(os.path.dirname(__file__))" # as .py
     elif mode == "exe": return "os.chdir(os.path.dirname(sys.argv[0]))" # as .exe
 
-def github_downloads(url: str) -> list:
-
-    '''
-    
-    this function extracts download urls from latest release on github and returns as list
-    
-    Example Input: https://api.github.com/repos/EXAMPLE/EXAMPLE/releases/latest
-    
-    Example Output: ['https://github.com/EXAMPLE/EXAMPLE/releases/download/VERSION/EXAMPLE.TXT']
+def sys_open(item: str) -> None:
     
     '''
-
-    if "https://api.github.com/repos/" not in url or "/releases/latest" not in url: print(clr('  > Invalid url! Must follow: "https://api.github.com/repos/NAME/NAME/releases/latest"',2)); time.sleep(5); sys.exit(1)    
-    while True:
-        try: response = str(dumps(get(url).json(), indent=4)).splitlines(); urls = []; break
-        except: wait = input(clr("  > Make sure you are connected to the Internet! Press [ENTER] to try again... ",2))
-    for line in response:
-        if "browser_download_url" in line: urls.append(line.replace('"','').split(' ')[-1])
-    return urls
-
-def github_file_selector(url: str, mode: str, name_list: list) -> list:
-    
+    - opens the url on the default browser on windows / linux
+    - opens directory
+    - starts file
     '''
     
-    This function is used to filter the output from github_downloads()
-    
-    url = 'USER_NAME/REPO_NAME'
-    mode = 'add' or 'remove'
-    name_list = list of names to be added or removed
-    
-    Example output from github_downloads(): [
-        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE.TXT'
-        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_2.TXT'
-        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_3.TXT'
-        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST.TXT'
-        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_2.TXT'
-        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_3.TXT'
-        ]
-        
-    ==================================================================================
-    
-    Example Input: "EX_USER/EX_REPO", "add", ["EXAMPLE"]
-        
-    Example Output: [
-        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE.TXT'
-        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_2.TXT'
-        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_3.TXT'
-        ]
-        
-    Note: Only urls with filenames containing "EXAMPLE" were returned.
-
-    ==================================================================================
-
-    Example Input: "EX_USER/EX_REPO", "remove", ["EXAMPLE"]
-    
-    Example Output: [
-        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST.TXT'
-        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_2.TXT'
-        'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_3.TXT'
-        ]
-    
-    Note: Only urls with filenames not containing "EXAMPLE" were returned.
-    
-    '''
-
-    urls = []
-    for file_url in github_downloads(f"https://api.github.com/repos/{url}/releases/latest"):
-        if mode == "add": valid = False
-        elif mode == "remove": valid = True
-        for name in name_list:
-            if name in file_url.split('/')[-1]:
-                if mode == "add": valid = True
-                elif mode == "remove": valid = False
-        if valid: urls.append(file_url)
-    return urls
+    if os.name == 'nt': os.system(f'start {item}')
+    else: os.system(f'xdg-open {item}')
 
 def dankware_banner() -> None:
     
