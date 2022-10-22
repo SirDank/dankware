@@ -195,9 +195,9 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     
     '''
     
-    chars = ['>','<','.',',','=','-','_','?','!','|','(',')','{','}','/',':','"',"'"]
-    chars_2 = ['true', 'True', 'TRUE']
-    chars_3 = ['false', 'False', 'FALSE']
+    chars = ['>','<','.',',','=','-','_','?','!','|','(',')','{','}','/','\\',':','"',"'"]
+    chars_2 = ['true', 'True', 'TRUE', 'online', 'Online', 'ONLINE']
+    chars_3 = ['false', 'False', 'FALSE', 'offline', 'Offline', 'OFFLINE']
     colours_bright = [black, blue, cyan, green, magenta, red, white, yellow]
     colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW"]
 
@@ -411,21 +411,43 @@ def get_duration(then, now = datetime.now(), interval = "default"):
     duration_in_s = duration.total_seconds() 
     
     def years():
-      return divmod(duration_in_s, 31536000) # Seconds in a year=31536000.
+        return divmod(duration_in_s, 31536000) # Seconds in a year=31536000.
 
     def days(seconds = None):
-      return divmod(seconds if seconds != None else duration_in_s, 86400) # Seconds in a day = 86400
+        return divmod(seconds if seconds != None else duration_in_s, 86400) # Seconds in a day = 86400
 
     def hours(seconds = None):
-      return divmod(seconds if seconds != None else duration_in_s, 3600) # Seconds in an hour = 3600
+        return divmod(seconds if seconds != None else duration_in_s, 3600) # Seconds in an hour = 3600
 
     def minutes(seconds = None):
-      return divmod(seconds if seconds != None else duration_in_s, 60) # Seconds in a minute = 60
+        return divmod(seconds if seconds != None else duration_in_s, 60) # Seconds in a minute = 60
 
     def seconds(seconds = None):
-      if seconds != None:
-        return divmod(seconds, 1)   
-      return duration_in_s
+        if seconds != None:
+            return divmod(seconds, 1)   
+        return duration_in_s
+  
+    def dynamic():
+
+        dynamic_duration = int(years()[0])
+        if dynamic_duration == 0:
+            dynamic_duration = int(days()[0])
+            if dynamic_duration == 0:
+                dynamic_duration = int(hours()[0])
+                if dynamic_duration == 0:
+                    dynamic_duration = int(minutes()[0])
+                    if dynamic_duration == 0:
+                        dynamic_duration = int(seconds()[0])
+                        if dynamic_duration == 1: return f"{dynamic_duration} second"
+                        else: return f"{dynamic_duration} seconds"
+                    elif dynamic_duration == 1: return f"{dynamic_duration} minute"
+                    else: return f"{dynamic_duration} minutes"
+                elif dynamic_duration == 1: return f"{dynamic_duration} hour"
+                else: return f"{dynamic_duration} hours"
+            elif dynamic_duration == 1: return f"{dynamic_duration} day"
+            else: return f"{dynamic_duration} days"
+        elif dynamic_duration == 1: return f"{dynamic_duration} year"
+        else: return f"{dynamic_duration} years"
 
     def totalDuration():
         y = years()
@@ -442,6 +464,7 @@ def get_duration(then, now = datetime.now(), interval = "default"):
         'hours': int(hours()[0]),
         'minutes': int(minutes()[0]),
         'seconds': int(seconds()),
+        'dynamic': dynamic(),
         'default': totalDuration()
     }[interval]
 
