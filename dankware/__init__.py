@@ -25,9 +25,9 @@ yellow = Fore.YELLOW + Style.BRIGHT
 
 def multithread(function, threads: int = 1, input_one = None, input_two = None, progress_bar: bool = True) -> None:
     
-    '''
+    """
     input one/two can be any of these: None, List, Variable
-    '''
+    """
 
     futures = []
     executor = ThreadPoolExecutor(max_workers=threads)
@@ -70,7 +70,7 @@ def multithread(function, threads: int = 1, input_one = None, input_two = None, 
 
 def github_downloads(url: str) -> list:
 
-    '''
+    """
     
     this function extracts download urls from latest release on github and returns as list
     
@@ -78,7 +78,7 @@ def github_downloads(url: str) -> list:
     
     Example Output: ['https://github.com/EXAMPLE/EXAMPLE/releases/download/VERSION/EXAMPLE.TXT']
     
-    '''
+    """
 
     if "https://api.github.com/repos/" not in url or "/releases/latest" not in url: print(clr('  > Invalid url! Must follow: "https://api.github.com/repos/NAME/NAME/releases/latest"',2)); time.sleep(5); sys.exit(1)    
     while True:
@@ -90,7 +90,7 @@ def github_downloads(url: str) -> list:
 
 def github_file_selector(url: str, mode: str, name_list: list) -> list:
     
-    '''
+    """
     
     This function is used to filter the output from github_downloads()
     
@@ -131,7 +131,7 @@ def github_file_selector(url: str, mode: str, name_list: list) -> list:
     
     Note: Only urls with filenames not containing "EXAMPLE" were returned.
     
-    '''
+    """
 
     urls = []
     for file_url in github_downloads(f"https://api.github.com/repos/{url}/releases/latest"):
@@ -146,10 +146,10 @@ def github_file_selector(url: str, mode: str, name_list: list) -> list:
 
 def random_ip() -> str:
     
-    '''
+    """
     generates a random valid computer ip
     [NOTE] https://github.com/robertdavidgraham/masscan/blob/master/data/exclude.conf
-    '''
+    """
     
     while True:
 
@@ -177,7 +177,7 @@ def random_ip() -> str:
 
 def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     
-    '''
+    """
     
     this function colours special characters inside the 'chars' list
     
@@ -193,7 +193,7 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     spl = white
     text = random
     
-    '''
+    """
     
     chars = ['>','<','.',',','=','-','_','?','!','|','(',')','{','}','/','\\',':','"',"'"]
     chars_2 = ['true', 'True', 'TRUE', 'online', 'Online', 'ONLINE', 'success', 'Success', 'SUCCESS']
@@ -235,10 +235,10 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
 
 def align(text: str) -> str: 
     
-    '''
+    """
     center align banner / line ( supports both coloured and non-coloured )
     [NOTE] align supports: clr, clr_banner (colorama), does not support: fade
-    '''
+    """
     
     width = os.get_terminal_size().columns; aligned = text
     for colour in vars(Fore).values(): aligned = aligned.replace(colour,'')
@@ -249,9 +249,9 @@ def align(text: str) -> str:
 
 def clr_banner(banner: str) -> str:
     
-    '''
+    """
     randomized banner colour
-    '''
+    """
 
     bad_colours = ['BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET']
     codes = vars(Fore); colours = [codes[colour] for colour in codes if colour not in bad_colours]
@@ -260,10 +260,10 @@ def clr_banner(banner: str) -> str:
 
 def fade(text: str, colour: str = "purple") -> str:
     
-    '''
+    """
     credits to https://github.com/venaxyt/gratient & https://github.com/venaxyt/fade <3
     available_colours = [black,red,green,cyan,blue,purple,random,black-v,red-v,green-v,cyan-v,blue-v,purple-v,pink-v]
-    '''
+    """
 
     colour = colour.lower(); available_colours = ['black','red','green','cyan','blue','purple','random','black-v','red-v','green-v','cyan-v','blue-v','purple-v','pink-v'] 
     if colour in available_colours: valid_colour = True
@@ -402,10 +402,10 @@ def fade(text: str, colour: str = "purple") -> str:
 
 def get_duration(then, now = datetime.now(), interval = "default"):
 
-    '''
+    """
     Returns a duration as specified by variable interval
     Functions, except totalDuration, returns [quotient, remainder]
-    '''
+    """
 
     duration = now - then # For build-in functions
     duration_in_s = duration.total_seconds() 
@@ -472,9 +472,9 @@ def get_duration(then, now = datetime.now(), interval = "default"):
 
 def cls() -> None: 
     
-    '''
+    """
     clear screen for multi-os
-    '''
+    """
     
     print(Style.RESET_ALL)
     if os.name == 'nt': _ = os.system('cls')
@@ -482,52 +482,54 @@ def cls() -> None:
 
 def title(title: str) -> None:
     
-    '''
+    """
     changes title
-    '''
+    """
 
     if os.name == 'nt': os.system(f"title {title}")
     
 def rm_line() -> None:
     
-    '''
+    """
     deletes previous line
-    '''
+    """
 
     print("\033[A                             \033[A")
 
 def chdir(mode: str) -> str:
     
-    '''
-    running os.chdir(os.path.dirname(__file__)) inside example.py will change its directory to the example.py file's location
-    running os.chdir(os.path.dirname(sys.argv[0])) inside example.exe will change its directory to the example.exe file's location (nuitka)
-    
+    """
+
+    running "os.chdir(os.path.dirname(__file__))" inside example.py will change its directory to the example.py file's location
+    running "os.chdir(os.path.dirname(sys.argv[0]))" inside example.exe will change its directory to the example.exe file's location (nuitka)
+        
     for changing directory to exe's path as exe: exec(chdir("exe"))
     for changing directory to script's path as script: exec(chdir("script"))
     
-    [NOTE] When I build executables, inside the script, the [ exec_mode = "script" ] is automatically replaced with [ exec_mode = "exe" ]
-    [NOTE] If you run [ os.chdir(os.path.dirname(__file__)) ] as an executable, it will change its directory to its temp folder ( C:\Users\user\AppData\Local\Temp\dankware_PPID )
-    '''
+    [NOTE] When I build executables, the [ exec_mode = "script" ] is automatically replaced with [ exec_mode = "exe" ] inside the script
+    [NOTE] If you run "os.chdir(os.path.dirname(__file__))" as an executable, it will change its directory to its temp folder [ C:\\Users\\user\\AppData\\Local\\Temp\\dankware_PPID ]
+
+    """
 
     if mode == "script": return "os.chdir(os.path.dirname(__file__))" # as .py
     elif mode == "exe": return "os.chdir(os.path.dirname(sys.argv[0]))" # as .exe
 
 def sys_open(item: str) -> None:
     
-    '''
+    """
     - opens the url on the default browser on windows / linux
     - opens directory
     - starts file
-    '''
+    """
     
     if os.name == 'nt': os.system(f'start {item}')
     else: os.system(f'xdg-open {item}')
 
 def dankware_banner() -> None:
     
-    '''
+    """
     dankware banner printer with github url
-    '''
+    """
 
     banner="\n 8 888888888o.     \n 8 8888    `^888.  \n 8 8888        `88.\n 8 8888         `88\n 8 8888          88\n 8 8888          88\n 8 8888         ,88\n 8 8888        ,88'\n 8 8888    ,o88P'  \n 8 888888888P'     \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n b.             8\n 888o.          8\n Y88888o.       8\n .`Y888888o.    8\n 8o. `Y888888o. 8\n 8`Y8o. `Y88888o8\n 8   `Y8o. `Y8888\n 8      `Y8o. `Y8\n 8         `Y8o.`\n 8            `Yo\n\n\n 8 8888     ,88'\n 8 8888    ,88' \n 8 8888   ,88'  \n 8 8888  ,88'   \n 8 8888 ,88'    \n 8 8888 88'     \n 8 888888<      \n 8 8888 `Y8.    \n 8 8888   `Y8.  \n 8 8888     `Y8.\n\n\n `8.`888b                 ,8'\n  `8.`888b               ,8' \n   `8.`888b             ,8'  \n    `8.`888b     .b    ,8'   \n     `8.`888b    88b  ,8'    \n      `8.`888b .`888b,8'     \n       `8.`888b8.`8888'      \n        `8.`888`8.`88'       \n         `8.`8' `8,`'        \n          `8.`   `8'         \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n 8 888888888o.  \n 8 8888    `88. \n 8 8888     `88 \n 8 8888     ,88 \n 8 8888.   ,88' \n 8 888888888P'  \n 8 8888`8b      \n 8 8888 `8b.    \n 8 8888   `8b.  \n 8 8888     `88.\n\n\n 8 8888888888   \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n 8 8888         \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n "
     cls(); print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
