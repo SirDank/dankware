@@ -196,8 +196,8 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     """
     
     chars = ['>','<','.',',','=','-','_','?','!','|','(',')','{','}','/','\\',':','"',"'"]
-    chars_2 = ['true', 'True', 'TRUE', 'online', 'Online', 'ONLINE', 'success', 'Success', 'SUCCESS']
-    chars_3 = ['false', 'False', 'FALSE', 'offline', 'Offline', 'OFFLINE', 'failure', 'Failure', 'FAILURE', 'failed', 'Failed', 'FAILED']
+    chars_2 = ['true ', 'True ', 'TRUE ', 'online ', 'Online ', 'ONLINE ', 'success ', 'Success ', 'SUCCESS ']
+    chars_3 = ['false ', 'False ', 'FALSE ', 'offline ', 'Offline ', 'OFFLINE ', 'failure ', 'Failure ', 'FAILURE ', 'failed ', 'Failed ', 'FAILED ']
     colours_bright = [black, blue, cyan, green, magenta, red, white, yellow]
     colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW"]
 
