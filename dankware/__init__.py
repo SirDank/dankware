@@ -196,8 +196,8 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     '''
     
     chars = ['>','<','.',',','=','-','_','?','!','|','(',')','{','}','/','\\',':','"',"'"]
-    chars_2 = ['true', 'True', 'TRUE', 'online', 'Online', 'ONLINE']
-    chars_3 = ['false', 'False', 'FALSE', 'offline', 'Offline', 'OFFLINE']
+    chars_2 = ['true', 'True', 'TRUE', 'online', 'Online', 'ONLINE', 'success', 'Success', 'SUCCESS']
+    chars_3 = ['false', 'False', 'FALSE', 'offline', 'Offline', 'OFFLINE', 'failure', 'Failure', 'FAILURE', 'failed', 'Failed', 'FAILED']
     colours_bright = [black, blue, cyan, green, magenta, red, white, yellow]
     colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW"]
 
@@ -499,8 +499,14 @@ def rm_line() -> None:
 def chdir(mode: str) -> str:
     
     '''
-    for changing directory to exe's path: exec(chdir("exe"))
-    for changing directory to script's path: exec(chdir("script"))
+    running os.chdir(os.path.dirname(__file__)) inside example.py will change its directory to the example.py file's location
+    running os.chdir(os.path.dirname(sys.argv[0])) inside example.exe will change its directory to the example.exe file's location (nuitka)
+    
+    for changing directory to exe's path as exe: exec(chdir("exe"))
+    for changing directory to script's path as script: exec(chdir("script"))
+    
+    [NOTE] When I build executables, inside the script, the [ exec_mode = "script" ] is automatically replaced with [ exec_mode = "exe" ]
+    [NOTE] If you run [ os.chdir(os.path.dirname(__file__)) ] as an executable, it will change its directory to its temp folder ( C:\Users\user\AppData\Local\Temp\dankware_PPID )
     '''
 
     if mode == "script": return "os.chdir(os.path.dirname(__file__))" # as .py
