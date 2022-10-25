@@ -196,26 +196,36 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     """
     
     chars = ['>','<','.',',','=','-','_','?','!','|','(',')','{','}','/','\\',':','"',"'"]
-    chars_2 = ['true ', 'True ', 'TRUE ', 'online ', 'Online ', 'ONLINE ', 'success ', 'Success ', 'SUCCESS ']
-    chars_3 = ['false ', 'False ', 'FALSE ', 'offline ', 'Offline ', 'OFFLINE ', 'failure ', 'Failure ', 'FAILURE ', 'failed ', 'Failed ', 'FAILED ']
+    words_green = ['true', 'True', 'TRUE', 'online', 'Online', 'ONLINE', 'successfully', 'Successfully', 'SUCCESSFULLY', 'successful', 'Successful', 'SUCCESSFUL', 'success', 'Success', 'SUCCESS']
+    words_red = ['falsely', 'Falsely', 'FALSELY', 'false', 'False', 'FALSE', 'offline', 'Offline', 'OFFLINE', 'failures', 'Failures', 'FAILURES', 'failure', 'Failure', 'FAILURE', 'failed', 'Failed', 'FAILED', 'fail', 'Fail', 'FAIL']
     colours_bright = [black, blue, cyan, green, magenta, red, white, yellow]
     colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW"]
 
     for _ in range(len(colours_bright)):
         text = str(text).replace(colours_bright[_], colours_alt[_])
+        
+    # default
 
-    if mode == 1: # default
+    if mode == 1:
         text = str(text).replace("[",f"{colour}[{white}").replace("]",f"{colour}]{white}")
         for char in chars: text = text.replace(char, f"{colour}{char}{white}")
-        for bool in chars_2: text = text.replace(bool, f"{green}{bool}{white}")
-        for bool in chars_3: text = text.replace(bool, f"{red}{bool}{white}")
+        for word in words_green:
+            #if word in ['success', 'Success', 'SUCCESS'] and "successful" in text.lower(): continue
+            text = text.replace(word, f"{green}{word}{white}")
+        for word in words_red:
+            #if word in ['false', 'False', 'FALSE'] and "falsely" in text.lower(): continue
+            text = text.replace(word, f"{red}{word}{white}")
     
-    elif mode == 2: # for error messages
+    # for error messages
+    
+    elif mode == 2:
         text = str(text).replace("[",f"{white}[{red}").replace("]",f"{white}]{red}")
         for char in chars: text = text.replace(char, f"{white}{char}{red}")
-        for bool in chars_2: text = text.replace(bool, f"{green}{bool}{red}")
+        for word in words_green: text = text.replace(word, f"{green}{word}{red}")
     
-    elif mode == 3: # random | TRUE, FALSE will not be coloured!
+    # random | TRUE, FALSE will not be coloured!
+    
+    elif mode == 3:
         text = [char for char in text]; bad_colours = ['BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET']
         codes = vars(Fore); colours = [codes[colour] for colour in codes if colour not in bad_colours]
         for _ in range(len(text)):
