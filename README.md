@@ -3,7 +3,7 @@
   <img src="https://profile-counter.glitch.me/dankware/count.svg" />
 </p>
 
-# dankware
+# 🚨 dankware 🚨
  Python module with various features! Install with the below command!
 ```
 pip install dankware
@@ -14,7 +14,7 @@ Update to the latest version with the below command!
 pip install --upgrade dankware
 ```
  
-# Multithreading
+# 🚨 Multithreading 🚨
 ```py
 from dankware import multithread
 import time
@@ -79,7 +79,7 @@ multithread(example, 10, new_list, 5, progress_bar=False) # input_two: 5 | disab
 
 ---  
 
-# Scraping
+# 🚨 Scraping 🚨
 
 ```py
 from dankware import github_downloads
@@ -91,7 +91,7 @@ for url in github_downloads("https://api.github.com/repos/EssentialsX/Essentials
 
 ---  
 
-# Generate Random IPs
+# 🚨 Generate Random IPs 🚨
 
 ```py
 from dankware import random_ip
@@ -104,7 +104,7 @@ print(random_ip())
 
 ---  
 
-# Colour Special Characters
+# 🚨 Colour Special Characters 🚨
 
 ```py
 from dankware import clr
@@ -140,7 +140,7 @@ print(clr("\n  > Is this a randomly coloured string: TRUE | As you can see it do
 
 ---  
 
-# Banners
+# 🚨 Banners 🚨
 
 ```py
 banner = '''
@@ -182,7 +182,7 @@ print(align(clr_banner(banner)))
 
 ---  
 
-# Gradient Reworked [ Originally By @venaxyt ]
+# 🚨 Gradient Reworked [ Originally By @venaxyt ] 🚨
 
 ```py
 from dankware import fade
