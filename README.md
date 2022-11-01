@@ -157,21 +157,21 @@ Y88b 888 888  888 888  888 888 "88b Y88b 888 d88P 888  888 888    Y8b.
 '''
 ```
 
-## Colourize Banner (random)
+## ♦️ Colourize Banner (random) ♦️
 ```py
 from dankware import clr_banner
 print(clr_banner(banner))
 ```
 > <img width="558" alt="image" src="https://user-images.githubusercontent.com/52797753/153722086-2f372bfa-4872-46a0-81f8-cdf7c2344fd6.png">
 
-## Align Banner (console center)
+## ♦️ Align Banner (console center) ♦️
 ```py
 from dankware import align
 print(align(banner)) # also works with single text line (even coloured)
 ```
 > <img width="802" alt="image" src="https://user-images.githubusercontent.com/52797753/153722230-1f3b6103-6d8a-4537-9828-1718a6bd3367.png">
 
-## Align Coloured Banner
+## ♦️ Align Coloured Banner ♦️
 ```py
 from dankware import align, clr_banner
 print(align(clr_banner(banner)))
@@ -204,7 +204,7 @@ Y8b d88P
 '''
 ```
 
-## Black
+## ♦️ Black ♦️
 ```py
 print(fade(banner, "black"))
 ```
@@ -214,7 +214,7 @@ print(fade(banner, "black-v"))
 ```
 > <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723205-a91eb1c6-07bc-4bc6-9fa6-52231e50a25c.png">
 
-## Red
+## ♦️ Red ♦️
 ```py
 print(fade(banner, "red"))
 ```
@@ -224,7 +224,7 @@ print(fade(banner, "red-v"))
 ```
 > <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723473-bdb75ea7-2df2-4f70-adb5-cf5caa57200a.png">
 
-## Green
+## ♦️ Green ♦️
 ```py
 print(fade(banner, "green"))
 ```
@@ -234,7 +234,7 @@ print(fade(banner, "green-v"))
 ```
 > <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723481-2e5c21b2-0f12-4d99-ab8d-a3e5c40e4c16.png">
 
-## Cyan
+## ♦️ Cyan ♦️
 ```py
 from dankware import fade
 print(fade(banner, "cyan"))
@@ -245,7 +245,7 @@ print(fade(banner, "cyan-v"))
 ```
 > <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723496-8d03c5d3-601e-499d-80cd-51c3648957bf.png">
 
-## Blue
+## ♦️ Blue ♦️
 ```py
 print(fade(banner, "blue"))
 ```
@@ -255,7 +255,7 @@ print(fade(banner, "blue-v"))
 ```
 > <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723509-41732010-b7d5-4867-95f9-690d47322536.png">
 
-## Purple
+## ♦️ Purple ♦️
 ```py
 print(fade(banner, "purple"))
 ```
@@ -265,13 +265,13 @@ print(fade(banner, "purple-v"))
 ```
 > <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723519-00aa980e-4a04-4d8d-a319-5691c1f8e517.png">
 
-## Pink
+## ♦️ Pink ♦️
 ```py
 print(fade(banner, "pink-v"))
 ```
 > <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723540-b324dfe1-5ae2-4b66-ad3a-546a589558c8.png">
 
-## Random
+## ♦️ Random ♦️
 ```py
 print(fade(banner, "random"))
 ```
