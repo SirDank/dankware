@@ -8,6 +8,7 @@ from json import dumps
 from requests import get
 from datetime import datetime
 from colorama import Fore, Style
+from traceback import extract_tb
 from alive_progress import alive_bar
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -477,6 +478,27 @@ def get_duration(then, now = datetime.now(), interval = "default"):
         'dynamic': dynamic(),
         'default': totalDuration()
     }[interval]
+
+def err(exc_info) -> str:
+    
+    """
+    [EXAMPLE]:
+
+    import sys
+    from dankware import err, clr
+    
+    try: value = 1/0
+    except: print(clr(err(sys.exc_info()), 2))
+    """
+
+    ex_type, ex_value, ex_traceback = exc_info
+    trace_back = extract_tb(ex_traceback)
+    stack_trace = []
+
+    for trace in trace_back:
+        stack_trace.append("    - File: {} | Line: {} | Function: {} | {}".format(trace[0].split('\\')[-1], trace[1], trace[2], trace[3]))
+
+    return "  > Error Type: {}\n\n  > Error Message: \n\n    - {}\n\n  > Error Stack Trace: \n\n{}".format(ex_type.__name__, ex_value, '\n'.join(stack_trace))
 
 # functions for windows executables [ dankware ]
 

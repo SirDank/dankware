@@ -79,18 +79,6 @@ multithread(example, 10, new_list, 5, progress_bar=False) # input_two: 5 | disab
 
 ---  
 
-# 🚨 Scraping 🚨
-
-```py
-from dankware import github_downloads
-for url in github_downloads("https://api.github.com/repos/EssentialsX/Essentials/releases/latest"): print(url)
-```
-> <img width="712" alt="image" src="https://user-images.githubusercontent.com/52797753/188403861-ba4d5d06-c426-4fb3-b68b-8313faaa3dfc.png">
-
-<p>&nbsp;</p>    
-
----  
-
 # 🚨 Generate Random IPs 🚨
 
 ```py
@@ -99,6 +87,32 @@ print(random_ip())
 ```
 
 > <img width="200" alt="image" src="https://user-images.githubusercontent.com/52797753/194127781-8f622448-4595-4c2a-a3e7-3e4356076840.png">
+
+<p>&nbsp;</p>    
+
+---  
+
+# 🚨 Error Traceback 🚨
+
+```py
+import sys
+from dankware import err, clr
+try: value = 1/0
+except: print(clr(err(sys.exc_info()), 2))
+```
+> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/200135298-322b4c18-92d2-49d6-b588-31cf90bd191b.png">
+
+<p>&nbsp;</p>    
+
+---  
+
+# 🚨 Scraping 🚨
+
+```py
+from dankware import github_downloads
+for url in github_downloads("https://api.github.com/repos/EssentialsX/Essentials/releases/latest"): print(url)
+```
+> <img width="712" alt="image" src="https://user-images.githubusercontent.com/52797753/188403861-ba4d5d06-c426-4fb3-b68b-8313faaa3dfc.png">
 
 <p>&nbsp;</p>    
 
