@@ -50,10 +50,15 @@ def multithread(function, threads: int = 1, input_one = None, input_two = None, 
 
     elif not one_isNone and not two_isNone:
         if one_isList and two_isList:
-            if len(input_one) != len(input_two): print(clr(f"\n  > MULTITHREAD ERROR! - input_one({len(input_one)}) and input_two({len(input_two)}) do not have the same length!",2)); return
+            if len(input_one) != len(input_two):
+                print(clr(f"\n  > MULTITHREAD ERROR! - input_one({len(input_one)}) and input_two({len(input_two)}) do not have the same length!",2))
+                if len(input_one) < 50 and len(input_two) < 50:
+                    print(clr(f"\n  > input_one = {str(input_one)}",2))
+                    print(clr(f"\n  > input_two = {str(input_two)}",2))
+                sys.exit(1)
             for index in range(len(input_one)): futures.append(executor.submit(function, input_one[index], input_two[index]))
         elif one_isList:
-            for index in range(len(input_one)): futures.append(executor.submit(function, input_one[index], input_two)) 
+            for index in range(len(input_one)): futures.append(executor.submit(function, input_one[index], input_two))
         elif two_isList:
             for index in range(len(input_two)): futures.append(executor.submit(function, input_one, input_two[index]))
         elif not one_isList and not two_isList:
@@ -81,10 +86,10 @@ def github_downloads(url: str) -> list:
     
     """
 
-    if "https://api.github.com/repos/" not in url or "/releases/latest" not in url: print(clr('  > Invalid url! Must follow: "https://api.github.com/repos/NAME/NAME/releases/latest"',2)); time.sleep(5); sys.exit(1)    
+    if "https://api.github.com/repos/" not in url or "/releases/latest" not in url: print(clr('  > Invalid url! Must follow: "https://api.github.com/repos/NAME/NAME/releases/latest"',2)); sys.exit(1)    
     while True:
         try: response = str(dumps(get(url).json(), indent=4)).splitlines(); urls = []; break
-        except: wait = input(clr("  > Make sure you are connected to the Internet! Press [ENTER] to try again... ",2))
+        except: input(clr("  > Make sure you are connected to the Internet! Press [ENTER] to try again... ",2))
     for line in response:
         if "browser_download_url" in line: urls.append(line.replace('"','').split(' ')[-1])
     return urls
@@ -212,10 +217,12 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
         for char in chars: text = text.replace(char, f"{colour}{char}{white}")
         for word in words_green:
             #if word in ['success', 'Success', 'SUCCESS'] and "successful" in text.lower(): continue
-            text = text.replace(word, f"{green}{word}{white}")
+            replacement = f'{green}'.join(list(word))
+            text = text.replace(word, f"{green}{replacement}{white}")
         for word in words_red:
             #if word in ['false', 'False', 'FALSE'] and "falsely" in text.lower(): continue
-            text = text.replace(word, f"{red}{word}{white}")
+            replacement = f'{red}'.join(list(word))
+            text = text.replace(word, f"{red}{replacement}{white}")
     
     # for error messages
     
@@ -235,7 +242,7 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
                 if char in ( ['[',']'] + chars ): text[_] = white + char
                 else: text[_] = random.choice(colours) + Style.BRIGHT + char
 
-    else: return str(f"\n  {white}> {red}CLR ERROR{white}! - {red}Wrong mode {white}[{red}{mode}{white}]" + Style.RESET_ALL)
+    else: print(str(f"\n  {white}> {red}CLR ERROR{white}! - {red}Wrong mode {white}[{red}{mode}{white}]" + Style.RESET_ALL)); sys.exit(1)
     
     for _ in range(len(colours_bright)):
         text = str(text).replace(colours_alt[_], colours_bright[_])
@@ -279,7 +286,7 @@ def fade(text: str, colour: str = "purple") -> str:
     colour = colour.lower(); available_colours = ['black','red','green','cyan','blue','purple','random','black-v','red-v','green-v','cyan-v','blue-v','purple-v','pink-v'] 
     if colour in available_colours: valid_colour = True
     else: valid_colour = False
-    if not valid_colour: return clr(f"\n  > FADE ERROR! - Invalid colour: {colour} | Available colours: {', '.join(available_colours)}")
+    if not valid_colour: print(clr(f"\n  > FADE ERROR! - Invalid colour: {colour} | Available colours: {', '.join(available_colours)}")); sys.exit(1)
         
     faded = ""
     if len(text.splitlines()) > 1: multi_line = True
@@ -406,7 +413,7 @@ def fade(text: str, colour: str = "purple") -> str:
                 faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
             if multi_line: faded += "\n"
     
-    else: return clr(f"\n  > FADE ERROR! - [{colour}] is not supported yet!",2)
+    else: print(clr(f"\n  > FADE ERROR! - [{colour}] is not supported yet!",2)); sys.exit(1)
     
     if multi_line: faded = faded[:-1]
     return faded
@@ -497,8 +504,12 @@ def err(exc_info) -> str:
 
     for trace in trace_back:
         stack_trace.append("    - File: {} | Line: {} | Function: {} | {}".format(trace[0].split('\\')[-1], trace[1], trace[2], trace[3]))
+        
+    report = "  > Error Type: {}".format(ex_type.__name__)
+    if ex_value != '': report += "\n\n  > Error Message: \n\n    - {}".format(ex_value)
+    report += "\n\n  > Error Stack Trace: \n\n{}".format('\n'.join(stack_trace))
 
-    return "  > Error Type: {}\n\n  > Error Message: \n\n    - {}\n\n  > Error Stack Trace: \n\n{}".format(ex_type.__name__, ex_value, '\n'.join(stack_trace))
+    return report
 
 # functions for windows executables [ dankware ]
 
