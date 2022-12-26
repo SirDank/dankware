@@ -204,11 +204,15 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     chars = ['>','<','.',',','=','-','_','?','!','|','(',')','{','}','/','\\',':','"',"'"]
     words_green = ['true', 'True', 'TRUE', 'online', 'Online', 'ONLINE', 'successfully', 'Successfully', 'SUCCESSFULLY', 'successful', 'Successful', 'SUCCESSFUL', 'success', 'Success', 'SUCCESS']
     words_red = ['falsely', 'Falsely', 'FALSELY', 'false', 'False', 'FALSE', 'offline', 'Offline', 'OFFLINE', 'failures', 'Failures', 'FAILURES', 'failure', 'Failure', 'FAILURE', 'failed', 'Failed', 'FAILED', 'fail', 'Fail', 'FAIL']
-    colours_bright = [black, blue, cyan, green, magenta, red, white, yellow]
-    colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW"]
+    colours_to_replace = [Fore.BLACK, Fore.BLUE, Fore.CYAN, Fore.GREEN, Fore.MAGENTA, Fore.RED, Fore.WHITE, Fore.YELLOW, Style.BRIGHT, Style.RESET_ALL]
+    colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW", "BBRIGHTT", "RRESETT"]
 
-    for _ in range(len(colours_bright)):
-        text = str(text).replace(colours_bright[_], colours_alt[_])
+    if mode != 3:
+        for _ in range(len(colours_to_replace)):
+            text = str(text).replace(colours_to_replace[_], colours_alt[_])
+    else:
+        for _ in range(len(colours_to_replace)):
+            text = str(text).replace(colours_to_replace[_], '')
         
     # default
 
@@ -216,11 +220,9 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
         text = str(text).replace("[",f"{colour}[{white}").replace("]",f"{colour}]{white}")
         for char in chars: text = text.replace(char, f"{colour}{char}{white}")
         for word in words_green:
-            #if word in ['success', 'Success', 'SUCCESS'] and "successful" in text.lower(): continue
             replacement = f'{green}'.join(list(word))
             text = text.replace(word, f"{green}{replacement}{white}")
         for word in words_red:
-            #if word in ['false', 'False', 'FALSE'] and "falsely" in text.lower(): continue
             replacement = f'{red}'.join(list(word))
             text = text.replace(word, f"{red}{replacement}{white}")
     
@@ -233,29 +235,37 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     
     # random | TRUE, FALSE will not be coloured!
     
-    elif mode == 3:
+    elif mode == 3 or mode == 4:
         text = [char for char in text]; bad_colours = ['BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET']
         codes = vars(Fore); colours = [codes[colour] for colour in codes if colour not in bad_colours]
+        #styles = [Style.BRIGHT, Style.DIM, Style.NORMAL]
+        if mode == 3: colour_spl = True
+        else: colour_spl = False
         for _ in range(len(text)):
             char = text[_]
-            if char != ' ':
-                if char in ( ['[',']'] + chars ): text[_] = white + char
-                else: text[_] = random.choice(colours) + Style.BRIGHT + char
+            if char != ' ' and char != '\n':
+                if colour_spl:
+                    if char in ( ['[',']'] + chars ): text[_] = white + char
+                    else: text[_] = random.choice(colours) + Style.BRIGHT + char
+                else:
+                    text[_] = random.choice(colours) + Style.BRIGHT + char
+        text = ''.join(text)
 
     else: print(str(f"\n  {white}> {red}CLR ERROR{white}! - {red}Wrong mode {white}[{red}{mode}{white}]" + Style.RESET_ALL)); sys.exit(1)
-    
-    for _ in range(len(colours_bright)):
-        text = str(text).replace(colours_alt[_], colours_bright[_])
 
-    if mode == 1: return str(f"{white}{text}" + Style.RESET_ALL)
-    elif mode == 2: return str(f"{red}{text}" + Style.RESET_ALL)
-    elif mode == 3: return str(''.join(text) + Style.RESET_ALL)
+    if mode != 3:
+        for _ in range(len(colours_to_replace)):
+            text = str(text).replace(colours_alt[_], colours_to_replace[_])
+
+    if mode == 1: return white + text + Style.RESET_ALL
+    elif mode == 2: return red + text + Style.RESET_ALL
+    elif mode == 3 or mode == 4: return text + Style.RESET_ALL
 
 def align(text: str) -> str: 
     
     """
     center align banner / line ( supports both coloured and non-coloured )
-    [NOTE] align supports: clr, clr_banner (colorama), does not support: fade
+    [NOTE] align supports: clr, does not support: fade
     """
     
     width = os.get_terminal_size().columns; aligned = text
@@ -264,17 +274,6 @@ def align(text: str) -> str:
     text = text.split('\n'); aligned = aligned.split('\n')
     for _ in range(len(aligned)): aligned[_] = aligned[_].center(width).replace(aligned[_],text[_])
     return str('\n'.join(aligned) + Style.RESET_ALL)
-
-def clr_banner(banner: str) -> str:
-    
-    """
-    randomized banner colour
-    """
-
-    bad_colours = ['BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET']
-    codes = vars(Fore); colours = [codes[colour] for colour in codes if colour not in bad_colours]
-    coloured_chars = [random.choice(colours) + Style.BRIGHT + char if char != ' ' else char for char in banner]
-    return str(''.join(coloured_chars) + Style.RESET_ALL)
 
 def fade(text: str, colour: str = "purple") -> str:
     
@@ -576,7 +575,7 @@ def dankware_banner() -> None:
 
     banner="\n 8 888888888o.     \n 8 8888    `^888.  \n 8 8888        `88.\n 8 8888         `88\n 8 8888          88\n 8 8888          88\n 8 8888         ,88\n 8 8888        ,88'\n 8 8888    ,o88P'  \n 8 888888888P'     \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n b.             8\n 888o.          8\n Y88888o.       8\n .`Y888888o.    8\n 8o. `Y888888o. 8\n 8`Y8o. `Y88888o8\n 8   `Y8o. `Y8888\n 8      `Y8o. `Y8\n 8         `Y8o.`\n 8            `Yo\n\n\n 8 8888     ,88'\n 8 8888    ,88' \n 8 8888   ,88'  \n 8 8888  ,88'   \n 8 8888 ,88'    \n 8 8888 88'     \n 8 888888<      \n 8 8888 `Y8.    \n 8 8888   `Y8.  \n 8 8888     `Y8.\n\n\n `8.`888b                 ,8'\n  `8.`888b               ,8' \n   `8.`888b             ,8'  \n    `8.`888b     .b    ,8'   \n     `8.`888b    88b  ,8'    \n      `8.`888b .`888b,8'     \n       `8.`888b8.`8888'      \n        `8.`888`8.`88'       \n         `8.`8' `8,`'        \n          `8.`   `8'         \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n 8 888888888o.  \n 8 8888    `88. \n 8 8888     `88 \n 8 8888     ,88 \n 8 8888.   ,88' \n 8 888888888P'  \n 8 8888`8b      \n 8 8888 `8b.    \n 8 8888   `8b.  \n 8 8888     `88.\n\n\n 8 8888888888   \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n 8 8888         \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n "
     cls(); print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-    for line in align(clr_banner(banner)).splitlines(): time.sleep(0.05); print(line)
+    for line in align(clr(banner,4)).splitlines(): time.sleep(0.05); print(line)
 
     num_lines = os.get_terminal_size().lines
     for _ in range(num_lines): time.sleep(0.1); print("\n")

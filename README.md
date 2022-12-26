@@ -122,6 +122,8 @@ for url in github_downloads("https://api.github.com/repos/EssentialsX/Essentials
 
 ```py
 from dankware import clr
+# default mode = 1
+# default colour = magenta
 print(clr("\n  > Hey! Long time no see :)"))
 ```
 > <img width="207" alt="image" src="https://user-images.githubusercontent.com/52797753/153749617-bb0483fe-0385-490b-8695-72f448300c39.png">
@@ -133,19 +135,23 @@ print(clr("\n  This is a string: True | This is an integer: False"))
 > <img width="372" alt="image" src="https://user-images.githubusercontent.com/52797753/153749921-3332f3e6-eaa8-4bf1-ab4d-3fe35d245492.png">
 
 ```py
-from dankware import clr, green, magenta # dankware now supports adding custom colours on both the text and the function itself!
+from dankware import clr, green, magenta
+# dankware now supports adding custom colours on both the text and the function itself!
+# colour = green
 print(clr(f"\n  > {magenta}Purple{white} thinks he's better than everyone else :(", colour=green))
 ```
 > <img width="367" alt="image" src="https://user-images.githubusercontent.com/52797753/190898116-750e256e-a1d9-4c8a-a3b2-d0ac209fa0f7.png">
 
 ```py
 from dankware import clr
+# mode = 2
 print(clr("\n  > Error in sector [7] redirecting... | INTEGRITY_CHECK_SUCCESS: TRUE",2))
 ```
 > <img width="480" alt="image" src="https://user-images.githubusercontent.com/52797753/153749821-ae3e4dfd-26dc-4e08-a06e-677ac26457a1.png">
 
 ```py
 from dankware import clr
+# mode = 3
 print(clr("\n  > Is this a randomly coloured string: TRUE | As you can see it does not colour True/False",3))
 ```
 > <img width="659" alt="image" src="https://user-images.githubusercontent.com/52797753/155293415-7b065b5a-44dd-4fe7-995d-a25582f904cb.png">
@@ -173,8 +179,9 @@ Y88b 888 888  888 888  888 888 "88b Y88b 888 d88P 888  888 888    Y8b.
 
 ## ♦️ Colourize Banner (random) ♦️
 ```py
-from dankware import clr_banner
-print(clr_banner(banner))
+from dankware import clr
+# mode = 4
+print(clr(banner,4))
 ```
 > <img width="558" alt="image" src="https://user-images.githubusercontent.com/52797753/153722086-2f372bfa-4872-46a0-81f8-cdf7c2344fd6.png">
 
@@ -187,8 +194,8 @@ print(align(banner)) # also works with single text line (even coloured)
 
 ## ♦️ Align Coloured Banner ♦️
 ```py
-from dankware import align, clr_banner
-print(align(clr_banner(banner)))
+from dankware import align, clr
+print(align(clr(banner,4)))
 ```
 > <img width="830" alt="image" src="https://user-images.githubusercontent.com/52797753/153722373-9925dd25-83bb-4d1c-83eb-bfaae1802088.png">
 
