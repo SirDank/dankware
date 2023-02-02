@@ -110,9 +110,17 @@ except: print(clr(err(sys.exc_info()), 2))
 
 ```py
 from dankware import github_downloads
-for url in github_downloads("https://api.github.com/repos/EssentialsX/Essentials/releases/latest"): print(url)
+# full url > https://api.github.com/repos/EssentialsX/Essentials/releases/latest
+for url in github_downloads("EssentialsX/Essentials"): print(url)
 ```
-> <img width="712" alt="image" src="https://user-images.githubusercontent.com/52797753/188403861-ba4d5d06-c426-4fb3-b68b-8313faaa3dfc.png">
+> <img width="712" alt="image" src="https://user-images.githubusercontent.com/52797753/216242124-ed911013-bae4-4622-8c0a-0d11638da750.png">
+
+```py
+from dankware import github_file_selector
+# full url > https://api.github.com/repos/EssentialsX/Essentials/releases/latest
+for url in github_file_selector("EssentialsX/Essentials", "remove", ['AntiBuild', 'Discord', 'GeoIP', 'Protect', 'XMPP']): print(url)
+```
+> <img width="712" alt="image" src="https://user-images.githubusercontent.com/52797753/216241961-5359d662-a117-4eb4-b74e-e82b41a895bc.png">
 
 <p>&nbsp;</p>    
 

@@ -1,11 +1,16 @@
-# Please read the documentation on github before using this module > https://github.com/SirDank/dankware
+###################################################################################
+
+#                            https://github.com/SirDank                            
+
+###################################################################################
+
+# > Please read the documentation on github before using this module!
 
 import os
 import sys
 import time
 import random
-from json import dumps
-from requests import get
+import requests
 from datetime import datetime
 from colorama import Fore, Style
 from traceback import extract_tb
@@ -23,6 +28,22 @@ red = Fore.RED + Style.BRIGHT
 reset = Style.RESET_ALL
 white = Fore.WHITE + Style.BRIGHT
 yellow = Fore.YELLOW + Style.BRIGHT
+
+# dankware variables
+
+chars = ['>','<','.',',','=','-','_','?','!','|','(',')','{','}','/','\\',':','"',"'"]
+words_green = ['true', 'True', 'TRUE', 'online', 'Online', 'ONLINE', 'successfully', 'Successfully', 'SUCCESSFULLY', 'successful', 'Successful', 'SUCCESSFUL', 'success', 'Success', 'SUCCESS']
+words_red = ['falsely', 'Falsely', 'FALSELY', 'false', 'False', 'FALSE', 'offline', 'Offline', 'OFFLINE', 'failures', 'Failures', 'FAILURES', 'failure', 'Failure', 'FAILURE', 'failed', 'Failed', 'FAILED', 'fail', 'Fail', 'FAIL']
+colours_to_replace = [Fore.BLACK, Fore.BLUE, Fore.CYAN, Fore.GREEN, Fore.MAGENTA, Fore.RED, Fore.WHITE, Fore.YELLOW, Style.BRIGHT, Style.RESET_ALL]
+colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW", "BBRIGHTT", "RRESETT"]
+bad_colours = ['BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET']
+codes = vars(Fore); colours = [codes[colour] for colour in codes if colour not in bad_colours]
+#styles = [Style.BRIGHT, Style.DIM, Style.NORMAL]
+available_colours = ['black','red','green','cyan','blue','purple','random','black-v','red-v','green-v','cyan-v','blue-v','purple-v','pink-v']
+
+excluded_prefixes_one = ['6.', '7.', '10.', '11.', '21.', '22.', '26.', '28.', '29.', '30.', '33.', '55.', '127.', '136.', '205.', '214.', '215.']
+excluded_prefixes_two = ['23.27.', '31.25.', '50.117.', '74.115.', '75.127.', '81.87.', '100.64.', '128.16.', '128.40.', '128.41.', '128.86.', '128.232.', '128.240.', '128.243.', '129.11.', '129.12.', '129.31.', '129.67.', '129.123.', '129.169.', '129.215.', '129.234.', '130.88.', '130.159.', '130.209.', '130.246.', '131.111.', '131.227.', '131.231.', '131.251.', '134.36.', '134.83.', '134.151.', '134.219.', '134.220.', '134.225.', '136.148.', '136.156.', '137.44.', '137.50.', '137.73.', '137.108.', '137.195.', '137.222.', '137.253.', '138.38.', '138.40.', '138.250.', '138.253.', '139.133.', '139.153.', '139.166.', '139.184.', '139.222.', '140.97.', '141.163.', '141.241.', '142.111.', '142.252.', '143.52.', '143.117.', '143.167.', '143.210.', '143.234.', '144.32.', '144.39.', '144.82.', '144.124.', '144.173.', '146.87.', '146.97.', '146.169.', '146.176.', '146.179.', '146.191.', '146.227.', '147.143.', '147.188.', '147.197.', '148.79.', '148.88.', '148.197.', '149.155.', '149.170.', '150.204.', '152.71.', '152.78.', '152.105.', '153.11.', '155.198.', '155.245.', '157.140.', '157.228.', '158.94.', '158.125.', '158.143.', '158.223.', '159.92.', '160.5.', '160.9.', '161.73.', '161.74.', '161.76.', '161.112.', '163.1.', '163.119.', '163.160.', '163.167.', '164.11.', '165.160.', '166.88.', '169.254.', '172.252.', '192.168.', '192.177.', '192.186.', '193.60.', '194.66.', '194.80.', '195.194.', '198.18.', '205.164.', '212.121.', '212.219.']
+excluded_prefixes_three = ['4.53.201.', '5.152.179.', '8.12.162.', '8.12.163.', '8.12.164.', '8.14.84.', '8.14.145.', '8.14.146.', '8.14.147.', '8.17.250.', '8.17.251.', '8.17.252.', '23.231.128.', '31.25.2.', '31.25.4.', '37.72.112.', '37.72.172.', '38.72.200.', '46.254.200.', '50.93.192.', '50.93.193.', '50.93.194.', '50.93.195.', '50.93.196.', '50.93.197.', '50.115.128.', '50.118.128.', '63.141.222.', '64.62.253.', '64.92.96.', '64.145.79.', '64.145.82.', '64.158.146.', '65.49.24.', '65.49.93.', '65.162.192.', '66.79.160.', '66.160.191.', '68.68.96.', '69.46.64.', '69.176.80.', '72.13.80.', '72.52.76.', '74.82.43.', '74.82.160.', '74.114.88.', '74.115.2.', '74.115.4.', '74.122.100.', '85.12.64.', '89.207.208.', '92.245.224.', '103.251.91.', '108.171.32.', '108.171.42.', '108.171.52.', '108.171.62.', '118.193.78.', '130.93.16.', '132.206.9.', '132.206.123.', '132.206.125.', '141.170.64.', '141.170.96.', '141.170.100.', '146.82.55.93', '149.54.136.', '149.54.152.', '159.86.128.', '173.245.64.', '173.245.194.', '173.245.220.', '173.252.192.', '178.18.16.', '178.18.26.', '178.18.27.', '178.18.28.', '178.18.29.', '183.182.22.', '185.83.168.', '192.12.72.', '192.18.195.', '192.35.172.', '192.41.104.', '192.41.112.', '192.41.128.', '192.68.153.', '192.76.6.', '192.76.8.', '192.76.16.', '192.76.32.', '192.82.153.', '192.84.5.', '192.84.75.', '192.84.76.', '192.84.80.', '192.84.212.', '192.88.9.', '192.88.10.', '192.88.99.', '192.92.114.', '192.94.235.', '192.100.78.', '192.100.154.', '192.107.168.', '192.108.120.', '192.124.46.', '192.133.244.', '192.149.111.', '192.150.180.', '192.150.184.', '192.153.213.', '192.155.160.', '192.156.162.', '192.160.194.', '192.171.128.', '192.171.192.', '192.173.1.', '192.173.2.', '192.173.4.', '192.173.128.', '192.188.157.', '192.188.158.', '192.190.201.', '192.190.202.', '192.195.42.', '192.195.105.', '192.195.116.', '192.195.118.', '192.249.64.', '192.250.240.', '193.32.22.', '193.37.225.', '193.37.240.', '193.38.143.', '193.39.80.', '193.39.172.', '193.39.212.', '193.107.116.', '193.130.15.', '193.133.28.', '193.138.86.', '194.32.32.', '194.35.93.', '194.35.186.', '194.35.192.', '194.35.241.', '194.36.1.', '194.36.2.', '194.36.121.', '194.36.152.', '194.60.218.', '194.110.214.', '194.187.32.', '198.12.120.', '198.12.121.', '198.12.122.', '198.51.100.', '198.144.240.', '199.33.120.', '199.33.124.', '199.48.147.', '199.68.196.', '199.127.240.', '199.187.168.', '199.188.238.', '199.255.208.', '203.12.6.', '204.13.64.', '204.16.192.', '204.19.238.', '204.74.208.', '204.113.91.', '205.159.189.', '205.209.128.', '206.108.52.', '206.165.4.', '208.77.40.', '208.80.4.', '208.123.223.', '209.51.185.', '209.54.48.', '209.107.192.', '209.107.210.', '209.107.212.', '211.156.110.', '212.121.192.', '216.151.183.', '216.151.190.', '216.172.128.', '216.185.36.', '216.218.233.', '216.224.112.']
 
 def multithread(function, threads: int = 1, input_one = None, input_two = None, progress_bar: bool = True) -> None:
     
@@ -74,37 +95,43 @@ def multithread(function, threads: int = 1, input_one = None, input_two = None, 
             try: future.result()
             except: pass
 
-def github_downloads(url: str) -> list:
+def github_downloads(user_repo: str) -> list:
 
     """
     
     this function extracts download urls from latest release on github and returns as list
     
-    Example Input: https://api.github.com/repos/EXAMPLE/EXAMPLE/releases/latest
+    Example Input: EXAMPLE/EXAMPLE ( from https://api.github.com/repos/EXAMPLE/EXAMPLE/releases/latest )
     
     Example Output: ['https://github.com/EXAMPLE/EXAMPLE/releases/download/VERSION/EXAMPLE.TXT']
     
     """
+    
+    urls = []
 
-    if "https://api.github.com/repos/" not in url or "/releases/latest" not in url: print(clr('  > Invalid url! Must follow: "https://api.github.com/repos/NAME/NAME/releases/latest"',2)); sys.exit(1)    
+    #if "https://api.github.com/repos/" not in url or "/releases/latest" not in url:
+    #    print(clr('  > Invalid url! Must follow: "https://api.github.com/repos/NAME/NAME/releases/latest"',2))
+    #    sys.exit(1)    
     while True:
-        try: response = str(dumps(get(url).json(), indent=4)).splitlines(); urls = []; break
+        try: response = requests.get(f"https://api.github.com/repos/{user_repo}/releases/latest").json(); break
         except: input(clr("  > Make sure you are connected to the Internet! Press [ENTER] to try again... ",2))
-    for line in response:
-        if "browser_download_url" in line: urls.append(line.replace('"','').split(' ')[-1])
+    
+    for data in response["assets"]:
+        urls.append(data["browser_download_url"])
+
     return urls
 
-def github_file_selector(url: str, mode: str, name_list: list) -> list:
+def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> list:
     
     """
     
     This function is used to filter the output from github_downloads()
     
-    url = 'USER_NAME/REPO_NAME'
-    mode = 'add' or 'remove'
+    user_repo = 'USER_NAME/REPO_NAME' ( from https://api.github.com/repos/USER_NAME/REPO_NAME/releases/latest )
+    filter_mode = 'add' or 'remove'
     name_list = list of names to be added or removed
     
-    Example output from github_downloads(): [
+    Example output from github_downloads("EX_USER/EX_REPO"): [
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE.TXT'
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_2.TXT'
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_3.TXT'
@@ -140,13 +167,13 @@ def github_file_selector(url: str, mode: str, name_list: list) -> list:
     """
 
     urls = []
-    for file_url in github_downloads(f"https://api.github.com/repos/{url}/releases/latest"):
-        if mode == "add": valid = False
-        elif mode == "remove": valid = True
+    for file_url in github_downloads(user_repo):
+        if filter_mode == "add": valid = False
+        elif filter_mode == "remove": valid = True
         for name in name_list:
             if name in file_url.split('/')[-1]:
-                if mode == "add": valid = True
-                elif mode == "remove": valid = False
+                if filter_mode == "add": valid = True
+                elif filter_mode == "remove": valid = False
         if valid: urls.append(file_url)
     return urls
 
@@ -159,22 +186,17 @@ def random_ip() -> str:
     
     while True:
 
-        ip = f"{random.randint(1,223)}.{random.randint(1,255)}.{random.randint(1,255)}.{random.randint(1,255)}"
+        ip = f"{random.randint(1,223)}.{random.randint(0,255)}.{random.randint(0,255)}.{random.randint(0,255)}"
 
-        for _ in ["6.","7.","10.","11.","21.","22.","26.","28.","29.","30.","33.","55.","100.64.","127.","129.123.","132.206.9.","132.206.123.","132.206.125.","144.39.","153.11.","165.160.","169.254.","192.88.99.","192.168.","198.18.","198.51.100.","204.113.91.","205.","214.","215."]:
-            if ip.startswith(_): continue
+        if any(ip.startswith(prefix) for prefix in excluded_prefixes_one): continue
+        elif any(ip.startswith(prefix) for prefix in excluded_prefixes_two): continue
+        elif any(ip.startswith(prefix) for prefix in excluded_prefixes_two): continue
 
-        if ip.startswith("172."):
-            temp_num = 16;
-            while temp_num < 32:
-                if ip.startswith(f"172.{temp_num}."): break
-                temp_num += 1
-            if not temp_num == 32: continue
+        if ip.startswith("172.") and int(ip.split('.')[1]) >= 16 and int(ip.split('.')[1]) <= 31: continue
         elif ip.startswith("192."):
-            if ip.endswith(".170"): continue
-            elif ip.endswith(".171"): continue
-            elif ip.split('.')[2] == "2": continue
+            if ip.endswith(".170") or ip.endswith(".171") or ip.split('.')[2] == "2": continue
         elif ip.startswith("203.") and ip.split('.')[2] == "113": continue
+        elif ip.startswith("216.83.") and int(ip.split('.')[2]) >= 33 and int(ip.split('.')[2]) <= 63: continue
         elif ip.endswith(".255.255.255"): continue
 
         break
@@ -199,46 +221,41 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
     spl = white
     text = random
     
+    mode: 4 | to display banners
+    spl & text = random
+    
     """
     
-    chars = ['>','<','.',',','=','-','_','?','!','|','(',')','{','}','/','\\',':','"',"'"]
-    words_green = ['true', 'True', 'TRUE', 'online', 'Online', 'ONLINE', 'successfully', 'Successfully', 'SUCCESSFULLY', 'successful', 'Successful', 'SUCCESSFUL', 'success', 'Success', 'SUCCESS']
-    words_red = ['falsely', 'Falsely', 'FALSELY', 'false', 'False', 'FALSE', 'offline', 'Offline', 'OFFLINE', 'failures', 'Failures', 'FAILURES', 'failure', 'Failure', 'FAILURE', 'failed', 'Failed', 'FAILED', 'fail', 'Fail', 'FAIL']
-    colours_to_replace = [Fore.BLACK, Fore.BLUE, Fore.CYAN, Fore.GREEN, Fore.MAGENTA, Fore.RED, Fore.WHITE, Fore.YELLOW, Style.BRIGHT, Style.RESET_ALL]
-    colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW", "BBRIGHTT", "RRESETT"]
-
     if mode != 3:
         for _ in range(len(colours_to_replace)):
-            text = str(text).replace(colours_to_replace[_], colours_alt[_])
+            text = text.replace(colours_to_replace[_], colours_alt[_])
     else:
         for _ in range(len(colours_to_replace)):
-            text = str(text).replace(colours_to_replace[_], '')
-        
+            text = text.replace(colours_to_replace[_], '')
+
     # default
 
     if mode == 1:
-        text = str(text).replace("[",f"{colour}[{white}").replace("]",f"{colour}]{white}")
+        text = text.replace("[",f"{colour}[{white}").replace("]",f"{colour}]{white}")
         for char in chars: text = text.replace(char, f"{colour}{char}{white}")
         for word in words_green:
-            replacement = f'{green}'.join(list(word))
+            replacement = green.join(list(word))
             text = text.replace(word, f"{green}{replacement}{white}")
         for word in words_red:
-            replacement = f'{red}'.join(list(word))
+            replacement = red.join(list(word))
             text = text.replace(word, f"{red}{replacement}{white}")
     
     # for error messages
     
     elif mode == 2:
-        text = str(text).replace("[",f"{white}[{red}").replace("]",f"{white}]{red}")
+        text = text.replace("[",f"{white}[{red}").replace("]",f"{white}]{red}")
         for char in chars: text = text.replace(char, f"{white}{char}{red}")
         for word in words_green: text = text.replace(word, f"{green}{word}{red}")
     
     # random | TRUE, FALSE will not be coloured!
     
     elif mode == 3 or mode == 4:
-        text = [char for char in text]; bad_colours = ['BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET']
-        codes = vars(Fore); colours = [codes[colour] for colour in codes if colour not in bad_colours]
-        #styles = [Style.BRIGHT, Style.DIM, Style.NORMAL]
+        text = [char for char in text]
         if mode == 3: colour_spl = True
         else: colour_spl = False
         for _ in range(len(text)):
@@ -251,15 +268,15 @@ def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
                     text[_] = random.choice(colours) + Style.BRIGHT + char
         text = ''.join(text)
 
-    else: print(str(f"\n  {white}> {red}CLR ERROR{white}! - {red}Wrong mode {white}[{red}{mode}{white}]" + Style.RESET_ALL)); sys.exit(1)
+    else: print(str(f"\n  {white}> {red}CLR ERROR{white}! - {red}Wrong mode {white}[{red}{mode}{white}]" + reset)); sys.exit(1)
 
     if mode != 3:
         for _ in range(len(colours_to_replace)):
             text = str(text).replace(colours_alt[_], colours_to_replace[_])
 
-    if mode == 1: return white + text + Style.RESET_ALL
-    elif mode == 2: return red + text + Style.RESET_ALL
-    elif mode == 3 or mode == 4: return text + Style.RESET_ALL
+    if mode == 1: return white + text + reset
+    elif mode == 2: return red + text + reset
+    elif mode == 3 or mode == 4: return text + reset
 
 def align(text: str) -> str: 
     
@@ -267,13 +284,13 @@ def align(text: str) -> str:
     center align banner / line ( supports both coloured and non-coloured )
     [NOTE] align supports: clr, does not support: fade
     """
-    
+
     width = os.get_terminal_size().columns; aligned = text
     for colour in vars(Fore).values(): aligned = aligned.replace(colour,'')
     for style in vars(Style).values(): aligned = aligned.replace(style,'')
     text = text.split('\n'); aligned = aligned.split('\n')
     for _ in range(len(aligned)): aligned[_] = aligned[_].center(width).replace(aligned[_],text[_])
-    return str('\n'.join(aligned) + Style.RESET_ALL)
+    return str('\n'.join(aligned) + reset)
 
 def fade(text: str, colour: str = "purple") -> str:
     
@@ -282,7 +299,7 @@ def fade(text: str, colour: str = "purple") -> str:
     available_colours = [black,red,green,cyan,blue,purple,random,black-v,red-v,green-v,cyan-v,blue-v,purple-v,pink-v]
     """
 
-    colour = colour.lower(); available_colours = ['black','red','green','cyan','blue','purple','random','black-v','red-v','green-v','cyan-v','blue-v','purple-v','pink-v'] 
+    colour = colour.lower()
     if colour in available_colours: valid_colour = True
     else: valid_colour = False
     if not valid_colour: print(clr(f"\n  > FADE ERROR! - Invalid colour: {colour} | Available colours: {', '.join(available_colours)}")); sys.exit(1)
@@ -425,62 +442,33 @@ def get_duration(then, now = datetime.now(), interval = "default"):
     """
 
     duration = now - then # For build-in functions
-    duration_in_s = duration.total_seconds() 
+    duration_in_s = int(duration.total_seconds())
     
-    def years():
-        return divmod(duration_in_s, 31536000) # Seconds in a year=31536000.
-
-    def days(seconds = None):
-        return divmod(seconds if seconds != None else duration_in_s, 86400) # Seconds in a day = 86400
-
-    def hours(seconds = None):
-        return divmod(seconds if seconds != None else duration_in_s, 3600) # Seconds in an hour = 3600
-
-    def minutes(seconds = None):
-        return divmod(seconds if seconds != None else duration_in_s, 60) # Seconds in a minute = 60
-
-    def seconds(seconds = None):
-        if seconds != None:
-            return divmod(seconds, 1)   
-        return duration_in_s
+    def time_units(duration_in_s):
+        years, rem = divmod(duration_in_s, 31536000) 
+        days, rem = divmod(rem, 86400) 
+        hours, rem = divmod(rem, 3600) 
+        minutes, rem = divmod(rem, 60) 
+        return int(years), int(days), int(hours), int(minutes), int(rem)
   
     def dynamic():
-
-        dynamic_duration = int(years()[0])
-        if dynamic_duration == 0:
-            dynamic_duration = int(days()[0])
-            if dynamic_duration == 0:
-                dynamic_duration = int(hours()[0])
-                if dynamic_duration == 0:
-                    dynamic_duration = int(minutes()[0])
-                    if dynamic_duration == 0:
-                        dynamic_duration = int(seconds()[0])
-                        if dynamic_duration == 1: return f"{dynamic_duration} second"
-                        else: return f"{dynamic_duration} seconds"
-                    elif dynamic_duration == 1: return f"{dynamic_duration} minute"
-                    else: return f"{dynamic_duration} minutes"
-                elif dynamic_duration == 1: return f"{dynamic_duration} hour"
-                else: return f"{dynamic_duration} hours"
-            elif dynamic_duration == 1: return f"{dynamic_duration} day"
-            else: return f"{dynamic_duration} days"
-        elif dynamic_duration == 1: return f"{dynamic_duration} year"
-        else: return f"{dynamic_duration} years"
+        y, d, h, m, s = time_units(duration_in_s)
+        if y: return f"{y} year{'s' if y > 1 else ''}"
+        elif d: return f"{d} day{'s' if d > 1 else ''}"
+        elif h: return f"{h} hour{'s' if h > 1 else ''}"
+        elif m: return f"{m} minute{'s' if m > 1 else ''}"
+        else: return f"{s} second{'s' if s > 1 else ''}"
 
     def totalDuration():
-        y = years()
-        d = days(y[1]) # Use remainder to calculate next variable
-        h = hours(d[1])
-        m = minutes(h[1])
-        s = seconds(m[1])
-
-        return "Time between dates: {} years, {} days, {} hours, {} minutes and {} seconds".format(int(y[0]), int(d[0]), int(h[0]), int(m[0]), int(s[0]))
+        y, d, h, m, s = time_units(duration_in_s)
+        return f"Time between dates: {y} year{'s' if y > 1 else ''}, {d} day{'s' if d > 1 else ''}, {h} hour{'s' if h > 1 else ''}, {m} minute{'s' if m > 1 else ''} and {s} second{'s' if s > 1 else ''}"
 
     return {
-        'years': int(years()[0]),
-        'days': int(days()[0]),
-        'hours': int(hours()[0]),
-        'minutes': int(minutes()[0]),
-        'seconds': int(seconds()),
+        'years': int(duration_in_s // 31536000),
+        'days': int(duration_in_s // 86400),
+        'hours': int(duration_in_s // 3600),
+        'minutes': int(duration_in_s // 60),
+        'seconds': int(duration_in_s),
         'dynamic': dynamic(),
         'default': totalDuration()
     }[interval]
@@ -518,7 +506,7 @@ def cls() -> None:
     clear screen for multi-os
     """
     
-    print(Style.RESET_ALL)
+    print(reset)
     if os.name == 'nt': _ = os.system('cls')
     else: _ = os.system('clear')
 
