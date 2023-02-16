@@ -3,6 +3,13 @@
   <img src="https://profile-counter.glitch.me/dankware/count.svg" />
 </p>
 
+<p align="center">
+  <b>~ Stats ~</b><br><br>
+  <img src="https://static.pepy.tech/personalized-badge/dankware?period=total&units=international_system&left_color=black&right_color=brightgreen&left_text=downloads" />
+  <img src="https://static.pepy.tech/personalized-badge/dankware?period=month&units=international_system&left_color=black&right_color=brightgreen&left_text=downloads%20/%20month" />
+  <img src="https://static.pepy.tech/personalized-badge/dankware?period=week&units=international_system&left_color=black&right_color=brightgreen&left_text=downloads%20/%20week" />
+</p>
+
 # 🚨 dankware 🚨
  Python module with various features! Install with the below command!
 ```
