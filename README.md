@@ -327,3 +327,11 @@ print(fade(banner, "random"))
 <p>&nbsp;</p>    
 
 ---  
+
+# 🚨 Stats 🚨
+
+<br><p align="center"><img width="800" alt="image" src="https://repobeats.axiom.co/api/embed/ed44a86c2d46a8719705f5f57efde209b8cb5492.svg"></p><br>
+
+# 🚨 Star History 🚨
+
+<br><p align="center">[![Star History Chart](https://api.star-history.com/svg?repos=SirDank/dankware&type=Date)](https://star-history.com/#SirDank/dankware&Date)</p><br>
