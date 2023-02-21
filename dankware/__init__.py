@@ -560,15 +560,63 @@ def dankware_banner() -> None:
     """
     dankware banner printer with github url
     """
-
-    banner="\n 8 888888888o.     \n 8 8888    `^888.  \n 8 8888        `88.\n 8 8888         `88\n 8 8888          88\n 8 8888          88\n 8 8888         ,88\n 8 8888        ,88'\n 8 8888    ,o88P'  \n 8 888888888P'     \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n b.             8\n 888o.          8\n Y88888o.       8\n .`Y888888o.    8\n 8o. `Y888888o. 8\n 8`Y8o. `Y88888o8\n 8   `Y8o. `Y8888\n 8      `Y8o. `Y8\n 8         `Y8o.`\n 8            `Yo\n\n\n 8 8888     ,88'\n 8 8888    ,88' \n 8 8888   ,88'  \n 8 8888  ,88'   \n 8 8888 ,88'    \n 8 8888 88'     \n 8 888888<      \n 8 8888 `Y8.    \n 8 8888   `Y8.  \n 8 8888     `Y8.\n\n\n `8.`888b                 ,8'\n  `8.`888b               ,8' \n   `8.`888b             ,8'  \n    `8.`888b     .b    ,8'   \n     `8.`888b    88b  ,8'    \n      `8.`888b .`888b,8'     \n       `8.`888b8.`8888'      \n        `8.`888`8.`88'       \n         `8.`8' `8,`'        \n          `8.`   `8'         \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n 8 888888888o.  \n 8 8888    `88. \n 8 8888     `88 \n 8 8888     ,88 \n 8 8888.   ,88' \n 8 888888888P'  \n 8 8888`8b      \n 8 8888 `8b.    \n 8 8888   `8b.  \n 8 8888     `88.\n\n\n 8 8888888888   \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n 8 8888         \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n "
-    cls(); print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-    for line in align(clr(banner,4)).splitlines(): time.sleep(0.05); print(line)
-
+    
     num_lines = os.get_terminal_size().lines
-    for _ in range(num_lines): time.sleep(0.1); print("\n")
-    print(align(clr("github.com / SirDank"))); sleep_time = 0.01
-    for _ in range(int(num_lines/4)): time.sleep(sleep_time); sleep_time += 0.025; print("\n")
-    time.sleep(4)
-    for _ in range(int(num_lines/2)+5): time.sleep(0.01); print("\n")
+    banner="\n 8 888888888o.     \n 8 8888    `^888.  \n 8 8888        `88.\n 8 8888         `88\n 8 8888          88\n 8 8888          88\n 8 8888         ,88\n 8 8888        ,88'\n 8 8888    ,o88P'  \n 8 888888888P'     \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n b.             8\n 888o.          8\n Y88888o.       8\n .`Y888888o.    8\n 8o. `Y888888o. 8\n 8`Y8o. `Y88888o8\n 8   `Y8o. `Y8888\n 8      `Y8o. `Y8\n 8         `Y8o.`\n 8            `Yo\n\n\n 8 8888     ,88'\n 8 8888    ,88' \n 8 8888   ,88'  \n 8 8888  ,88'   \n 8 8888 ,88'    \n 8 8888 88'     \n 8 888888<      \n 8 8888 `Y8.    \n 8 8888   `Y8.  \n 8 8888     `Y8.\n\n\n `8.`888b                 ,8'\n  `8.`888b               ,8' \n   `8.`888b             ,8'  \n    `8.`888b     .b    ,8'   \n     `8.`888b    88b  ,8'    \n      `8.`888b .`888b,8'     \n       `8.`888b8.`8888'      \n        `8.`888`8.`88'       \n         `8.`8' `8,`'        \n          `8.`   `8'         \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n 8 888888888o.  \n 8 8888    `88. \n 8 8888     `88 \n 8 8888     ,88 \n 8 8888.   ,88' \n 8 888888888P'  \n 8 8888`8b      \n 8 8888 `8b.    \n 8 8888   `8b.  \n 8 8888     `88.\n\n\n 8 8888888888   \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n 8 8888         \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n "
+    
+    tmp = ""
+    to_print = []
+    sleep_time = []
+    sleep_time_1 = 0.05
+    sleep_time_2 = 0.01
+    sleep_time_variation = 0.01
+    
+    # sleep_time_1
+        
+    for line in align(clr(banner,4)).splitlines():
+        to_print.append(line)
+        sleep_time.append(sleep_time_1)
+        
+    for _ in range(num_lines):
+        tmp += "     \n"
+        to_print.append("     ")
+        sleep_time.append(sleep_time_1)
+        
+    # sleep_time_2
+    
+    tmp += (align(clr("github.com / SirDank")) + '\n')
+    to_print.append(align(clr("github.com / SirDank")))
+    sleep_time.append(sleep_time_2)
+    
+    for _ in range(int(num_lines/2)):
+        tmp += "     \n"
+        to_print.append("     ")
+        sleep_time.append(sleep_time_2)
+        sleep_time_2 = float(f'{(sleep_time_2 + sleep_time_variation):.3f}')
+
+    #for _ in range(3):
+    #    to_print.append(tmp.replace(align(clr("github.com / SirDank")), align(clr("< github.com / SirDank >"))))
+    #    sleep_time.append(0.333)
+    #    to_print.append(tmp.replace(align(clr("github.com / SirDank")), align(clr("<   github.com / SirDank   >"))))
+    #    sleep_time.append(0.333)
+    #    to_print.append(tmp.replace(align(clr("github.com / SirDank")), align(clr("<     github.com / SirDank     >"))))
+    #    sleep_time.append(0.333)
+    
+    sleep_time[-1] = 4
+    
+    for _ in range(int(num_lines/2)):
+        to_print.append("     ")
+        sleep_time.append(0.01)
+        #sleep_time.append(sleep_time_2)
+        #sleep_time_2 = float(f'{(sleep_time_2 - sleep_time_variation):.3f}')
+        
+    # start
+        
+    cls(); print('\n' * 60)
+
+    for _, amt in zip(to_print, sleep_time):
+        print(_); time.sleep(amt)
+    
+    # finish
+        
     cls()
