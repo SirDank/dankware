@@ -115,7 +115,7 @@ export_registry_keys(registry_root, registry_path, recursive=True, export_path=e
 import sys
 from dankware import err, clr
 try: value = 1/0
-except: print(clr(err(sys.exc_info()), 2))
+except: print(clr(err(sys.exc_info()),2))
 ```
 > <img width="700" alt="image" src="https://user-images.githubusercontent.com/52797753/221346044-db739b15-b365-47b3-b6f1-20d199c58ab2.png">
 

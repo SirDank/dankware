@@ -1,4 +1,16 @@
-from dankware import *
+import os
+import sys
+import time
+import ctypes
+import winreg
+import random
+import requests
+from datetime import datetime
+from colorama import Fore, Style
+from traceback import extract_tb
+from alive_progress import alive_bar
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from dankware import multithread, github_downloads, github_file_selector, random_ip, is_admin, export_registry_keys, clr, align, fade, get_duration, err, cls, title, rm_line, chdir, sys_open, dankware_banner, white, magenta, green
 
 cls()
 a = 0

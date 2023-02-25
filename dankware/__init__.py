@@ -98,7 +98,7 @@ def multithread(function, threads: int = 1, input_one = None, input_two = None, 
             for future in as_completed(futures):
                 try: future.result()
                 except: pass
-    except: sys.exit(clr(err(sys.exc_info()), 2))
+    except: sys.exit(clr(err(sys.exc_info()),2))
 
 def github_downloads(user_repo: str) -> list:
 
@@ -282,7 +282,7 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
         open(export_path, 'w', encoding='utf-16').write('Windows Registry Editor Version 5.00\n\n' + '\n'.join(key_data))
         print(clr(f"\n  > Successfully exported registry to \"{os.path.join(os.getcwd(), 'export.reg') if export_path == 'export.reg' else export_path}\""))
     
-    except: sys.exit(clr(err(sys.exc_info()), 2))
+    except: sys.exit(clr(err(sys.exc_info()),2))
 
 def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = magenta) -> str:
     
@@ -367,7 +367,7 @@ def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = mag
         if mode == 1: return white + text + reset
         elif mode == 2: return red + text + reset
         elif mode == 3 or mode == 4: return text + reset
-    except: sys.exit(clr(err(sys.exc_info()), 2))
+    except: sys.exit(clr(err(sys.exc_info()),2))
 
 def align(text: str) -> str: 
     
@@ -523,7 +523,7 @@ def fade(text: str, colour: str = "purple") -> str:
         
         if multi_line: faded = faded[:-1]
         return faded
-    except: sys.exit(clr(err(sys.exc_info()), 2))
+    except: sys.exit(clr(err(sys.exc_info()),2))
 
 def get_duration(then, now = datetime.now(), interval = "default"):
 
@@ -578,7 +578,7 @@ def err(exc_info) -> str:
     
     try: value = 1/0
 
-    except: print(clr(err(sys.exc_info()), 2))
+    except: print(clr(err(sys.exc_info()),2))
     """
 
     ex_type, ex_value, ex_traceback = exc_info
