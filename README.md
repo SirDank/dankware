@@ -35,7 +35,7 @@ def example():
         
 multithread(example, 10) # func: example | threads: 10 | single: 50 seconds | multi: 5 seconds
 ```
-> <img width="525" alt="image" src="https://user-images.githubusercontent.com/52797753/153721721-0541e26b-f0b2-4c87-8c61-778a817cf80e.png">
+> <img width="500" alt="image" src="https://user-images.githubusercontent.com/52797753/153721721-0541e26b-f0b2-4c87-8c61-778a817cf80e.png">
 
 ```py
 from dankware import multithread
@@ -51,7 +51,7 @@ def example(num):
 multithread(example, 10, new_list) # input_one: list
 print(sum)
 ```
-> <img width="516" alt="image" src="https://user-images.githubusercontent.com/52797753/153748543-07260a2e-5e25-4926-b11f-9d3670d2f3ef.png">
+> <img width="500" alt="image" src="https://user-images.githubusercontent.com/52797753/153748543-07260a2e-5e25-4926-b11f-9d3670d2f3ef.png">
 
 ```py
 from dankware import multithread
@@ -66,7 +66,7 @@ def example(num1, num2):
 
 multithread(example, 10, list1, list2) # input_one: list1 | input_two: list2
 ```
-> <img width="510" alt="image" src="https://user-images.githubusercontent.com/52797753/153749164-d8224ad4-3116-4376-90cd-bc1d093e0942.png">
+> <img width="500" alt="image" src="https://user-images.githubusercontent.com/52797753/153749164-d8224ad4-3116-4376-90cd-bc1d093e0942.png">
 
 ```py
 from dankware import multithread
@@ -80,7 +80,64 @@ def example(num1, num2):
 
 multithread(example, 10, new_list, 5, progress_bar=False) # input_two: 5 | disabled progress bar
 ```
-> <img width="33" alt="image" src="https://user-images.githubusercontent.com/52797753/153749433-95512c4d-afcd-4ad7-9797-caded6e44239.png">
+> <img width="60" alt="image" src="https://user-images.githubusercontent.com/52797753/153749433-95512c4d-afcd-4ad7-9797-caded6e44239.png">
+
+<p>&nbsp;</p>    
+
+---  
+
+# 🚨 Export Registry Keys 🚨
+
+```py
+import os
+from dankware import export_registry_keys, is_admin
+
+# [NOTE]: this function requires admin privileges!
+
+export_path = "D:\\export.reg"
+registry_root = r'HKEY_CURRENT_USER'
+registry_path = r'Software\Google\Chrome\PreferenceMACs'
+#export_path = os.path.join(os.environ['USERPROFILE'], 'Desktop', 'export.reg')
+
+export_registry_keys(registry_root, registry_path, recursive=True, export_path=export_path)
+```
+> <img width="500" alt="image" src="https://user-images.githubusercontent.com/52797753/221345714-f1cdea4a-0c08-4c47-8c95-c64d95d12dec.png">
+
+> <img width="500" alt="image" src="https://user-images.githubusercontent.com/52797753/221345782-3a5a6ef0-d3b4-48a7-b8f8-c40f210b067d.png">
+
+<p>&nbsp;</p>    
+
+---  
+
+# 🚨 Error Traceback 🚨
+
+```py
+import sys
+from dankware import err, clr
+try: value = 1/0
+except: print(clr(err(sys.exc_info()), 2))
+```
+> <img width="700" alt="image" src="https://user-images.githubusercontent.com/52797753/221346044-db739b15-b365-47b3-b6f1-20d199c58ab2.png">
+
+<p>&nbsp;</p>    
+
+---  
+
+# 🚨 Scraping 🚨
+
+```py
+from dankware import github_downloads
+# full url > https://api.github.com/repos/EssentialsX/Essentials/releases/latest
+for url in github_downloads("EssentialsX/Essentials"): print(url)
+```
+> <img width="700" alt="image" src="https://user-images.githubusercontent.com/52797753/216242124-ed911013-bae4-4622-8c0a-0d11638da750.png">
+
+```py
+from dankware import github_file_selector
+# full url > https://api.github.com/repos/EssentialsX/Essentials/releases/latest
+for url in github_file_selector("EssentialsX/Essentials", "remove", ['AntiBuild', 'Discord', 'GeoIP', 'Protect', 'XMPP']): print(url)
+```
+> <img width="700" alt="image" src="https://user-images.githubusercontent.com/52797753/216241961-5359d662-a117-4eb4-b74e-e82b41a895bc.png">
 
 <p>&nbsp;</p>    
 
@@ -99,77 +156,54 @@ print(random_ip())
 
 ---  
 
-# 🚨 Error Traceback 🚨
-
-```py
-import sys
-from dankware import err, clr
-try: value = 1/0
-except: print(clr(err(sys.exc_info()), 2))
-```
-> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/200135298-322b4c18-92d2-49d6-b588-31cf90bd191b.png">
-
-<p>&nbsp;</p>    
-
----  
-
-# 🚨 Scraping 🚨
-
-```py
-from dankware import github_downloads
-# full url > https://api.github.com/repos/EssentialsX/Essentials/releases/latest
-for url in github_downloads("EssentialsX/Essentials"): print(url)
-```
-> <img width="712" alt="image" src="https://user-images.githubusercontent.com/52797753/216242124-ed911013-bae4-4622-8c0a-0d11638da750.png">
-
-```py
-from dankware import github_file_selector
-# full url > https://api.github.com/repos/EssentialsX/Essentials/releases/latest
-for url in github_file_selector("EssentialsX/Essentials", "remove", ['AntiBuild', 'Discord', 'GeoIP', 'Protect', 'XMPP']): print(url)
-```
-> <img width="712" alt="image" src="https://user-images.githubusercontent.com/52797753/216241961-5359d662-a117-4eb4-b74e-e82b41a895bc.png">
-
-<p>&nbsp;</p>    
-
----  
-
 # 🚨 Colour Special Characters 🚨
 
 ```py
 from dankware import clr
 # default mode = 1
-# default colour = magenta
+# default colour_one = white
+# default colour_two = magenta
 print(clr("\n  > Hey! Long time no see :)"))
+#print(clr("\n  > Hey! Long time no see :)", colour_one = white, colour_two = magenta))
 ```
-> <img width="207" alt="image" src="https://user-images.githubusercontent.com/52797753/153749617-bb0483fe-0385-490b-8695-72f448300c39.png">
+> <img width="350" alt="image" src="https://user-images.githubusercontent.com/52797753/153749617-bb0483fe-0385-490b-8695-72f448300c39.png">
+
+```py
+from dankware import clr, white, magenta
+# default mode = 1
+# default colour_one = white
+# default colour_two = magenta
+print(clr("\n  > Hey! Long time no see :)", colour_one = magenta, colour_two = white))
+```
+> <img width="350" alt="image" src="https://user-images.githubusercontent.com/52797753/220981909-d6361e6a-d109-447a-8401-85e2813e7859.png">
 
 ```py
 from dankware import clr
 print(clr("\n  This is a string: True | This is an integer: False"))
 ```
-> <img width="372" alt="image" src="https://user-images.githubusercontent.com/52797753/153749921-3332f3e6-eaa8-4bf1-ab4d-3fe35d245492.png">
+> <img width="350" alt="image" src="https://user-images.githubusercontent.com/52797753/153749921-3332f3e6-eaa8-4bf1-ab4d-3fe35d245492.png">
 
 ```py
 from dankware import clr, green, magenta
 # dankware now supports adding custom colours on both the text and the function itself!
-# colour = green
-print(clr(f"\n  > {magenta}Purple{white} thinks he's better than everyone else :(", colour=green))
+# colour_two = green
+print(clr(f"\n  > {magenta}Purple{white} thinks he's better than everyone else :(", colour_two=green))
 ```
-> <img width="367" alt="image" src="https://user-images.githubusercontent.com/52797753/190898116-750e256e-a1d9-4c8a-a3b2-d0ac209fa0f7.png">
+> <img width="350" alt="image" src="https://user-images.githubusercontent.com/52797753/190898116-750e256e-a1d9-4c8a-a3b2-d0ac209fa0f7.png">
 
 ```py
 from dankware import clr
 # mode = 2
 print(clr("\n  > Error in sector [7] redirecting... | INTEGRITY_CHECK_SUCCESS: TRUE",2))
 ```
-> <img width="480" alt="image" src="https://user-images.githubusercontent.com/52797753/153749821-ae3e4dfd-26dc-4e08-a06e-677ac26457a1.png">
+> <img width="500" alt="image" src="https://user-images.githubusercontent.com/52797753/153749821-ae3e4dfd-26dc-4e08-a06e-677ac26457a1.png">
 
 ```py
 from dankware import clr
 # mode = 3
 print(clr("\n  > Is this a randomly coloured string: TRUE | As you can see it does not colour True/False",3))
 ```
-> <img width="659" alt="image" src="https://user-images.githubusercontent.com/52797753/155293415-7b065b5a-44dd-4fe7-995d-a25582f904cb.png">
+> <img width="650" alt="image" src="https://user-images.githubusercontent.com/52797753/155293415-7b065b5a-44dd-4fe7-995d-a25582f904cb.png">
 
 <p>&nbsp;</p>    
 
@@ -198,21 +232,21 @@ from dankware import clr
 # mode = 4
 print(clr(banner,4))
 ```
-> <img width="558" alt="image" src="https://user-images.githubusercontent.com/52797753/153722086-2f372bfa-4872-46a0-81f8-cdf7c2344fd6.png">
+> <img width="550" alt="image" src="https://user-images.githubusercontent.com/52797753/153722086-2f372bfa-4872-46a0-81f8-cdf7c2344fd6.png">
 
 ## ♦️ Align Banner (console center) ♦️
 ```py
 from dankware import align
 print(align(banner)) # also works with single text line (even coloured)
 ```
-> <img width="802" alt="image" src="https://user-images.githubusercontent.com/52797753/153722230-1f3b6103-6d8a-4537-9828-1718a6bd3367.png">
+> <img width="800" alt="image" src="https://user-images.githubusercontent.com/52797753/153722230-1f3b6103-6d8a-4537-9828-1718a6bd3367.png">
 
 ## ♦️ Align Coloured Banner ♦️
 ```py
 from dankware import align, clr
 print(align(clr(banner,4)))
 ```
-> <img width="830" alt="image" src="https://user-images.githubusercontent.com/52797753/153722373-9925dd25-83bb-4d1c-83eb-bfaae1802088.png">
+> <img width="800" alt="image" src="https://user-images.githubusercontent.com/52797753/153722373-9925dd25-83bb-4d1c-83eb-bfaae1802088.png">
 
 <p>&nbsp;</p>    
 
@@ -272,7 +306,6 @@ print(fade(banner, "green-v"))
 
 ## ♦️ Cyan ♦️
 ```py
-from dankware import fade
 print(fade(banner, "cyan"))
 ```
 > <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723059-b4808365-6006-4726-b427-b6848e0fc0e5.png">

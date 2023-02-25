@@ -9,6 +9,8 @@
 import os
 import sys
 import time
+import ctypes
+import winreg
 import random
 import requests
 from datetime import datetime
@@ -48,70 +50,69 @@ excluded_prefixes_three = ['4.53.201.', '5.152.179.', '8.12.162.', '8.12.163.', 
 def multithread(function, threads: int = 1, input_one = None, input_two = None, progress_bar: bool = True) -> None:
     
     """
-    input one/two can be any of these: None, List, Variable
+    > Please read the documentation on github before using this function!
+    Input one/two can be any of the following: None, List, Variable
     """
 
-    futures = []
-    executor = ThreadPoolExecutor(max_workers=threads)
-    one_isList = type(input_one) is list
-    two_isList = type(input_two) is list
-    if input_one is None: one_isNone = True
-    else: one_isNone = False
-    if input_two is None: two_isNone = True
-    else: two_isNone = False
+    try:
+        futures = []
+        executor = ThreadPoolExecutor(max_workers=threads)
+        one_isList = type(input_one) is list
+        two_isList = type(input_two) is list
+        if input_one is None: one_isNone = True
+        else: one_isNone = False
+        if input_two is None: two_isNone = True
+        else: two_isNone = False
 
-    if one_isNone:
-        for _ in range(threads): futures.append(executor.submit(function))
-    
-    elif two_isNone:
-        if one_isList:
-            for item in input_one: futures.append(executor.submit(function, item))
+        if one_isNone:
+            for _ in range(threads): futures.append(executor.submit(function))
+        
+        elif two_isNone:
+            if one_isList:
+                for item in input_one: futures.append(executor.submit(function, item))
+            else:
+                for _ in range(threads): futures.append(executor.submit(function, input_one))
+
+        elif not one_isNone and not two_isNone:
+            if one_isList and two_isList:
+                if len(input_one) != len(input_two):
+                    err_msg = clr(f"MULTITHREAD ERROR! - input_one({len(input_one)}) and input_two({len(input_two)}) do not have the same length!",2)
+                    if len(input_one) < 50 and len(input_two) < 50:
+                        err_msg += clr(f"\n  > input_one = {str(input_one)}",2)
+                        err_msg += clr(f"\n  > input_two = {str(input_two)}",2)
+                    raise ValueError(err_msg)
+                for index in range(len(input_one)): futures.append(executor.submit(function, input_one[index], input_two[index]))
+            elif one_isList:
+                for index in range(len(input_one)): futures.append(executor.submit(function, input_one[index], input_two))
+            elif two_isList:
+                for index in range(len(input_two)): futures.append(executor.submit(function, input_one, input_two[index]))
+            elif not one_isList and not two_isList:
+                for _ in range(threads): futures.append(executor.submit(function, input_one, input_two))
+
+        if progress_bar:
+            with alive_bar(int(len(futures)), title='') as bar:
+                for future in as_completed(futures):
+                    try: future.result(); bar()
+                    except: bar()
         else:
-            for _ in range(threads): futures.append(executor.submit(function, input_one))
-
-    elif not one_isNone and not two_isNone:
-        if one_isList and two_isList:
-            if len(input_one) != len(input_two):
-                print(clr(f"\n  > MULTITHREAD ERROR! - input_one({len(input_one)}) and input_two({len(input_two)}) do not have the same length!",2))
-                if len(input_one) < 50 and len(input_two) < 50:
-                    print(clr(f"\n  > input_one = {str(input_one)}",2))
-                    print(clr(f"\n  > input_two = {str(input_two)}",2))
-                sys.exit(1)
-            for index in range(len(input_one)): futures.append(executor.submit(function, input_one[index], input_two[index]))
-        elif one_isList:
-            for index in range(len(input_one)): futures.append(executor.submit(function, input_one[index], input_two))
-        elif two_isList:
-            for index in range(len(input_two)): futures.append(executor.submit(function, input_one, input_two[index]))
-        elif not one_isList and not two_isList:
-            for _ in range(threads): futures.append(executor.submit(function, input_one, input_two))
-
-    if progress_bar:
-        with alive_bar(int(len(futures)), title='') as bar:
             for future in as_completed(futures):
-                try: future.result(); bar()
-                except: bar()
-    else:
-        for future in as_completed(futures):
-            try: future.result()
-            except: pass
+                try: future.result()
+                except: pass
+    except: sys.exit(clr(err(sys.exc_info()), 2))
 
 def github_downloads(user_repo: str) -> list:
 
     """
-    
-    this function extracts download urls from latest release on github and returns as list
-    
-    Example Input: EXAMPLE/EXAMPLE ( from https://api.github.com/repos/EXAMPLE/EXAMPLE/releases/latest )
-    
-    Example Output: ['https://github.com/EXAMPLE/EXAMPLE/releases/download/VERSION/EXAMPLE.TXT']
-    
+    Extracts direct download urls from the latest release on github and returns it as a list
+
+    - Example Input: EXAMPLE/EXAMPLE ( from https://api.github.com/repos/EXAMPLE/EXAMPLE/releases/latest )
+    - Example Output: ['https://github.com/EXAMPLE/EXAMPLE/releases/download/VERSION/EXAMPLE.TXT']
     """
     
     urls = []
 
     #if "https://api.github.com/repos/" not in url or "/releases/latest" not in url:
-    #    print(clr('  > Invalid url! Must follow: "https://api.github.com/repos/NAME/NAME/releases/latest"',2))
-    #    sys.exit(1)    
+    #    raise ValueError(clr('  > Invalid url! Must follow: "https://api.github.com/repos/NAME/NAME/releases/latest"',2)) 
     while True:
         try: response = requests.get(f"https://api.github.com/repos/{user_repo}/releases/latest").json(); break
         except: input(clr("  > Make sure you are connected to the Internet! Press [ENTER] to try again... ",2))
@@ -127,9 +128,11 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
     
     This function is used to filter the output from github_downloads()
     
-    user_repo = 'USER_NAME/REPO_NAME' ( from https://api.github.com/repos/USER_NAME/REPO_NAME/releases/latest )
-    filter_mode = 'add' or 'remove'
-    name_list = list of names to be added or removed
+    - user_repo = 'USER_NAME/REPO_NAME' ( from https://api.github.com/repos/USER_NAME/REPO_NAME/releases/latest )
+    - filter_mode = 'add' or 'remove'
+    - name_list = list of names to be added or removed
+    
+    __________________________________________________________________________________
     
     Example output from github_downloads("EX_USER/EX_REPO"): [
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE.TXT'
@@ -139,8 +142,8 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_2.TXT'
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_3.TXT'
         ]
-        
-    ==================================================================================
+    
+    __________________________________________________________________________________
     
     Example Input: "EX_USER/EX_REPO", "add", ["EXAMPLE"]
         
@@ -150,9 +153,9 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_3.TXT'
         ]
         
-    Note: Only urls with filenames containing "EXAMPLE" were returned.
+    - Note: Only urls with filenames containing "EXAMPLE" were returned.
 
-    ==================================================================================
+    __________________________________________________________________________________
 
     Example Input: "EX_USER/EX_REPO", "remove", ["EXAMPLE"]
     
@@ -162,7 +165,7 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_3.TXT'
         ]
     
-    Note: Only urls with filenames not containing "EXAMPLE" were returned.
+    - Note: Only urls with filenames not containing "EXAMPLE" were returned.
     
     """
 
@@ -180,8 +183,8 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
 def random_ip() -> str:
     
     """
-    generates a random valid computer ip
-    [NOTE] https://github.com/robertdavidgraham/masscan/blob/master/data/exclude.conf
+    Generates a random valid computer ip
+    - Follows: https://github.com/robertdavidgraham/masscan/blob/master/data/exclude.conf
     """
     
     while True:
@@ -203,86 +206,174 @@ def random_ip() -> str:
         
     return ip
 
-def clr(text: str, mode: int = 1, colour: str = magenta) -> str:
+def is_admin() -> bool:
+    
+    """
+    Checks if the current user has admin privileges and returns True if found else False
+    """
+    
+    try: return ctypes.windll.shell32.IsUserAnAdmin()
+    except: return False
+    
+'''def run_as_admin() -> None:
+    
+    """
+    Executes the script with admin privileges
+    """
+    
+    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
+    #sys.exit(clr("\n  > Exiting original un-elevated script...",2))'''
+
+def export_registry_keys(registry_root: str, registry_path: str, recursive: bool = True, export_path: str = "export.reg") -> None:
+    
+    """
+    Function to export registry keys with or without its subkeys and saves them to export_path
+    - Examples for registry_root: 'HKEY_CLASSES_ROOT', 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE', 'HKEY_USERS', 'HKEY_CURRENT_CONFIG'
+    - Example for registry_path: r'Software\Google\Chrome\PreferenceMACs'
+    - recursive: True (subkeys saved)
+    - recursive: False (subkeys not saved)
+    - export_path: "exported.reg" (default)
+    """
+    
+    try:
+    
+        key_data = []
+        key_map = {
+            'HKEY_CLASSES_ROOT': winreg.HKEY_CLASSES_ROOT,
+            'HKEY_CURRENT_USER': winreg.HKEY_CURRENT_USER,
+            'HKEY_LOCAL_MACHINE': winreg.HKEY_LOCAL_MACHINE,
+            'HKEY_USERS': winreg.HKEY_USERS,
+            'HKEY_CURRENT_CONFIG': winreg.HKEY_CURRENT_CONFIG,
+        }
+        
+        if not export_path.endswith('.reg'):
+            raise ValueError(clr("Invalid Export Path! export_path must end with '.reg'",2))
+        if registry_root not in key_map.keys():
+            raise ValueError(clr(f"Invalid Registry Root! Use one of the following: {', '.join(key_map.keys())}",2))
+        if not is_admin():
+            raise RuntimeError(clr("Current user is not an administrator! Exporting registry keys requires admin privileges!",2))
+            # If the current user is not an admin, relaunch the script with admin privileges
+            #run_as_admin()
+            
+        def exporter(key, registry_root, subkey_path, key_data, recursive) -> None:
+
+            # Open the registry subkey
+            subkey = winreg.OpenKey(key, subkey_path, 0, winreg.KEY_READ | winreg.KEY_WOW64_64KEY)
+            # Get the number of subkeys and add the current subkey's path to the output list
+            subkey_count = winreg.QueryInfoKey(subkey)[0]
+            key_data.append(f'[{registry_root}\\{subkey_path}]')
+            # Enumerate the values of the current subkey and add them to the output list
+            for i in range(winreg.QueryInfoKey(subkey)[1]):
+                value_name, value_data, value_type = winreg.EnumValue(subkey, i)
+                key_data.append(f'"{value_name}"="{value_data}"')
+            # Add a blank line to the output list to separate subkeys
+            key_data.append('')
+            # Recursively export each subkey if recursive=True
+            for i in range(subkey_count):
+                subkey_name = winreg.EnumKey(subkey, i)
+                subkey_full_path = subkey_path + '\\' + subkey_name if subkey_path else subkey_name
+                if recursive: exporter(key, registry_root, subkey_full_path, key_data, recursive)
+            # Close the current subkey
+            winreg.CloseKey(subkey)
+
+        key = key_map[registry_root]
+
+        exporter(key, registry_root, registry_path, key_data, recursive)
+        open(export_path, 'w', encoding='utf-16').write('Windows Registry Editor Version 5.00\n\n' + '\n'.join(key_data))
+        print(clr(f"\n  > Successfully exported registry to \"{os.path.join(os.getcwd(), 'export.reg') if export_path == 'export.reg' else export_path}\""))
+    
+    except: sys.exit(clr(err(sys.exc_info()), 2))
+
+def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = magenta) -> str:
     
     """
     
     this function colours special characters inside the 'chars' list
     
-    mode: 1 | to display general text (default)
-    spl = magenta (default) / specified colour
-    text = white
+    ___________________________________________
     
-    mode: 2 | to display error messages
-    spl = white
-    text = red
-    
-    mode: 3
-    spl = white
-    text = random
-    
-    mode: 4 | to display banners
-    spl & text = random
+    - mode: 1 | to display general text (default)
+    - text = white (default) / specified colour
+    - spl = magenta (default) / specified colour
+
+    ___________________________________________
+
+    - mode: 2 | to display error messages
+    - text = red
+    - spl = white
+
+    ___________________________________________
+
+    - mode: 3
+    - text = random
+    - spl = white
+
+    ___________________________________________
+
+    - mode: 4 | to display banners
+    - text & spl = random
     
     """
     
-    if mode != 3:
-        for _ in range(len(colours_to_replace)):
-            text = text.replace(colours_to_replace[_], colours_alt[_])
-    else:
-        for _ in range(len(colours_to_replace)):
-            text = text.replace(colours_to_replace[_], '')
+    try:
+        if mode != 3:
+            for _ in range(len(colours_to_replace)):
+                text = text.replace(colours_to_replace[_], colours_alt[_])
+        else:
+            for _ in range(len(colours_to_replace)):
+                text = text.replace(colours_to_replace[_], '')
 
-    # default
+        # default
 
-    if mode == 1:
-        text = text.replace("[",f"{colour}[{white}").replace("]",f"{colour}]{white}")
-        for char in chars: text = text.replace(char, f"{colour}{char}{white}")
-        for word in words_green:
-            replacement = green.join(list(word))
-            text = text.replace(word, f"{green}{replacement}{white}")
-        for word in words_red:
-            replacement = red.join(list(word))
-            text = text.replace(word, f"{red}{replacement}{white}")
-    
-    # for error messages
-    
-    elif mode == 2:
-        text = text.replace("[",f"{white}[{red}").replace("]",f"{white}]{red}")
-        for char in chars: text = text.replace(char, f"{white}{char}{red}")
-        for word in words_green: text = text.replace(word, f"{green}{word}{red}")
-    
-    # random | TRUE, FALSE will not be coloured!
-    
-    elif mode == 3 or mode == 4:
-        text = [char for char in text]
-        if mode == 3: colour_spl = True
-        else: colour_spl = False
-        for _ in range(len(text)):
-            char = text[_]
-            if char != ' ' and char != '\n':
-                if colour_spl:
-                    if char in ( ['[',']'] + chars ): text[_] = white + char
-                    else: text[_] = random.choice(colours) + Style.BRIGHT + char
-                else:
-                    text[_] = random.choice(colours) + Style.BRIGHT + char
-        text = ''.join(text)
+        if mode == 1:
+            text = text.replace("[",f"{colour_two}[{colour_one}").replace("]",f"{colour_two}]{colour_one}")
+            for char in chars: text = text.replace(char, f"{colour_two}{char}{colour_one}")
+            for word in words_green:
+                replacement = green.join(list(word))
+                text = text.replace(word, f"{green}{replacement}{colour_one}")
+            for word in words_red:
+                replacement = red.join(list(word))
+                text = text.replace(word, f"{red}{replacement}{colour_one}")
+        
+        # for error messages
+        
+        elif mode == 2:
+            text = text.replace("[",f"{white}[{red}").replace("]",f"{white}]{red}")
+            for char in chars: text = text.replace(char, f"{white}{char}{red}")
+            for word in words_green: text = text.replace(word, f"{green}{word}{red}")
+        
+        # random | TRUE, FALSE will not be coloured!
+        
+        elif mode == 3 or mode == 4:
+            text = [char for char in text]
+            if mode == 3: colour_spl = True
+            else: colour_spl = False
+            for _ in range(len(text)):
+                char = text[_]
+                if char != ' ' and char != '\n':
+                    if colour_spl:
+                        if char in ( ['[',']'] + chars ): text[_] = white + char
+                        else: text[_] = random.choice(colours) + Style.BRIGHT + char
+                    else:
+                        text[_] = random.choice(colours) + Style.BRIGHT + char
+            text = ''.join(text)
 
-    else: print(str(f"\n  {white}> {red}CLR ERROR{white}! - {red}Wrong mode {white}[{red}{mode}{white}]" + reset)); sys.exit(1)
+        else: raise ValueError(f"\n  {white}> {red}Invalid Mode {white}[{red}{mode}{white}] | Valid Modes{white}: {red}1{white},{red}2{white},{red}3{white},{red}4" + reset)
 
-    if mode != 3:
-        for _ in range(len(colours_to_replace)):
-            text = str(text).replace(colours_alt[_], colours_to_replace[_])
+        if mode != 3:
+            for _ in range(len(colours_to_replace)):
+                text = str(text).replace(colours_alt[_], colours_to_replace[_])
 
-    if mode == 1: return white + text + reset
-    elif mode == 2: return red + text + reset
-    elif mode == 3 or mode == 4: return text + reset
+        if mode == 1: return white + text + reset
+        elif mode == 2: return red + text + reset
+        elif mode == 3 or mode == 4: return text + reset
+    except: sys.exit(clr(err(sys.exc_info()), 2))
 
 def align(text: str) -> str: 
     
     """
     center align banner / line ( supports both coloured and non-coloured )
-    [NOTE] align supports: clr, does not support: fade
+    - [NOTE] align supports: clr, does not support: fade
     """
 
     width = os.get_terminal_size().columns; aligned = text
@@ -296,149 +387,148 @@ def fade(text: str, colour: str = "purple") -> str:
     
     """
     credits to https://github.com/venaxyt/gratient & https://github.com/venaxyt/fade <3
-    available_colours = [black,red,green,cyan,blue,purple,random,black-v,red-v,green-v,cyan-v,blue-v,purple-v,pink-v]
+    - available_colours = [black,red,green,cyan,blue,purple,random,black-v,red-v,green-v,cyan-v,blue-v,purple-v,pink-v]
     """
 
-    colour = colour.lower()
-    if colour in available_colours: valid_colour = True
-    else: valid_colour = False
-    if not valid_colour: print(clr(f"\n  > FADE ERROR! - Invalid colour: {colour} | Available colours: {', '.join(available_colours)}")); sys.exit(1)
-        
-    faded = ""
-    if len(text.splitlines()) > 1: multi_line = True
-    else: multi_line = False
+    try:
+        colour = colour.lower()
+        if not colour in available_colours: raise ValueError(clr(f"\n  > Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}",2))
+            
+        faded = ""
+        if len(text.splitlines()) > 1: multi_line = True
+        else: multi_line = False
 
-    if colour == "black":
-        for line in text.splitlines():
+        if colour == "black":
+            for line in text.splitlines():
+                R = 0; G = 0; B = 0
+                for char in line:
+                    R += 3; G += 3; B += 3
+                    if R > 255 and G > 255 and B > 255: R = 255; G = 255; B = 255
+                    faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
+                if multi_line: faded += "\n"
+                
+        elif colour == "red":
+            for line in text.splitlines():
+                G = 250
+                for char in line:
+                    G -= 5
+                    if G < 0: G = 0
+                    faded += f"\033[38;2;255;{G};0m{char}\033[0m"
+                if multi_line: faded += "\n"
+                
+        elif colour == "green":
+            for line in text.splitlines():
+                R = 0
+                for char in line:
+                    if not R > 200: R += 3
+                    faded += f"\033[38;2;{R};255;0m{char}\033[0m"
+                if multi_line: faded += "\n"
+                
+        elif colour == "cyan":
+            for line in text.splitlines():
+                B = 100
+                for char in line:
+                    B += 2
+                    if B > 255: B = 255
+                    faded += f"\033[38;2;0;255;{B}m{char}\033[0m"
+                if multi_line: faded += "\n"
+
+        elif colour == "blue":
+            for line in text.splitlines():
+                G = 0
+                for char in line:
+                    G += 3
+                    if G > 255: G = 255
+                    faded += f"\033[38;2;0;{G};255m{char}\033[0m"
+                if multi_line: faded += "\n"
+            
+        elif colour == "purple":
+            for line in text.splitlines():
+                R = 35
+                for char in line:
+                    R += 3
+                    if R > 255: R = 255
+                    faded += f"\033[38;2;{R};0;220m{char}\033[0m"
+                if multi_line: faded += "\n"
+
+        elif colour == "black-v":
             R = 0; G = 0; B = 0
-            for char in line:
-                R += 3; G += 3; B += 3
-                if R > 255 and G > 255 and B > 255: R = 255; G = 255; B = 255
-                faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
-            if multi_line: faded += "\n"
-            
-    elif colour == "red":
-        for line in text.splitlines():
+            for line in text.splitlines():
+                faded += (f"\033[38;2;{R};{G};{B}m{line}\033[0m")
+                if not R == 255 and not G == 255 and not B == 255:
+                    R += 20; G += 20; B += 20
+                    if R > 255 and G > 255 and B > 255: R = 255; G = 255; B = 255
+                if multi_line: faded += "\n"
+                        
+        elif colour == "red-v":
             G = 250
-            for char in line:
-                G -= 5
-                if G < 0: G = 0
-                faded += f"\033[38;2;255;{G};0m{char}\033[0m"
-            if multi_line: faded += "\n"
-            
-    elif colour == "green":
-        for line in text.splitlines():
+            for line in text.splitlines():
+                faded += f"\033[38;2;255;{G};0m{line}\033[0m"
+                if not G == 0:
+                    G -= 25
+                    if G < 0: G = 0
+                if multi_line:faded += "\n"
+
+        elif colour == "green-v":
             R = 0
-            for char in line:
-                if not R > 200: R += 3
-                faded += f"\033[38;2;{R};255;0m{char}\033[0m"
-            if multi_line: faded += "\n"
+            for line in text.splitlines():
+                faded += f"\033[38;2;{R};255;0m{line}\033[0m"
+                if not R > 200: R += 30
+                if multi_line: faded += "\n"
             
-    elif colour == "cyan":
-        for line in text.splitlines():
+        elif colour == "cyan-v":
             B = 100
-            for char in line:
-                B += 2
-                if B > 255: B = 255
-                faded += f"\033[38;2;0;255;{B}m{char}\033[0m"
-            if multi_line: faded += "\n"
+            for line in text.splitlines():
+                faded += f"\033[38;2;0;255;{B}m{line}\033[0m"
+                if not B == 255:
+                    B += 15
+                    if B > 255: B = 255
+                if multi_line: faded += "\n"
+            
+        elif colour == "blue-v":
+            G = 10
+            for line in text.splitlines():
+                faded += f"\033[38;2;0;{G};255m{line}\033[0m"
+                if not G == 255:
+                    G += 15
+                    if G > 255: G = 255
+                if multi_line: faded += "\n"
+            
+        elif colour == "purple-v":
+            R = 40
+            for line in text.splitlines():
+                faded += f"\033[38;2;{R};0;220m{line}\033[0m"
+                if not R == 255:
+                    R += 15
+                    if R > 255: R = 255
+                if multi_line: faded += "\n"
+            
+        elif colour == "pink-v":
+            B = 255
+            for line in text.splitlines():
+                faded += f"\033[38;2;255;0;{B}m{line}\033[0m"
+                if not B == 0:
+                    B -= 20
+                    if B < 0: B = 0
+                if multi_line: faded += "\n"
 
-    elif colour == "blue":
-        for line in text.splitlines():
-            G = 0
-            for char in line:
-                G += 3
-                if G > 255: G = 255
-                faded += f"\033[38;2;0;{G};255m{char}\033[0m"
-            if multi_line: faded += "\n"
+        elif colour == "random":
+            for line in text.splitlines():
+                for char in line:
+                    R, G, B = random.randint(0,255), random.randint(0,255), random.randint(0,255)
+                    faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
+                if multi_line: faded += "\n"
         
-    elif colour == "purple":
-        for line in text.splitlines():
-            R = 35
-            for char in line:
-                R += 3
-                if R > 255: R = 255
-                faded += f"\033[38;2;{R};0;220m{char}\033[0m"
-            if multi_line: faded += "\n"
-
-    elif colour == "black-v":
-        R = 0; G = 0; B = 0
-        for line in text.splitlines():
-            faded += (f"\033[38;2;{R};{G};{B}m{line}\033[0m")
-            if not R == 255 and not G == 255 and not B == 255:
-                R += 20; G += 20; B += 20
-                if R > 255 and G > 255 and B > 255: R = 255; G = 255; B = 255
-            if multi_line: faded += "\n"
-                    
-    elif colour == "red-v":
-        G = 250
-        for line in text.splitlines():
-            faded += f"\033[38;2;255;{G};0m{line}\033[0m"
-            if not G == 0:
-                G -= 25
-                if G < 0: G = 0
-            if multi_line:faded += "\n"
-
-    elif colour == "green-v":
-        R = 0
-        for line in text.splitlines():
-            faded += f"\033[38;2;{R};255;0m{line}\033[0m"
-            if not R > 200: R += 30
-            if multi_line: faded += "\n"
+        else: raise ValueError(clr(f"\n  > FADE ERROR! - [{colour}] is not supported yet!",2))
         
-    elif colour == "cyan-v":
-        B = 100
-        for line in text.splitlines():
-            faded += f"\033[38;2;0;255;{B}m{line}\033[0m"
-            if not B == 255:
-                B += 15
-                if B > 255: B = 255
-            if multi_line: faded += "\n"
-        
-    elif colour == "blue-v":
-        G = 10
-        for line in text.splitlines():
-            faded += f"\033[38;2;0;{G};255m{line}\033[0m"
-            if not G == 255:
-                G += 15
-                if G > 255: G = 255
-            if multi_line: faded += "\n"
-        
-    elif colour == "purple-v":
-        R = 40
-        for line in text.splitlines():
-            faded += f"\033[38;2;{R};0;220m{line}\033[0m"
-            if not R == 255:
-                R += 15
-                if R > 255: R = 255
-            if multi_line: faded += "\n"
-        
-    elif colour == "pink-v":
-        B = 255
-        for line in text.splitlines():
-            faded += f"\033[38;2;255;0;{B}m{line}\033[0m"
-            if not B == 0:
-                B -= 20
-                if B < 0: B = 0
-            if multi_line: faded += "\n"
-
-    elif colour == "random":
-        for line in text.splitlines():
-            for char in line:
-                R, G, B = random.randint(0,255), random.randint(0,255), random.randint(0,255)
-                faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
-            if multi_line: faded += "\n"
-    
-    else: print(clr(f"\n  > FADE ERROR! - [{colour}] is not supported yet!",2)); sys.exit(1)
-    
-    if multi_line: faded = faded[:-1]
-    return faded
+        if multi_line: faded = faded[:-1]
+        return faded
+    except: sys.exit(clr(err(sys.exc_info()), 2))
 
 def get_duration(then, now = datetime.now(), interval = "default"):
 
     """
-    Returns a duration as specified by variable interval
-    Functions, except totalDuration, returns [quotient, remainder]
+    Returns a duration as specified by the 'interval' variable
     """
 
     duration = now - then # For build-in functions
@@ -476,12 +566,18 @@ def get_duration(then, now = datetime.now(), interval = "default"):
 def err(exc_info) -> str:
     
     """
+    Returns short traceback
+    
+    __________________________________________
+    
     [EXAMPLE]:
 
     import sys
+
     from dankware import err, clr
     
     try: value = 1/0
+
     except: print(clr(err(sys.exc_info()), 2))
     """
 
@@ -490,20 +586,19 @@ def err(exc_info) -> str:
     stack_trace = []
 
     for trace in trace_back:
-        stack_trace.append("    - File: {} | Line: {} | Function: {} | {}".format(trace[0].split('\\')[-1], trace[1], trace[2], trace[3]))
-        
+        # trace[0].split('\\')[-1]
+        stack_trace.append("    - File: {} | Line: {} | Function: {} | {}".format(trace[0], trace[1], trace[2], trace[3]))
+
     report = "  > Error Type: {}".format(ex_type.__name__)
-    if ex_value != '': report += "\n\n  > Error Message: \n\n    - {}".format(ex_value)
-    report += "\n\n  > Error Stack Trace: \n\n{}".format('\n'.join(stack_trace))
+    if ex_value: report += "\n  > Error Message: \n    - {}".format(ex_value)
+    report += "\n  > Error Stack Trace: \n{}".format('\n'.join(stack_trace))
 
     return report
-
-# functions for windows executables [ dankware ]
 
 def cls() -> None: 
     
     """
-    clear screen for multi-os
+    Clear screen for multi-os
     """
     
     print(reset)
@@ -513,7 +608,7 @@ def cls() -> None:
 def title(title: str) -> None:
     
     """
-    changes title
+    Changes console window title
     """
 
     if os.name == 'nt': os.system(f"title {title}")
@@ -521,7 +616,7 @@ def title(title: str) -> None:
 def rm_line() -> None:
     
     """
-    deletes previous line
+    Deletes previous line
     """
 
     print("\033[A                             \033[A")
@@ -529,16 +624,12 @@ def rm_line() -> None:
 def chdir(mode: str) -> str:
     
     """
-
-    running "os.chdir(os.path.dirname(__file__))" inside example.py will change its directory to the example.py file's location
-    running "os.chdir(os.path.dirname(sys.argv[0]))" inside example.exe will change its directory to the example.exe file's location (nuitka)
-        
-    for changing directory to exe's path as exe: exec(chdir("exe"))
-    for changing directory to script's path as script: exec(chdir("script"))
-    
-    [NOTE] When I build executables, the [ exec_mode = "script" ] is automatically replaced with [ exec_mode = "exe" ] inside the script
-    [NOTE] If you run "os.chdir(os.path.dirname(__file__))" as an executable, it will change its directory to its temp folder [ C:\\Users\\user\\AppData\\Local\\Temp\\dankware_PPID ]
-
+    - running "os.chdir(os.path.dirname(__file__))" inside example.py will change its directory to the example.py file's location
+    - running "os.chdir(os.path.dirname(sys.argv[0]))" inside example.exe will change its directory to the example.exe file's location (nuitka)
+    - for changing directory to exe's path as exe: exec(chdir("exe"))
+    - for changing directory to script's path as script: exec(chdir("script"))
+    - [NOTE] When I build executables, the [ exec_mode = "script" ] is automatically replaced with [ exec_mode = "exe" ] inside the script
+    - [NOTE] If you run "os.chdir(os.path.dirname(__file__))" as an executable, it will change its directory to its temp folder [ C:\\Users\\user\\AppData\\Local\\Temp\\dankware_PPID ]
     """
 
     if mode == "script": return "os.chdir(os.path.dirname(__file__))" # as .py
@@ -547,9 +638,10 @@ def chdir(mode: str) -> str:
 def sys_open(item: str) -> None:
     
     """
-    - opens the url on the default browser on windows / linux
-    - opens directory
-    - starts file
+    Can do the following:
+    - Open the url on the default browser on windows / linux
+    - Open directory
+    - Start file
     """
     
     if os.name == 'nt': os.system(f'start {item}')
@@ -558,7 +650,7 @@ def sys_open(item: str) -> None:
 def dankware_banner() -> None:
     
     """
-    dankware banner printer with github url
+    Dankware banner printer with github url
     """
     
     num_lines = os.get_terminal_size().lines
