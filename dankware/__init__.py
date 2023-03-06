@@ -98,7 +98,10 @@ def multithread(function, threads: int = 1, input_one = None, input_two = None, 
             for future in as_completed(futures):
                 try: future.result()
                 except: pass
-    except: sys.exit(clr(err(sys.exc_info()),2))
+    except: 
+        try: executor.shutdown()
+        except: pass
+        sys.exit(clr(err(sys.exc_info()),2))
 
 def github_downloads(user_repo: str) -> list:
 
@@ -280,7 +283,7 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
 
         exporter(key, registry_root, registry_path, key_data, recursive)
         open(export_path, 'w', encoding='utf-16').write('Windows Registry Editor Version 5.00\n\n' + '\n'.join(key_data))
-        print(clr(f"\n  > Successfully exported registry to \"{os.path.join(os.getcwd(), 'export.reg') if export_path == 'export.reg' else export_path}\""))
+        print(clr(f"\n  > Successfully exported registry keys to \"{os.path.join(os.getcwd(), 'export.reg') if export_path == 'export.reg' else export_path}\""))
     
     except: sys.exit(clr(err(sys.exc_info()),2))
 
@@ -299,19 +302,19 @@ def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = mag
     ___________________________________________
 
     - mode: 2 | to display error messages
-    - text = red
-    - spl = white
+    - text = red (fixed colour)
+    - spl = white (fixed colour)
 
     ___________________________________________
 
     - mode: 3
-    - text = random
-    - spl = white
+    - text = random (fixed colour)
+    - spl = white (fixed colour)
 
     ___________________________________________
 
     - mode: 4 | to display banners
-    - text & spl = random
+    - text & spl = random (fixed colour)
     
     """
     
@@ -340,7 +343,7 @@ def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = mag
         elif mode == 2:
             text = text.replace("[",f"{white}[{red}").replace("]",f"{white}]{red}")
             for char in chars: text = text.replace(char, f"{white}{char}{red}")
-            for word in words_green: text = text.replace(word, f"{green}{word}{red}")
+            #for word in words_green: text = text.replace(word, f"{green}{word}{red}")
         
         # random | TRUE, FALSE will not be coloured!
         
@@ -586,8 +589,11 @@ def err(exc_info) -> str:
     stack_trace = []
 
     for trace in trace_back:
-        # trace[0].split('\\')[-1]
-        stack_trace.append("    - File: {} | Line: {} | Function: {} | {}".format(trace[0], trace[1], trace[2], trace[3]))
+        filename = trace[0]
+        if filename == "<string>": filename = str(__name__)
+        #elif filename.endswith(".pyc"): filename = filename[:-1]
+        #elif filename.endswith("$py.class"): filename = filename[:-9] + ".py"
+        stack_trace.append("    - File: {} | Line: {} | Function: {}{}".format(filename, trace[1], trace[2] if trace[2] != '<module>' else 'top-level', ' | ' + trace[3] if trace[3] else ''))
 
     report = "  > Error Type: {}".format(ex_type.__name__)
     if ex_value: report += "\n  > Error Message: \n    - {}".format(ex_value)
