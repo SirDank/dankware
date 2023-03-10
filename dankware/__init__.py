@@ -528,14 +528,15 @@ def fade(text: str, colour: str = "purple") -> str:
         return faded
     except: sys.exit(clr(err(sys.exc_info()),2))
 
-def get_duration(then, now = datetime.now(), interval = "default"):
+def get_duration(then, now = datetime.now(), interval = "default") -> str:
 
     """
     Returns a duration as specified by the 'interval' variable
     """
 
     duration = now - then # For build-in functions
-    duration_in_s = int(duration.total_seconds())
+    try: duration_in_s = int(duration.total_seconds())
+    except: duration_in_s = int(duration)
     
     def time_units(duration_in_s):
         years, rem = divmod(duration_in_s, 31536000) 
