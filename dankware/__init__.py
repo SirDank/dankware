@@ -528,44 +528,70 @@ def fade(text: str, colour: str = "purple") -> str:
         return faded
     except: sys.exit(clr(err(sys.exc_info()),2))
 
-def get_duration(then, now = datetime.now(), interval = "default") -> str:
+def get_duration(then: datetime, now=datetime.now(), interval="default"):
 
     """
     Returns a duration as specified by the 'interval' variable
+    
+    __________________________________________________________
+    
+    valid intervals:
+    - years -> int
+    - days -> int
+    - hours -> int
+    - minutes -> int
+    - seconds -> int
+    - dynamic -> str
+    - default -> str
     """
 
-    duration = now - then # For build-in functions
-    try: duration_in_s = int(duration.total_seconds())
-    except: duration_in_s = int(duration)
+    duration = now - then
+
+    if interval == "years": return int(duration.days / 365)
+    elif interval == "days": return duration.days
+    elif interval == "hours": return int(duration.total_seconds() / 3600)
+    elif interval == "minutes": return int(duration.total_seconds() / 60)
+    elif interval == "seconds": return int(duration.total_seconds())
+    elif interval == "dynamic":
+
+        seconds = duration.total_seconds()
+
+        if seconds < 60:
+            return f"{int(seconds)} second{'s' if seconds > 1 else ''}"
+        
+        elif seconds < 3600:
+            minutes = int(seconds / 60)
+            return f"{minutes} minute{'s' if minutes > 1 else ''}"
+        
+        elif seconds < 86400:
+            hours = int(seconds / 3600)
+            return f"{hours} hour{'s' if hours > 1 else ''}"
+       
+        elif seconds < 31536000:
+            days = int(seconds / 86400)
+            return f"{days} day{'s' if days > 1 else ''}"
+        
+        else:
+            years = int(seconds / 31536000)
+            return f"{years} year{'s' if years > 1 else ''}"
     
-    def time_units(duration_in_s):
-        years, rem = divmod(duration_in_s, 31536000) 
-        days, rem = divmod(rem, 86400) 
-        hours, rem = divmod(rem, 3600) 
-        minutes, rem = divmod(rem, 60) 
-        return int(years), int(days), int(hours), int(minutes), int(rem)
-  
-    def dynamic():
-        y, d, h, m, s = time_units(duration_in_s)
-        if y: return f"{y} year{'s' if y > 1 else ''}"
-        elif d: return f"{d} day{'s' if d > 1 else ''}"
-        elif h: return f"{h} hour{'s' if h > 1 else ''}"
-        elif m: return f"{m} minute{'s' if m > 1 else ''}"
-        else: return f"{s} second{'s' if s > 1 else ''}"
+    else:
+        seconds = duration.total_seconds()
 
-    def totalDuration():
-        y, d, h, m, s = time_units(duration_in_s)
-        return f"Time between dates: {y} year{'s' if y > 1 else ''}, {d} day{'s' if d > 1 else ''}, {h} hour{'s' if h > 1 else ''}, {m} minute{'s' if m > 1 else ''} and {s} second{'s' if s > 1 else ''}"
+        years = int(seconds / 31536000)
+        days = int((seconds % 31536000) / 86400)
+        hours = int((seconds % 86400) / 3600)
+        minutes = int((seconds % 3600) / 60)
+        seconds = int(seconds % 60)
 
-    return {
-        'years': int(duration_in_s // 31536000),
-        'days': int(duration_in_s // 86400),
-        'hours': int(duration_in_s // 3600),
-        'minutes': int(duration_in_s // 60),
-        'seconds': int(duration_in_s),
-        'dynamic': dynamic(),
-        'default': totalDuration()
-    }[interval]
+        parts = []
+        if years: parts.append(f"{years} year{'s' if years > 1 else ''}")
+        if days: parts.append(f"{days} day{'s' if days > 1 else ''}")
+        if hours: parts.append(f"{hours} hour{'s' if hours > 1 else ''}")
+        if minutes: parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
+        if seconds: parts.append(f"{seconds} second{'s' if seconds > 1 else ''}")
+
+        return ", ".join(parts)
 
 def err(exc_info) -> str:
     

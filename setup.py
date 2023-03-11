@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
   name="dankware",
-  version="3.1.2",
+  version="3.1.3",
   author="SirDank",
   author_email="SirDankenstein@protonmail.com",
   description="Python module with various features.",
