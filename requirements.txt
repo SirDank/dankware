@@ -2,4 +2,4 @@ build
 twine
 requests
 colorama
-alive_progress
+rich

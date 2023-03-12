@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
   name="dankware",
-  version="3.1.3",
+  version="3.2",
   author="SirDank",
   author_email="SirDankenstein@protonmail.com",
   description="Python module with various features.",
@@ -14,7 +14,7 @@ setup(
     "Bug Tracker": "https://github.com/SirDank/dankware/issues",
   },
   license="MIT",
-  keywords=["dank","dankware","multithread","gradient","fade"],
+  keywords=["dank","dankware","multithread","gradient","fade","registry key","error traceback","random ip","github scraper"],
   classifiers = [
   "Programming Language :: Python :: 3",
   "License :: OSI Approved :: MIT License",
@@ -26,5 +26,5 @@ setup(
   ],
   package_dir={"": "."},
   packages=find_packages(where="."),
-  install_requires=['alive-progress', 'colorama', 'requests']
+  install_requires=['rich', 'colorama', 'requests']
 )

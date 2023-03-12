@@ -16,8 +16,12 @@ import requests
 from datetime import datetime
 from colorama import Fore, Style
 from traceback import extract_tb
-from alive_progress import alive_bar
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+from rich.live import Live
+from rich.panel import Panel
+from rich.table import Table
+from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn
 
 # colorama colours
 
@@ -33,71 +37,86 @@ yellow = Fore.YELLOW + Style.BRIGHT
 
 # dankware variables
 
-chars = ['>','<','.',',','=','-','_','?','!','|','(',')','{','}','/','\\',':','"',"'"]
+chars = ['>','<','.',',','=','-','_','?','!','|','(',')','{','}','/','\\',':','"',"'","%"]
 words_green = ['true', 'True', 'TRUE', 'online', 'Online', 'ONLINE', 'successfully', 'Successfully', 'SUCCESSFULLY', 'successful', 'Successful', 'SUCCESSFUL', 'success', 'Success', 'SUCCESS']
 words_red = ['falsely', 'Falsely', 'FALSELY', 'false', 'False', 'FALSE', 'offline', 'Offline', 'OFFLINE', 'failures', 'Failures', 'FAILURES', 'failure', 'Failure', 'FAILURE', 'failed', 'Failed', 'FAILED', 'fail', 'Fail', 'FAIL']
 colours_to_replace = [Fore.BLACK, Fore.BLUE, Fore.CYAN, Fore.GREEN, Fore.MAGENTA, Fore.RED, Fore.WHITE, Fore.YELLOW, Style.BRIGHT, Style.RESET_ALL]
 colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW", "BBRIGHTT", "RRESETT"]
 bad_colours = ['BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET']
 codes = vars(Fore); colours = [codes[colour] for colour in codes if colour not in bad_colours]
-#styles = [Style.BRIGHT, Style.DIM, Style.NORMAL]
+styles = [Style.BRIGHT, Style.DIM, Style.NORMAL]
 available_colours = ['black','red','green','cyan','blue','purple','random','black-v','red-v','green-v','cyan-v','blue-v','purple-v','pink-v']
 
-excluded_prefixes_one = ['6.', '7.', '10.', '11.', '21.', '22.', '26.', '28.', '29.', '30.', '33.', '55.', '127.', '136.', '205.', '214.', '215.']
-excluded_prefixes_two = ['23.27.', '31.25.', '50.117.', '74.115.', '75.127.', '81.87.', '100.64.', '128.16.', '128.40.', '128.41.', '128.86.', '128.232.', '128.240.', '128.243.', '129.11.', '129.12.', '129.31.', '129.67.', '129.123.', '129.169.', '129.215.', '129.234.', '130.88.', '130.159.', '130.209.', '130.246.', '131.111.', '131.227.', '131.231.', '131.251.', '134.36.', '134.83.', '134.151.', '134.219.', '134.220.', '134.225.', '136.148.', '136.156.', '137.44.', '137.50.', '137.73.', '137.108.', '137.195.', '137.222.', '137.253.', '138.38.', '138.40.', '138.250.', '138.253.', '139.133.', '139.153.', '139.166.', '139.184.', '139.222.', '140.97.', '141.163.', '141.241.', '142.111.', '142.252.', '143.52.', '143.117.', '143.167.', '143.210.', '143.234.', '144.32.', '144.39.', '144.82.', '144.124.', '144.173.', '146.87.', '146.97.', '146.169.', '146.176.', '146.179.', '146.191.', '146.227.', '147.143.', '147.188.', '147.197.', '148.79.', '148.88.', '148.197.', '149.155.', '149.170.', '150.204.', '152.71.', '152.78.', '152.105.', '153.11.', '155.198.', '155.245.', '157.140.', '157.228.', '158.94.', '158.125.', '158.143.', '158.223.', '159.92.', '160.5.', '160.9.', '161.73.', '161.74.', '161.76.', '161.112.', '163.1.', '163.119.', '163.160.', '163.167.', '164.11.', '165.160.', '166.88.', '169.254.', '172.252.', '192.168.', '192.177.', '192.186.', '193.60.', '194.66.', '194.80.', '195.194.', '198.18.', '205.164.', '212.121.', '212.219.']
-excluded_prefixes_three = ['4.53.201.', '5.152.179.', '8.12.162.', '8.12.163.', '8.12.164.', '8.14.84.', '8.14.145.', '8.14.146.', '8.14.147.', '8.17.250.', '8.17.251.', '8.17.252.', '23.231.128.', '31.25.2.', '31.25.4.', '37.72.112.', '37.72.172.', '38.72.200.', '46.254.200.', '50.93.192.', '50.93.193.', '50.93.194.', '50.93.195.', '50.93.196.', '50.93.197.', '50.115.128.', '50.118.128.', '63.141.222.', '64.62.253.', '64.92.96.', '64.145.79.', '64.145.82.', '64.158.146.', '65.49.24.', '65.49.93.', '65.162.192.', '66.79.160.', '66.160.191.', '68.68.96.', '69.46.64.', '69.176.80.', '72.13.80.', '72.52.76.', '74.82.43.', '74.82.160.', '74.114.88.', '74.115.2.', '74.115.4.', '74.122.100.', '85.12.64.', '89.207.208.', '92.245.224.', '103.251.91.', '108.171.32.', '108.171.42.', '108.171.52.', '108.171.62.', '118.193.78.', '130.93.16.', '132.206.9.', '132.206.123.', '132.206.125.', '141.170.64.', '141.170.96.', '141.170.100.', '146.82.55.93', '149.54.136.', '149.54.152.', '159.86.128.', '173.245.64.', '173.245.194.', '173.245.220.', '173.252.192.', '178.18.16.', '178.18.26.', '178.18.27.', '178.18.28.', '178.18.29.', '183.182.22.', '185.83.168.', '192.12.72.', '192.18.195.', '192.35.172.', '192.41.104.', '192.41.112.', '192.41.128.', '192.68.153.', '192.76.6.', '192.76.8.', '192.76.16.', '192.76.32.', '192.82.153.', '192.84.5.', '192.84.75.', '192.84.76.', '192.84.80.', '192.84.212.', '192.88.9.', '192.88.10.', '192.88.99.', '192.92.114.', '192.94.235.', '192.100.78.', '192.100.154.', '192.107.168.', '192.108.120.', '192.124.46.', '192.133.244.', '192.149.111.', '192.150.180.', '192.150.184.', '192.153.213.', '192.155.160.', '192.156.162.', '192.160.194.', '192.171.128.', '192.171.192.', '192.173.1.', '192.173.2.', '192.173.4.', '192.173.128.', '192.188.157.', '192.188.158.', '192.190.201.', '192.190.202.', '192.195.42.', '192.195.105.', '192.195.116.', '192.195.118.', '192.249.64.', '192.250.240.', '193.32.22.', '193.37.225.', '193.37.240.', '193.38.143.', '193.39.80.', '193.39.172.', '193.39.212.', '193.107.116.', '193.130.15.', '193.133.28.', '193.138.86.', '194.32.32.', '194.35.93.', '194.35.186.', '194.35.192.', '194.35.241.', '194.36.1.', '194.36.2.', '194.36.121.', '194.36.152.', '194.60.218.', '194.110.214.', '194.187.32.', '198.12.120.', '198.12.121.', '198.12.122.', '198.51.100.', '198.144.240.', '199.33.120.', '199.33.124.', '199.48.147.', '199.68.196.', '199.127.240.', '199.187.168.', '199.188.238.', '199.255.208.', '203.12.6.', '204.13.64.', '204.16.192.', '204.19.238.', '204.74.208.', '204.113.91.', '205.159.189.', '205.209.128.', '206.108.52.', '206.165.4.', '208.77.40.', '208.80.4.', '208.123.223.', '209.51.185.', '209.54.48.', '209.107.192.', '209.107.210.', '209.107.212.', '211.156.110.', '212.121.192.', '216.151.183.', '216.151.190.', '216.172.128.', '216.185.36.', '216.218.233.', '216.224.112.']
+excluded_prefixes_one = {'6.': '', '7.': '', '10.': '', '11.': '', '21.': '', '22.': '', '26.': '', '28.': '', '29.': '', '30.': '', '33.': '', '55.': '', '127.': '', '136.': '', '205.': '', '214.': '', '215.': ''}
+excluded_prefixes_two = {'23.27.': '', '31.25.': '', '50.117.': '', '74.115.': '', '75.127.': '', '81.87.': '', '100.64.': '', '128.16.': '', '128.40.': '', '128.41.': '', '128.86.': '', '128.232.': '', '128.240.': '', '128.243.': '', '129.11.': '', '129.12.': '', '129.31.': '', '129.67.': '', '129.123.': '', '129.169.': '', '129.215.': '', '129.234.': '', '130.88.': '', '130.159.': '', '130.209.': '', '130.246.': '', '131.111.': '', '131.227.': '', '131.231.': '', '131.251.': '', '134.36.': '', '134.83.': '', '134.151.': '', '134.219.': '', '134.220.': '', '134.225.': '', '136.148.': '', '136.156.': '', '137.44.': '', '137.50.': '', '137.73.': '', '137.108.': '', '137.195.': '', '137.222.': '', '137.253.': '', '138.38.': '', '138.40.': '', '138.250.': '', '138.253.': '', '139.133.': '', '139.153.': '', '139.166.': '', '139.184.': '', '139.222.': '', '140.97.': '', '141.163.': '', '141.241.': '', '142.111.': '', '142.252.': '', '143.52.': '', '143.117.': '', '143.167.': '', '143.210.': '', '143.234.': '', '144.32.': '', '144.39.': '', '144.82.': '', '144.124.': '', '144.173.': '', '146.87.': '', '146.97.': '', '146.169.': '', '146.176.': '', '146.179.': '', '146.191.': '', '146.227.': '', '147.143.': '', '147.188.': '', '147.197.': '', '148.79.': '', '148.88.': '', '148.197.': '', '149.155.': '', '149.170.': '', '150.204.': '', '152.71.': '', '152.78.': '', '152.105.': '', '153.11.': '', '155.198.': '', '155.245.': '', '157.140.': '', '157.228.': '', '158.94.': '', '158.125.': '', '158.143.': '', '158.223.': '', '159.92.': '', '160.5.': '', '160.9.': '', '161.73.': '', '161.74.': '', '161.76.': '', '161.112.': '', '163.1.': '', '163.119.': '', '163.160.': '', '163.167.': '', '164.11.': '', '165.160.': '', '166.88.': '', '169.254.': '', '172.252.': '', '192.168.': '', '192.177.': '', '192.186.': '', '193.60.': '', '194.66.': '', '194.80.': '', '195.194.': '', '198.18.': '', '205.164.': '', '212.121.': '', '212.219.': ''}
+excluded_prefixes_three = {'4.53.201.': '', '5.152.179.': '', '8.12.162.': '', '8.12.163.': '', '8.12.164.': '', '8.14.84.': '', '8.14.145.': '', '8.14.146.': '', '8.14.147.': '', '8.17.250.': '', '8.17.251.': '', '8.17.252.': '', '23.231.128.': '', '31.25.2.': '', '31.25.4.': '', '37.72.112.': '', '37.72.172.': '', '38.72.200.': '', '46.254.200.': '', '50.93.192.': '', '50.93.193.': '', '50.93.194.': '', '50.93.195.': '', '50.93.196.': '', '50.93.197.': '', '50.115.128.': '', '50.118.128.': '', '63.141.222.': '', '64.62.253.': '', '64.92.96.': '', '64.145.79.': '', '64.145.82.': '', '64.158.146.': '', '65.49.24.': '', '65.49.93.': '', '65.162.192.': '', '66.79.160.': '', '66.160.191.': '', '68.68.96.': '', '69.46.64.': '', '69.176.80.': '', '72.13.80.': '', '72.52.76.': '', '74.82.43.': '', '74.82.160.': '', '74.114.88.': '', '74.115.2.': '', '74.115.4.': '', '74.122.100.': '', '85.12.64.': '', '89.207.208.': '', '92.245.224.': '', '103.251.91.': '', '108.171.32.': '', '108.171.42.': '', '108.171.52.': '', '108.171.62.': '', '118.193.78.': '', '130.93.16.': '', '132.206.9.': '', '132.206.123.': '', '132.206.125.': '', '141.170.64.': '', '141.170.96.': '', '141.170.100.': '', '146.82.55.93': '', '149.54.136.': '', '149.54.152.': '', '159.86.128.': '', '173.245.64.': '', '173.245.194.': '', '173.245.220.': '', '173.252.192.': '', '178.18.16.': '', '178.18.26.': '', '178.18.27.': '', '178.18.28.': '', '178.18.29.': '', '183.182.22.': '', '185.83.168.': '', '192.12.72.': '', '192.18.195.': '', '192.35.172.': '', '192.41.104.': '', '192.41.112.': '', '192.41.128.': '', '192.68.153.': '', '192.76.6.': '', '192.76.8.': '', '192.76.16.': '', '192.76.32.': '', '192.82.153.': '', '192.84.5.': '', '192.84.75.': '', '192.84.76.': '', '192.84.80.': '', '192.84.212.': '', '192.88.9.': '', '192.88.10.': '', '192.88.99.': '', '192.92.114.': '', '192.94.235.': '', '192.100.78.': '', '192.100.154.': '', '192.107.168.': '', '192.108.120.': '', '192.124.46.': '', '192.133.244.': '', '192.149.111.': '', '192.150.180.': '', '192.150.184.': '', '192.153.213.': '', '192.155.160.': '', '192.156.162.': '', '192.160.194.': '', '192.171.128.': '', '192.171.192.': '', '192.173.1.': '', '192.173.2.': '', '192.173.4.': '', '192.173.128.': '', '192.188.157.': '', '192.188.158.': '', '192.190.201.': '', '192.190.202.': '', '192.195.42.': '', '192.195.105.': '', '192.195.116.': '', '192.195.118.': '', '192.249.64.': '', '192.250.240.': '', '193.32.22.': '', '193.37.225.': '', '193.37.240.': '', '193.38.143.': '', '193.39.80.': '', '193.39.172.': '', '193.39.212.': '', '193.107.116.': '', '193.130.15.': '', '193.133.28.': '', '193.138.86.': '', '194.32.32.': '', '194.35.93.': '', '194.35.186.': '', '194.35.192.': '', '194.35.241.': '', '194.36.1.': '', '194.36.2.': '', '194.36.121.': '', '194.36.152.': '', '194.60.218.': '', '194.110.214.': '', '194.187.32.': '', '198.12.120.': '', '198.12.121.': '', '198.12.122.': '', '198.51.100.': '', '198.144.240.': '', '199.33.120.': '', '199.33.124.': '', '199.48.147.': '', '199.68.196.': '', '199.127.240.': '', '199.187.168.': '', '199.188.238.': '', '199.255.208.': '', '203.12.6.': '', '204.13.64.': '', '204.16.192.': '', '204.19.238.': '', '204.74.208.': '', '204.113.91.': '', '205.159.189.': '', '205.209.128.': '', '206.108.52.': '', '206.165.4.': '', '208.77.40.': '', '208.80.4.': '', '208.123.223.': '', '209.51.185.': '', '209.54.48.': '', '209.107.192.': '', '209.107.210.': '', '209.107.212.': '', '211.156.110.': '', '212.121.192.': '', '216.151.183.': '', '216.151.190.': '', '216.172.128.': '', '216.185.36.': '', '216.218.233.': '', '216.224.112.': ''}
 
 def multithread(function, threads: int = 1, input_one = None, input_two = None, progress_bar: bool = True) -> None:
-    
+
     """
     > Please read the documentation on github before using this function!
     Input one/two can be any of the following: None, List, Variable
     """
 
     try:
+
         futures = []
         executor = ThreadPoolExecutor(max_workers=threads)
-        one_isList = type(input_one) is list
-        two_isList = type(input_two) is list
-        if input_one is None: one_isNone = True
-        else: one_isNone = False
-        if input_two is None: two_isNone = True
-        else: two_isNone = False
 
-        if one_isNone:
+        if input_one is None:
             for _ in range(threads): futures.append(executor.submit(function))
-        
-        elif two_isNone:
-            if one_isList:
+        elif input_two is None:
+            if isinstance(input_one, list):
                 for item in input_one: futures.append(executor.submit(function, item))
             else:
                 for _ in range(threads): futures.append(executor.submit(function, input_one))
 
-        elif not one_isNone and not two_isNone:
-            if one_isList and two_isList:
-                if len(input_one) != len(input_two):
-                    err_msg = clr(f"MULTITHREAD ERROR! - input_one({len(input_one)}) and input_two({len(input_two)}) do not have the same length!",2)
-                    if len(input_one) < 50 and len(input_two) < 50:
-                        err_msg += clr(f"\n  > input_one = {str(input_one)}",2)
-                        err_msg += clr(f"\n  > input_two = {str(input_two)}",2)
+        else:
+            
+            if isinstance(input_one, list) and isinstance(input_two, list):
+                
+                input_one_len, input_two_len = len(input_one), len(input_two)
+
+                if input_one_len != input_two_len:
+                    err_msg = f"MULTITHREAD ERROR! - input_one({input_one_len}) and input_two({input_two_len}) do not have the same length!"
+                    if input_one_len < 50 and input_two_len < 50:
+                        err_msg += f"\n  > input_one = {input_one}"
+                        err_msg += f"\n  > input_two = {input_two}"
                     raise ValueError(err_msg)
-                for index in range(len(input_one)): futures.append(executor.submit(function, input_one[index], input_two[index]))
-            elif one_isList:
-                for index in range(len(input_one)): futures.append(executor.submit(function, input_one[index], input_two))
-            elif two_isList:
-                for index in range(len(input_two)): futures.append(executor.submit(function, input_one, input_two[index]))
-            elif not one_isList and not two_isList:
+                for item1, item2 in zip(input_one, input_two):
+                    futures.append(executor.submit(function, item1, item2))
+
+            elif isinstance(input_one, list):
+                for item1 in input_one: futures.append(executor.submit(function, item1, input_two))
+            elif isinstance(input_two, list):
+                for item2 in input_two: futures.append(executor.submit(function, input_one, item2))
+            else:
                 for _ in range(threads): futures.append(executor.submit(function, input_one, input_two))
 
         if progress_bar:
-            with alive_bar(int(len(futures)), title='') as bar:
-                for future in as_completed(futures):
-                    try: future.result(); bar()
-                    except: bar()
+
+            width = os.get_terminal_size().columns
+            job_progress = Progress("{task.description}", SpinnerColumn(), BarColumn(bar_width=width), TextColumn("[deep_pink1][progress.percentage][bright_cyan]{task.percentage:>3.0f}%"), TimeRemainingColumn())
+            overall_task = job_progress.add_task("[bright_green]Progress", total=int(len(futures)))
+            progress_table = Table.grid()
+            progress_table.add_row(Panel.fit(job_progress, title="[bright_red]Jobs", border_style="magenta1", padding=(1, 2)))
+    
+            with Live(progress_table, refresh_per_second=10):
+                while not job_progress.finished:
+                    time.sleep(0.1)
+                    for future in as_completed(futures):
+                        if future.done():
+                            try: future.result()
+                            except: pass
+                            job_progress.advance(overall_task)
+
         else:
             for future in as_completed(futures):
                 try: future.result()
                 except: pass
+
+        executor.shutdown()
+
     except: 
         try: executor.shutdown()
         except: pass
@@ -191,21 +210,26 @@ def random_ip() -> str:
     """
     
     while True:
+        
+        first_octet = random.randint(1, 223)
+        second_octet = random.randint(0, 255)
+        third_octet = random.randint(0, 255)
+        fourth_octet = random.randint(0, 255)
 
-        ip = f"{random.randint(1,223)}.{random.randint(0,255)}.{random.randint(0,255)}.{random.randint(0,255)}"
-
-        if any(ip.startswith(prefix) for prefix in excluded_prefixes_one): continue
-        elif any(ip.startswith(prefix) for prefix in excluded_prefixes_two): continue
-        elif any(ip.startswith(prefix) for prefix in excluded_prefixes_two): continue
-
-        if ip.startswith("172.") and int(ip.split('.')[1]) >= 16 and int(ip.split('.')[1]) <= 31: continue
-        elif ip.startswith("192."):
-            if ip.endswith(".170") or ip.endswith(".171") or ip.split('.')[2] == "2": continue
-        elif ip.startswith("203.") and ip.split('.')[2] == "113": continue
-        elif ip.startswith("216.83.") and int(ip.split('.')[2]) >= 33 and int(ip.split('.')[2]) <= 63: continue
-        elif ip.endswith(".255.255.255"): continue
+        if f"{first_octet}." in excluded_prefixes_one.keys(): continue
+        elif f"{first_octet}.{second_octet}." in excluded_prefixes_two.keys(): continue
+        elif f"{first_octet}.{second_octet}.{third_octet}" in excluded_prefixes_three.keys(): continue
+        
+        if first_octet == 172 and second_octet >= 16 and second_octet <= 31: continue
+        elif first_octet == 192:
+            if fourth_octet == 170 or fourth_octet == 171 or third_octet == 2: continue
+        elif first_octet == 203 and third_octet == 113: continue
+        elif first_octet == 216 and second_octet == 83 and third_octet >= 33 and third_octet <= 63: continue
+        elif second_octet == 255 and third_octet == 255 and third_octet == 255: continue
 
         break
+    
+    ip = f"{first_octet}.{second_octet}.{third_octet}.{fourth_octet}"
         
     return ip
 
@@ -528,7 +552,7 @@ def fade(text: str, colour: str = "purple") -> str:
         return faded
     except: sys.exit(clr(err(sys.exc_info()),2))
 
-def get_duration(then: datetime, now=datetime.now(), interval="default"):
+def get_duration(then: datetime, now: datetime = None, interval = "default"):
 
     """
     Returns a duration as specified by the 'interval' variable
@@ -544,14 +568,16 @@ def get_duration(then: datetime, now=datetime.now(), interval="default"):
     - dynamic -> str
     - default -> str
     """
+    
+    if now is None: now = datetime.now()
 
     duration = now - then
 
-    if interval == "years": return int(duration.days / 365)
-    elif interval == "days": return duration.days
-    elif interval == "hours": return int(duration.total_seconds() / 3600)
-    elif interval == "minutes": return int(duration.total_seconds() / 60)
-    elif interval == "seconds": return int(duration.total_seconds())
+    if interval in ("year", "years"): return int(duration.days / 365)
+    elif interval in ("day", "days"): return duration.days
+    elif interval in ("hour", "hours"): return int(duration.total_seconds() / 3600)
+    elif interval in ("minute", "minutes"): return int(duration.total_seconds() / 60)
+    elif interval in ("second", "seconds"): return int(duration.total_seconds())
     elif interval == "dynamic":
 
         seconds = duration.total_seconds()
@@ -694,6 +720,7 @@ def dankware_banner() -> None:
     sleep_time = []
     sleep_time_1 = 0.05
     sleep_time_2 = 0.01
+    sleep_time_3 = 0.333
     sleep_time_variation = 0.01
     
     # sleep_time_1
@@ -718,14 +745,18 @@ def dankware_banner() -> None:
         to_print.append("     ")
         sleep_time.append(sleep_time_2)
         sleep_time_2 = float(f'{(sleep_time_2 + sleep_time_variation):.3f}')
+        
+    # sleep_time_3
 
-    #for _ in range(3):
-    #    to_print.append(tmp.replace(align(clr("github.com / SirDank")), align(clr("< github.com / SirDank >"))))
-    #    sleep_time.append(0.333)
-    #    to_print.append(tmp.replace(align(clr("github.com / SirDank")), align(clr("<   github.com / SirDank   >"))))
-    #    sleep_time.append(0.333)
-    #    to_print.append(tmp.replace(align(clr("github.com / SirDank")), align(clr("<     github.com / SirDank     >"))))
-    #    sleep_time.append(0.333)
+    for _ in range(3):
+        to_print.append(tmp.replace(align(clr("github.com / SirDank")), align(clr("< github.com / SirDank >"))))
+        sleep_time.append(sleep_time_3)
+        to_print.append(tmp.replace(align(clr("github.com / SirDank")), align(clr("<   github.com / SirDank   >"))))
+        sleep_time.append(sleep_time_3)
+        to_print.append(tmp.replace(align(clr("github.com / SirDank")), align(clr("<     github.com / SirDank     >"))))
+        sleep_time.append(sleep_time_3)
+    to_print.append(tmp)
+    sleep_time.append(sleep_time_3)
     
     sleep_time[-1] = 4
     
