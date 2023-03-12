@@ -35,7 +35,7 @@ def example():
         
 multithread(example, 10) # func: example | threads: 10 | single: 50 seconds | multi: 5 seconds
 ```
-> <img width="500" alt="image" src="https://user-images.githubusercontent.com/52797753/153721721-0541e26b-f0b2-4c87-8c61-778a817cf80e.png">
+> <img width="500" alt="image" src="https://user-images.githubusercontent.com/52797753/224534374-4693f9fb-2c0c-426b-970d-face9926b9cd.png">
 
 ```py
 from dankware import multithread
@@ -51,7 +51,7 @@ def example(num):
 multithread(example, 10, new_list) # input_one: list
 print(sum)
 ```
-> <img width="500" alt="image" src="https://user-images.githubusercontent.com/52797753/153748543-07260a2e-5e25-4926-b11f-9d3670d2f3ef.png">
+> <img width="500" alt="image" src="https://user-images.githubusercontent.com/52797753/224534424-f03f5884-e9c8-445f-8c0a-5bb227c35aed.png">
 
 ```py
 from dankware import multithread
@@ -66,7 +66,7 @@ def example(num1, num2):
 
 multithread(example, 10, list1, list2) # input_one: list1 | input_two: list2
 ```
-> <img width="500" alt="image" src="https://user-images.githubusercontent.com/52797753/153749164-d8224ad4-3116-4376-90cd-bc1d093e0942.png">
+> <img width="500" alt="image" src="https://user-images.githubusercontent.com/52797753/224534446-c956dfb0-81a2-4717-bd80-e04484e76507.png">
 
 ```py
 from dankware import multithread
