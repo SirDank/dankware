@@ -10,7 +10,6 @@ import os
 import sys
 import time
 import ctypes
-import winreg
 import random
 import requests
 from datetime import datetime
@@ -21,7 +20,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.live import Live
 from rich.panel import Panel
 from rich.table import Table
-from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn
+from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn, TimeElapsedColumn
 
 # colorama colours
 
@@ -96,7 +95,7 @@ def multithread(function, threads: int = 1, input_one = None, input_two = None, 
         if progress_bar:
 
             width = os.get_terminal_size().columns
-            job_progress = Progress("{task.description}", SpinnerColumn(), BarColumn(bar_width=width), TextColumn("[deep_pink1][progress.percentage][bright_cyan]{task.percentage:>3.0f}%"), TimeRemainingColumn())
+            job_progress = Progress("{task.description}", SpinnerColumn(), BarColumn(bar_width=width), TextColumn("[deep_pink1][progress.percentage][bright_cyan]{task.percentage:>3.0f}%"), "[bright_cyan]ETA", TimeRemainingColumn(), TimeElapsedColumn())
             overall_task = job_progress.add_task("[bright_green]Progress", total=int(len(futures)))
             progress_table = Table.grid()
             progress_table.add_row(Panel.fit(job_progress, title="[bright_red]Jobs", border_style="magenta1", padding=(1, 2)))
@@ -252,6 +251,8 @@ def is_admin() -> bool:
     #sys.exit(clr("\n  > Exiting original un-elevated script...",2))'''
 
 def export_registry_keys(registry_root: str, registry_path: str, recursive: bool = True, export_path: str = "export.reg") -> None:
+    
+    import winreg
     
     """
     Function to export registry keys with or without its subkeys and saves them to export_path
@@ -678,7 +679,7 @@ def rm_line() -> None:
     Deletes previous line
     """
 
-    print("\033[A                             \033[A")
+    print("\033[A                                                  \033[A")
 
 def chdir(mode: str) -> str:
     
