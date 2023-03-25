@@ -9,6 +9,7 @@
 import os
 import sys
 import time
+import shutil
 import ctypes
 import random
 import requests
@@ -94,7 +95,7 @@ def multithread(function, threads: int = 1, input_one = None, input_two = None, 
 
         if progress_bar:
 
-            width = os.get_terminal_size().columns
+            width = shutil.get_terminal_size().columns
             job_progress = Progress("{task.description}", SpinnerColumn(), BarColumn(bar_width=width), TextColumn("[deep_pink1][progress.percentage][bright_cyan]{task.percentage:>3.0f}%"), "[bright_cyan]ETA", TimeRemainingColumn(), TimeElapsedColumn())
             overall_task = job_progress.add_task("[bright_green]Progress", total=int(len(futures)))
             progress_table = Table.grid()
@@ -404,7 +405,7 @@ def align(text: str) -> str:
     - [NOTE] align supports: clr, does not support: fade
     """
 
-    width = os.get_terminal_size().columns; aligned = text
+    width = shutil.get_terminal_size().columns; aligned = text
     for colour in vars(Fore).values(): aligned = aligned.replace(colour,'')
     for style in vars(Style).values(): aligned = aligned.replace(style,'')
     text = text.split('\n'); aligned = aligned.split('\n')
@@ -713,7 +714,7 @@ def dankware_banner() -> None:
     Dankware banner printer with github url
     """
     
-    num_lines = os.get_terminal_size().lines
+    num_lines = shutil.get_terminal_size().lines
     banner="\n 8 888888888o.     \n 8 8888    `^888.  \n 8 8888        `88.\n 8 8888         `88\n 8 8888          88\n 8 8888          88\n 8 8888         ,88\n 8 8888        ,88'\n 8 8888    ,o88P'  \n 8 888888888P'     \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n b.             8\n 888o.          8\n Y88888o.       8\n .`Y888888o.    8\n 8o. `Y888888o. 8\n 8`Y8o. `Y88888o8\n 8   `Y8o. `Y8888\n 8      `Y8o. `Y8\n 8         `Y8o.`\n 8            `Yo\n\n\n 8 8888     ,88'\n 8 8888    ,88' \n 8 8888   ,88'  \n 8 8888  ,88'   \n 8 8888 ,88'    \n 8 8888 88'     \n 8 888888<      \n 8 8888 `Y8.    \n 8 8888   `Y8.  \n 8 8888     `Y8.\n\n\n `8.`888b                 ,8'\n  `8.`888b               ,8' \n   `8.`888b             ,8'  \n    `8.`888b     .b    ,8'   \n     `8.`888b    88b  ,8'    \n      `8.`888b .`888b,8'     \n       `8.`888b8.`8888'      \n        `8.`888`8.`88'       \n         `8.`8' `8,`'        \n          `8.`   `8'         \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n 8 888888888o.  \n 8 8888    `88. \n 8 8888     `88 \n 8 8888     ,88 \n 8 8888.   ,88' \n 8 888888888P'  \n 8 8888`8b      \n 8 8888 `8b.    \n 8 8888   `8b.  \n 8 8888     `88.\n\n\n 8 8888888888   \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n 8 8888         \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n "
     
     tmp = ""
