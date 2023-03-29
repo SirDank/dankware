@@ -3,7 +3,7 @@ title dankware
 
 rmdir /s dist
 mkdir dist
-py311 -m build
+py -m build
 echo.
-py311 -m twine upload dist/*
+py -m twine upload dist/*
 pause

@@ -9,21 +9,9 @@
 import os
 import sys
 import time
-import shutil
-import ctypes
 import random
-import requests
-import tkinter as tk
 from datetime import datetime
-from PIL import Image, ImageTk
 from colorama import Fore, Style
-from traceback import extract_tb
-from concurrent.futures import ThreadPoolExecutor, as_completed
-
-from rich.live import Live
-from rich.panel import Panel
-from rich.table import Table
-from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn, TimeElapsedColumn
 
 # colorama colours
 
@@ -53,7 +41,7 @@ excluded_prefixes_one = {'6.': '', '7.': '', '10.': '', '11.': '', '21.': '', '2
 excluded_prefixes_two = {'23.27.': '', '31.25.': '', '50.117.': '', '74.115.': '', '75.127.': '', '81.87.': '', '100.64.': '', '128.16.': '', '128.40.': '', '128.41.': '', '128.86.': '', '128.232.': '', '128.240.': '', '128.243.': '', '129.11.': '', '129.12.': '', '129.31.': '', '129.67.': '', '129.123.': '', '129.169.': '', '129.215.': '', '129.234.': '', '130.88.': '', '130.159.': '', '130.209.': '', '130.246.': '', '131.111.': '', '131.227.': '', '131.231.': '', '131.251.': '', '134.36.': '', '134.83.': '', '134.151.': '', '134.219.': '', '134.220.': '', '134.225.': '', '136.148.': '', '136.156.': '', '137.44.': '', '137.50.': '', '137.73.': '', '137.108.': '', '137.195.': '', '137.222.': '', '137.253.': '', '138.38.': '', '138.40.': '', '138.250.': '', '138.253.': '', '139.133.': '', '139.153.': '', '139.166.': '', '139.184.': '', '139.222.': '', '140.97.': '', '141.163.': '', '141.241.': '', '142.111.': '', '142.252.': '', '143.52.': '', '143.117.': '', '143.167.': '', '143.210.': '', '143.234.': '', '144.32.': '', '144.39.': '', '144.82.': '', '144.124.': '', '144.173.': '', '146.87.': '', '146.97.': '', '146.169.': '', '146.176.': '', '146.179.': '', '146.191.': '', '146.227.': '', '147.143.': '', '147.188.': '', '147.197.': '', '148.79.': '', '148.88.': '', '148.197.': '', '149.155.': '', '149.170.': '', '150.204.': '', '152.71.': '', '152.78.': '', '152.105.': '', '153.11.': '', '155.198.': '', '155.245.': '', '157.140.': '', '157.228.': '', '158.94.': '', '158.125.': '', '158.143.': '', '158.223.': '', '159.92.': '', '160.5.': '', '160.9.': '', '161.73.': '', '161.74.': '', '161.76.': '', '161.112.': '', '163.1.': '', '163.119.': '', '163.160.': '', '163.167.': '', '164.11.': '', '165.160.': '', '166.88.': '', '169.254.': '', '172.252.': '', '192.168.': '', '192.177.': '', '192.186.': '', '193.60.': '', '194.66.': '', '194.80.': '', '195.194.': '', '198.18.': '', '205.164.': '', '212.121.': '', '212.219.': ''}
 excluded_prefixes_three = {'4.53.201.': '', '5.152.179.': '', '8.12.162.': '', '8.12.163.': '', '8.12.164.': '', '8.14.84.': '', '8.14.145.': '', '8.14.146.': '', '8.14.147.': '', '8.17.250.': '', '8.17.251.': '', '8.17.252.': '', '23.231.128.': '', '31.25.2.': '', '31.25.4.': '', '37.72.112.': '', '37.72.172.': '', '38.72.200.': '', '46.254.200.': '', '50.93.192.': '', '50.93.193.': '', '50.93.194.': '', '50.93.195.': '', '50.93.196.': '', '50.93.197.': '', '50.115.128.': '', '50.118.128.': '', '63.141.222.': '', '64.62.253.': '', '64.92.96.': '', '64.145.79.': '', '64.145.82.': '', '64.158.146.': '', '65.49.24.': '', '65.49.93.': '', '65.162.192.': '', '66.79.160.': '', '66.160.191.': '', '68.68.96.': '', '69.46.64.': '', '69.176.80.': '', '72.13.80.': '', '72.52.76.': '', '74.82.43.': '', '74.82.160.': '', '74.114.88.': '', '74.115.2.': '', '74.115.4.': '', '74.122.100.': '', '85.12.64.': '', '89.207.208.': '', '92.245.224.': '', '103.251.91.': '', '108.171.32.': '', '108.171.42.': '', '108.171.52.': '', '108.171.62.': '', '118.193.78.': '', '130.93.16.': '', '132.206.9.': '', '132.206.123.': '', '132.206.125.': '', '141.170.64.': '', '141.170.96.': '', '141.170.100.': '', '146.82.55.93': '', '149.54.136.': '', '149.54.152.': '', '159.86.128.': '', '173.245.64.': '', '173.245.194.': '', '173.245.220.': '', '173.252.192.': '', '178.18.16.': '', '178.18.26.': '', '178.18.27.': '', '178.18.28.': '', '178.18.29.': '', '183.182.22.': '', '185.83.168.': '', '192.12.72.': '', '192.18.195.': '', '192.35.172.': '', '192.41.104.': '', '192.41.112.': '', '192.41.128.': '', '192.68.153.': '', '192.76.6.': '', '192.76.8.': '', '192.76.16.': '', '192.76.32.': '', '192.82.153.': '', '192.84.5.': '', '192.84.75.': '', '192.84.76.': '', '192.84.80.': '', '192.84.212.': '', '192.88.9.': '', '192.88.10.': '', '192.88.99.': '', '192.92.114.': '', '192.94.235.': '', '192.100.78.': '', '192.100.154.': '', '192.107.168.': '', '192.108.120.': '', '192.124.46.': '', '192.133.244.': '', '192.149.111.': '', '192.150.180.': '', '192.150.184.': '', '192.153.213.': '', '192.155.160.': '', '192.156.162.': '', '192.160.194.': '', '192.171.128.': '', '192.171.192.': '', '192.173.1.': '', '192.173.2.': '', '192.173.4.': '', '192.173.128.': '', '192.188.157.': '', '192.188.158.': '', '192.190.201.': '', '192.190.202.': '', '192.195.42.': '', '192.195.105.': '', '192.195.116.': '', '192.195.118.': '', '192.249.64.': '', '192.250.240.': '', '193.32.22.': '', '193.37.225.': '', '193.37.240.': '', '193.38.143.': '', '193.39.80.': '', '193.39.172.': '', '193.39.212.': '', '193.107.116.': '', '193.130.15.': '', '193.133.28.': '', '193.138.86.': '', '194.32.32.': '', '194.35.93.': '', '194.35.186.': '', '194.35.192.': '', '194.35.241.': '', '194.36.1.': '', '194.36.2.': '', '194.36.121.': '', '194.36.152.': '', '194.60.218.': '', '194.110.214.': '', '194.187.32.': '', '198.12.120.': '', '198.12.121.': '', '198.12.122.': '', '198.51.100.': '', '198.144.240.': '', '199.33.120.': '', '199.33.124.': '', '199.48.147.': '', '199.68.196.': '', '199.127.240.': '', '199.187.168.': '', '199.188.238.': '', '199.255.208.': '', '203.12.6.': '', '204.13.64.': '', '204.16.192.': '', '204.19.238.': '', '204.74.208.': '', '204.113.91.': '', '205.159.189.': '', '205.209.128.': '', '206.108.52.': '', '206.165.4.': '', '208.77.40.': '', '208.80.4.': '', '208.123.223.': '', '209.51.185.': '', '209.54.48.': '', '209.107.192.': '', '209.107.210.': '', '209.107.212.': '', '211.156.110.': '', '212.121.192.': '', '216.151.183.': '', '216.151.190.': '', '216.172.128.': '', '216.185.36.': '', '216.218.233.': '', '216.224.112.': ''}
 
-def multithread(function, threads: int = 1, *args, progress_bar: bool = True) -> None:
+def multithread(function: callable, threads: int = 1, *args, progress_bar: bool = True) -> None:
     
     """
     > Please read the documentation on github before using this function!
@@ -67,6 +55,13 @@ def multithread(function, threads: int = 1, *args, progress_bar: bool = True) ->
     - *args: Input(s) for the function. Can be a list, a single value.
     - progress_bar: Whether to display a progress bar.
     """
+    
+    from rich.live import Live
+    from rich.panel import Panel
+    from rich.table import Table
+    from shutil import get_terminal_size
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn, TimeElapsedColumn
 
     try:
         
@@ -93,7 +88,7 @@ def multithread(function, threads: int = 1, *args, progress_bar: bool = True) ->
                 futures.append(submit_task(executor, *task_args))
 
         if progress_bar:
-            width = shutil.get_terminal_size().columns
+            width = get_terminal_size().columns
             job_progress = Progress("{task.description}", SpinnerColumn(), BarColumn(bar_width=width), TextColumn("[deep_pink1][progress.percentage][bright_cyan]{task.percentage:>3.0f}%"), "[bright_cyan]ETA", TimeRemainingColumn(), TimeElapsedColumn())
             overall_task = job_progress.add_task("[bright_green]Progress", total=int(len(futures)))
             progress_table = Table.grid()
@@ -137,6 +132,8 @@ def github_downloads(user_repo: str) -> list:
     for _ in github_downloads("SirDank/dank.tool"): print(_)
     ```
     """
+    
+    import requests
     
     urls = []
 
@@ -256,6 +253,8 @@ def random_ip() -> str:
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def is_admin() -> bool:
+    
+    import ctypes
     
     """
     Checks if the current user has admin privileges and returns True if found else False
@@ -440,8 +439,10 @@ def align(text: str) -> str:
     center align banner / line ( supports both coloured and non-coloured )
     - [NOTE] align supports: clr, does not support: fade
     """
+    
+    from shutil import get_terminal_size
 
-    width = shutil.get_terminal_size().columns; aligned = text
+    width = get_terminal_size().columns; aligned = text
     for colour in vars(Fore).values(): aligned = aligned.replace(colour,'')
     for style in vars(Style).values(): aligned = aligned.replace(style,'')
     text = text.split('\n'); aligned = aligned.split('\n')
@@ -679,6 +680,8 @@ def err(exc_info) -> str:
     except: print(clr(err(sys.exc_info()),2))
     ```
     """
+    
+    from traceback import extract_tb
 
     ex_type, ex_value, ex_traceback = exc_info
     trace_back = extract_tb(ex_traceback)
@@ -699,54 +702,7 @@ def err(exc_info) -> str:
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-class SplashScreen(tk.Toplevel):
-
-    def __init__(self, img_path, duration=3):
-        super().__init__()
-        self.img_path = img_path
-        self.duration = duration
-        self.setup_window()
-        self.load_image()
-        self.animate_image()
-
-    def setup_window(self):
-        self.overrideredirect(True)
-        self.wm_attributes("-topmost", True)
-        #self.wm_attributes("-transparentcolor", "white")
-
-        self.image = Image.open(self.img_path)
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-
-        width = self.image.width
-        height = self.image.height
-        x = (screen_width - width) // 2
-        y = (screen_height - height) // 2
-
-        self.geometry(f"{width}x{height}+{x}+{y}")
-
-        self.canvas = tk.Canvas(self, bg="white", highlightthickness=0)
-        self.canvas.pack()
-
-    def load_image(self):
-        if self.img_path.lower().endswith('.gif'):
-            self.frames = []
-            for i in range(self.image.n_frames):
-                self.image.seek(i)
-                frame = ImageTk.PhotoImage(self.image)
-                self.frames.append(frame)
-        else:
-            self.frames = [ImageTk.PhotoImage(self.image)]
-
-    def animate_image(self, current_frame=0):
-        self.canvas.delete(tk.ALL)
-        self.canvas.config(width=self.frames[current_frame].width(), height=self.frames[current_frame].height())
-        self.canvas.create_image(self.frames[current_frame].width() // 2, self.frames[current_frame].height() // 2, image=self.frames[current_frame])
-        current_frame = (current_frame + 1) % len(self.frames)
-        if len(self.frames) > 1:
-            self.after(int(1000 / self.image.info['duration']), self.animate_image, current_frame)
-
-def splash_screen(img_path: str, duration: int=3) -> None:
+def splash_screen(img_path: str, duration: int = 3) -> None:
     
     """
     Displays a splash screen for the given duration
@@ -761,6 +717,55 @@ def splash_screen(img_path: str, duration: int=3) -> None:
     ThreadPoolExecutor().submit(splash_screen, "splash.gif", duration=3)
     ```
     """
+    
+    import tkinter as tk
+    from PIL import Image, ImageTk
+    
+    class SplashScreen(tk.Toplevel):
+
+        def __init__(self, img_path):
+            super().__init__()
+            self.img_path = img_path
+            self.setup_window()
+            self.load_image()
+            self.animate_image()
+
+        def setup_window(self):
+            self.overrideredirect(True)
+            self.wm_attributes("-topmost", True)
+            #self.wm_attributes("-transparentcolor", "white")
+
+            self.image = Image.open(self.img_path)
+            screen_width = self.winfo_screenwidth()
+            screen_height = self.winfo_screenheight()
+
+            width = self.image.width
+            height = self.image.height
+            x = (screen_width - width) // 2
+            y = (screen_height - height) // 2
+
+            self.geometry(f"{width}x{height}+{x}+{y}")
+
+            self.canvas = tk.Canvas(self, bg="white", highlightthickness=0)
+            self.canvas.pack()
+
+        def load_image(self):
+            if self.img_path.lower().endswith('.gif'):
+                self.frames = []
+                for i in range(self.image.n_frames):
+                    self.image.seek(i)
+                    frame = ImageTk.PhotoImage(self.image)
+                    self.frames.append(frame)
+            else:
+                self.frames = [ImageTk.PhotoImage(self.image)]
+
+        def animate_image(self, current_frame=0):
+            self.canvas.delete(tk.ALL)
+            self.canvas.config(width=self.frames[current_frame].width(), height=self.frames[current_frame].height())
+            self.canvas.create_image(self.frames[current_frame].width() // 2, self.frames[current_frame].height() // 2, image=self.frames[current_frame])
+            current_frame = (current_frame + 1) % len(self.frames)
+            if len(self.frames) > 1:
+                self.after(int(1000 / self.image.info['duration']), self.animate_image, current_frame)
     
     root = tk.Tk()
     root.withdraw()
@@ -797,8 +802,10 @@ def rm_line() -> None:
     """
     Deletes previous line
     """
+    
+    from shutil import get_terminal_size
 
-    print("\033[A" + " " * (shutil.get_terminal_size().columns - 6) + "\033[A")
+    print("\033[A" + " " * (get_terminal_size().columns - 6) + "\033[A")
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -838,7 +845,9 @@ def dankware_banner() -> None:
     Dankware banner printer with github url
     """
     
-    num_lines = shutil.get_terminal_size().lines
+    from shutil import get_terminal_size
+    
+    num_lines = get_terminal_size().lines
     banner="\n 8 888888888o.     \n 8 8888    `^888.  \n 8 8888        `88.\n 8 8888         `88\n 8 8888          88\n 8 8888          88\n 8 8888         ,88\n 8 8888        ,88'\n 8 8888    ,o88P'  \n 8 888888888P'     \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n b.             8\n 888o.          8\n Y88888o.       8\n .`Y888888o.    8\n 8o. `Y888888o. 8\n 8`Y8o. `Y88888o8\n 8   `Y8o. `Y8888\n 8      `Y8o. `Y8\n 8         `Y8o.`\n 8            `Yo\n\n\n 8 8888     ,88'\n 8 8888    ,88' \n 8 8888   ,88'  \n 8 8888  ,88'   \n 8 8888 ,88'    \n 8 8888 88'     \n 8 888888<      \n 8 8888 `Y8.    \n 8 8888   `Y8.  \n 8 8888     `Y8.\n\n\n `8.`888b                 ,8'\n  `8.`888b               ,8' \n   `8.`888b             ,8'  \n    `8.`888b     .b    ,8'   \n     `8.`888b    88b  ,8'    \n      `8.`888b .`888b,8'     \n       `8.`888b8.`8888'      \n        `8.`888`8.`88'       \n         `8.`8' `8,`'        \n          `8.`   `8'         \n\n\n          .8.         \n         .888.        \n        :88888.       \n       . `88888.      \n      .8. `88888.     \n     .8`8. `88888.    \n    .8' `8. `88888.   \n   .8'   `8. `88888.  \n  .888888888. `88888. \n .8'       `8. `88888.\n\n\n 8 888888888o.  \n 8 8888    `88. \n 8 8888     `88 \n 8 8888     ,88 \n 8 8888.   ,88' \n 8 888888888P'  \n 8 8888`8b      \n 8 8888 `8b.    \n 8 8888   `8b.  \n 8 8888     `88.\n\n\n 8 8888888888   \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n 8 8888         \n 8 8888         \n 8 8888         \n 8 8888         \n 8 888888888888 \n "
     
     tmp = ""
