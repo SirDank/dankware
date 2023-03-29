@@ -13,7 +13,9 @@ import shutil
 import ctypes
 import random
 import requests
+import tkinter as tk
 from datetime import datetime
+from PIL import Image, ImageTk
 from colorama import Fore, Style
 from traceback import extract_tb
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -51,56 +53,52 @@ excluded_prefixes_one = {'6.': '', '7.': '', '10.': '', '11.': '', '21.': '', '2
 excluded_prefixes_two = {'23.27.': '', '31.25.': '', '50.117.': '', '74.115.': '', '75.127.': '', '81.87.': '', '100.64.': '', '128.16.': '', '128.40.': '', '128.41.': '', '128.86.': '', '128.232.': '', '128.240.': '', '128.243.': '', '129.11.': '', '129.12.': '', '129.31.': '', '129.67.': '', '129.123.': '', '129.169.': '', '129.215.': '', '129.234.': '', '130.88.': '', '130.159.': '', '130.209.': '', '130.246.': '', '131.111.': '', '131.227.': '', '131.231.': '', '131.251.': '', '134.36.': '', '134.83.': '', '134.151.': '', '134.219.': '', '134.220.': '', '134.225.': '', '136.148.': '', '136.156.': '', '137.44.': '', '137.50.': '', '137.73.': '', '137.108.': '', '137.195.': '', '137.222.': '', '137.253.': '', '138.38.': '', '138.40.': '', '138.250.': '', '138.253.': '', '139.133.': '', '139.153.': '', '139.166.': '', '139.184.': '', '139.222.': '', '140.97.': '', '141.163.': '', '141.241.': '', '142.111.': '', '142.252.': '', '143.52.': '', '143.117.': '', '143.167.': '', '143.210.': '', '143.234.': '', '144.32.': '', '144.39.': '', '144.82.': '', '144.124.': '', '144.173.': '', '146.87.': '', '146.97.': '', '146.169.': '', '146.176.': '', '146.179.': '', '146.191.': '', '146.227.': '', '147.143.': '', '147.188.': '', '147.197.': '', '148.79.': '', '148.88.': '', '148.197.': '', '149.155.': '', '149.170.': '', '150.204.': '', '152.71.': '', '152.78.': '', '152.105.': '', '153.11.': '', '155.198.': '', '155.245.': '', '157.140.': '', '157.228.': '', '158.94.': '', '158.125.': '', '158.143.': '', '158.223.': '', '159.92.': '', '160.5.': '', '160.9.': '', '161.73.': '', '161.74.': '', '161.76.': '', '161.112.': '', '163.1.': '', '163.119.': '', '163.160.': '', '163.167.': '', '164.11.': '', '165.160.': '', '166.88.': '', '169.254.': '', '172.252.': '', '192.168.': '', '192.177.': '', '192.186.': '', '193.60.': '', '194.66.': '', '194.80.': '', '195.194.': '', '198.18.': '', '205.164.': '', '212.121.': '', '212.219.': ''}
 excluded_prefixes_three = {'4.53.201.': '', '5.152.179.': '', '8.12.162.': '', '8.12.163.': '', '8.12.164.': '', '8.14.84.': '', '8.14.145.': '', '8.14.146.': '', '8.14.147.': '', '8.17.250.': '', '8.17.251.': '', '8.17.252.': '', '23.231.128.': '', '31.25.2.': '', '31.25.4.': '', '37.72.112.': '', '37.72.172.': '', '38.72.200.': '', '46.254.200.': '', '50.93.192.': '', '50.93.193.': '', '50.93.194.': '', '50.93.195.': '', '50.93.196.': '', '50.93.197.': '', '50.115.128.': '', '50.118.128.': '', '63.141.222.': '', '64.62.253.': '', '64.92.96.': '', '64.145.79.': '', '64.145.82.': '', '64.158.146.': '', '65.49.24.': '', '65.49.93.': '', '65.162.192.': '', '66.79.160.': '', '66.160.191.': '', '68.68.96.': '', '69.46.64.': '', '69.176.80.': '', '72.13.80.': '', '72.52.76.': '', '74.82.43.': '', '74.82.160.': '', '74.114.88.': '', '74.115.2.': '', '74.115.4.': '', '74.122.100.': '', '85.12.64.': '', '89.207.208.': '', '92.245.224.': '', '103.251.91.': '', '108.171.32.': '', '108.171.42.': '', '108.171.52.': '', '108.171.62.': '', '118.193.78.': '', '130.93.16.': '', '132.206.9.': '', '132.206.123.': '', '132.206.125.': '', '141.170.64.': '', '141.170.96.': '', '141.170.100.': '', '146.82.55.93': '', '149.54.136.': '', '149.54.152.': '', '159.86.128.': '', '173.245.64.': '', '173.245.194.': '', '173.245.220.': '', '173.252.192.': '', '178.18.16.': '', '178.18.26.': '', '178.18.27.': '', '178.18.28.': '', '178.18.29.': '', '183.182.22.': '', '185.83.168.': '', '192.12.72.': '', '192.18.195.': '', '192.35.172.': '', '192.41.104.': '', '192.41.112.': '', '192.41.128.': '', '192.68.153.': '', '192.76.6.': '', '192.76.8.': '', '192.76.16.': '', '192.76.32.': '', '192.82.153.': '', '192.84.5.': '', '192.84.75.': '', '192.84.76.': '', '192.84.80.': '', '192.84.212.': '', '192.88.9.': '', '192.88.10.': '', '192.88.99.': '', '192.92.114.': '', '192.94.235.': '', '192.100.78.': '', '192.100.154.': '', '192.107.168.': '', '192.108.120.': '', '192.124.46.': '', '192.133.244.': '', '192.149.111.': '', '192.150.180.': '', '192.150.184.': '', '192.153.213.': '', '192.155.160.': '', '192.156.162.': '', '192.160.194.': '', '192.171.128.': '', '192.171.192.': '', '192.173.1.': '', '192.173.2.': '', '192.173.4.': '', '192.173.128.': '', '192.188.157.': '', '192.188.158.': '', '192.190.201.': '', '192.190.202.': '', '192.195.42.': '', '192.195.105.': '', '192.195.116.': '', '192.195.118.': '', '192.249.64.': '', '192.250.240.': '', '193.32.22.': '', '193.37.225.': '', '193.37.240.': '', '193.38.143.': '', '193.39.80.': '', '193.39.172.': '', '193.39.212.': '', '193.107.116.': '', '193.130.15.': '', '193.133.28.': '', '193.138.86.': '', '194.32.32.': '', '194.35.93.': '', '194.35.186.': '', '194.35.192.': '', '194.35.241.': '', '194.36.1.': '', '194.36.2.': '', '194.36.121.': '', '194.36.152.': '', '194.60.218.': '', '194.110.214.': '', '194.187.32.': '', '198.12.120.': '', '198.12.121.': '', '198.12.122.': '', '198.51.100.': '', '198.144.240.': '', '199.33.120.': '', '199.33.124.': '', '199.48.147.': '', '199.68.196.': '', '199.127.240.': '', '199.187.168.': '', '199.188.238.': '', '199.255.208.': '', '203.12.6.': '', '204.13.64.': '', '204.16.192.': '', '204.19.238.': '', '204.74.208.': '', '204.113.91.': '', '205.159.189.': '', '205.209.128.': '', '206.108.52.': '', '206.165.4.': '', '208.77.40.': '', '208.80.4.': '', '208.123.223.': '', '209.51.185.': '', '209.54.48.': '', '209.107.192.': '', '209.107.210.': '', '209.107.212.': '', '211.156.110.': '', '212.121.192.': '', '216.151.183.': '', '216.151.190.': '', '216.172.128.': '', '216.185.36.': '', '216.218.233.': '', '216.224.112.': ''}
 
-def multithread(function, threads: int = 1, input_one = None, input_two = None, progress_bar: bool = True) -> None:
-
+def multithread(function, threads: int = 1, *args, progress_bar: bool = True) -> None:
+    
     """
     > Please read the documentation on github before using this function!
-    Input one/two can be any of the following: None, List, Variable
+    
+    ________________________________________________________________________________
+
+    Run the given function in multiple threads with the specified inputs.
+
+    - function: The function to run in multiple threads.
+    - threads: The number of threads to use.
+    - *args: Input(s) for the function. Can be a list, a single value.
+    - progress_bar: Whether to display a progress bar.
     """
 
     try:
+        
+        def submit_task(executor, *args):
+            return executor.submit(function, *args)
+        
+        if threads < 1:
+            raise ValueError("The number of threads must be a positive integer.")
 
         futures = []
         executor = ThreadPoolExecutor(max_workers=threads)
 
-        if input_one is None:
+        if not args:
             for _ in range(threads): futures.append(executor.submit(function))
-        elif input_two is None:
-            if isinstance(input_one, list):
-                for item in input_one: futures.append(executor.submit(function, item))
-            else:
-                for _ in range(threads): futures.append(executor.submit(function, input_one))
-
         else:
-            
-            if isinstance(input_one, list) and isinstance(input_two, list):
-                
-                input_one_len, input_two_len = len(input_one), len(input_two)
+            input_lists = []
+            for arg in args:
+                if isinstance(arg, list):
+                    input_lists.append(arg)
+                else:
+                    input_lists.append([arg] * threads)
 
-                if input_one_len != input_two_len:
-                    err_msg = f"MULTITHREAD ERROR! - input_one({input_one_len}) and input_two({input_two_len}) do not have the same length!"
-                    if input_one_len < 50 and input_two_len < 50:
-                        err_msg += f"\n  > input_one = {input_one}"
-                        err_msg += f"\n  > input_two = {input_two}"
-                    raise ValueError(err_msg)
-                for item1, item2 in zip(input_one, input_two):
-                    futures.append(executor.submit(function, item1, item2))
-
-            elif isinstance(input_one, list):
-                for item1 in input_one: futures.append(executor.submit(function, item1, input_two))
-            elif isinstance(input_two, list):
-                for item2 in input_two: futures.append(executor.submit(function, input_one, item2))
-            else:
-                for _ in range(threads): futures.append(executor.submit(function, input_one, input_two))
+            for task_args in zip(*input_lists):
+                futures.append(submit_task(executor, *task_args))
 
         if progress_bar:
-
             width = shutil.get_terminal_size().columns
             job_progress = Progress("{task.description}", SpinnerColumn(), BarColumn(bar_width=width), TextColumn("[deep_pink1][progress.percentage][bright_cyan]{task.percentage:>3.0f}%"), "[bright_cyan]ETA", TimeRemainingColumn(), TimeElapsedColumn())
             overall_task = job_progress.add_task("[bright_green]Progress", total=int(len(futures)))
             progress_table = Table.grid()
             progress_table.add_row(Panel.fit(job_progress, title="[bright_red]Jobs", border_style="magenta1", padding=(1, 2)))
-    
+
             with Live(progress_table, refresh_per_second=10):
                 while not job_progress.finished:
                     time.sleep(0.1)
@@ -112,23 +110,32 @@ def multithread(function, threads: int = 1, input_one = None, input_two = None, 
 
         else:
             for future in as_completed(futures):
-                try: future.result()
-                except: pass
-
-        executor.shutdown()
-
+                if future.done():
+                    try: future.result()
+                    except: pass
+                
     except: 
         try: executor.shutdown()
         except: pass
         sys.exit(clr(err(sys.exc_info()),2))
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def github_downloads(user_repo: str) -> list:
 
     """
     Extracts direct download urls from the latest release on github and returns it as a list
 
-    - Example Input: EXAMPLE/EXAMPLE ( from https://api.github.com/repos/EXAMPLE/EXAMPLE/releases/latest )
-    - Example Output: ['https://github.com/EXAMPLE/EXAMPLE/releases/download/VERSION/EXAMPLE.TXT']
+    - Example Input: USER_NAME/REPO_NAME ( from https://api.github.com/repos/USER_NAME/REPO_NAME/releases/latest )
+    - Example Output: ['https://github.com/USER_NAME/REPO_NAME/releases/download/VERSION/EXAMPLE.TXT']
+    
+    _____________________________________________________________________________________________________________________________________
+    
+    [ EXAMPLE ]
+    ```python
+    from dankware import github_downloads
+    for _ in github_downloads("SirDank/dank.tool"): print(_)
+    ```
     """
     
     urls = []
@@ -144,6 +151,8 @@ def github_downloads(user_repo: str) -> list:
 
     return urls
 
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> list:
     
     """
@@ -154,7 +163,16 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
     - filter_mode = 'add' or 'remove'
     - name_list = list of names to be added or removed
     
-    __________________________________________________________________________________
+    _______________________________________________________________________________________________________________________________________________________________________
+    
+    [ EXAMPLE ]
+    ```python
+    from dankware import github_file_selector
+    for file_url in github_file_selector("EssentialsX/Essentials", "remove", ['AntiBuild', 'Discord', 'GeoIP', 'Protect', 'XMPP']):
+        print(file_url)
+    ```
+    
+    _______________________________________________________________________________________________________________________________________________________________________
     
     Example output from github_downloads("EX_USER/EX_REPO"): [
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE.TXT'
@@ -163,9 +181,9 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST.TXT'
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_2.TXT'
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_3.TXT'
-        ]
+    ]
     
-    __________________________________________________________________________________
+    _______________________________________________________________________________________________________________________________________________________________________
     
     Example Input: "EX_USER/EX_REPO", "add", ["EXAMPLE"]
         
@@ -173,11 +191,11 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE.TXT'
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_2.TXT'
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE_3.TXT'
-        ]
+    ]
         
     - Note: Only urls with filenames containing "EXAMPLE" were returned.
 
-    __________________________________________________________________________________
+    _______________________________________________________________________________________________________________________________________________________________________
 
     Example Input: "EX_USER/EX_REPO", "remove", ["EXAMPLE"]
     
@@ -185,7 +203,7 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST.TXT'
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_2.TXT'
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST_3.TXT'
-        ]
+    ]
     
     - Note: Only urls with filenames not containing "EXAMPLE" were returned.
     
@@ -201,6 +219,8 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
                 elif filter_mode == "remove": valid = False
         if valid: urls.append(file_url)
     return urls
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def random_ip() -> str:
     
@@ -233,6 +253,8 @@ def random_ip() -> str:
         
     return ip
 
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def is_admin() -> bool:
     
     """
@@ -242,19 +264,21 @@ def is_admin() -> bool:
     try: return ctypes.windll.shell32.IsUserAnAdmin()
     except: return False
     
-'''def run_as_admin() -> None:
+'''
+def run_as_admin() -> None:
     
     """
     Executes the script with admin privileges
     """
     
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
-    #sys.exit(clr("\n  > Exiting original un-elevated script...",2))'''
+    #sys.exit(clr("\n  > Exiting original un-elevated script...",2))
+'''
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def export_registry_keys(registry_root: str, registry_path: str, recursive: bool = True, export_path: str = "export.reg") -> None:
-    
-    import winreg
-    
+
     """
     Function to export registry keys with or without its subkeys and saves them to export_path
     - Examples for registry_root: 'HKEY_CLASSES_ROOT', 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE', 'HKEY_USERS', 'HKEY_CURRENT_CONFIG'
@@ -262,7 +286,18 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
     - recursive: True (subkeys saved)
     - recursive: False (subkeys not saved)
     - export_path: "exported.reg" (default)
+    
+    _______________________________________________________________________________________________________________________________________________________________________
+    
+    [ EXAMPLE ]
+    
+    ```python
+    from dankware import export_registry_keys
+    export_registry_keys('HKEY_CURRENT_USER', r'Software\Google\Chrome\PreferenceMACs')
+    ```
     """
+
+    import winreg
     
     try:
     
@@ -276,42 +311,40 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
         }
         
         if not export_path.endswith('.reg'):
-            raise ValueError(clr("Invalid Export Path! export_path must end with '.reg'",2))
+            raise ValueError("Invalid Export Path! export_path must end with '.reg'")
         if registry_root not in key_map.keys():
-            raise ValueError(clr(f"Invalid Registry Root! Use one of the following: {', '.join(key_map.keys())}",2))
+            raise ValueError(f"Invalid Registry Root! Use one of the following: {', '.join(key_map.keys())}")
         if not is_admin():
-            raise RuntimeError(clr("Current user is not an administrator! Exporting registry keys requires admin privileges!",2))
+            raise RuntimeError("Current user is not an administrator! Exporting registry keys requires admin privileges!")
             # If the current user is not an admin, relaunch the script with admin privileges
             #run_as_admin()
             
         def exporter(key, registry_root, subkey_path, key_data, recursive) -> None:
 
-            # Open the registry subkey
             subkey = winreg.OpenKey(key, subkey_path, 0, winreg.KEY_READ | winreg.KEY_WOW64_64KEY)
-            # Get the number of subkeys and add the current subkey's path to the output list
             subkey_count = winreg.QueryInfoKey(subkey)[0]
             key_data.append(f'[{registry_root}\\{subkey_path}]')
-            # Enumerate the values of the current subkey and add them to the output list
+    
             for i in range(winreg.QueryInfoKey(subkey)[1]):
                 value_name, value_data, value_type = winreg.EnumValue(subkey, i)
                 key_data.append(f'"{value_name}"="{value_data}"')
-            # Add a blank line to the output list to separate subkeys
+
             key_data.append('')
-            # Recursively export each subkey if recursive=True
             for i in range(subkey_count):
                 subkey_name = winreg.EnumKey(subkey, i)
                 subkey_full_path = subkey_path + '\\' + subkey_name if subkey_path else subkey_name
                 if recursive: exporter(key, registry_root, subkey_full_path, key_data, recursive)
-            # Close the current subkey
+
             winreg.CloseKey(subkey)
 
         key = key_map[registry_root]
-
         exporter(key, registry_root, registry_path, key_data, recursive)
         open(export_path, 'w', encoding='utf-16').write('Windows Registry Editor Version 5.00\n\n' + '\n'.join(key_data))
         print(clr(f"\n  > Successfully exported registry keys to \"{os.path.join(os.getcwd(), 'export.reg') if export_path == 'export.reg' else export_path}\""))
     
     except: sys.exit(clr(err(sys.exc_info()),2))
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = magenta) -> str:
     
@@ -396,7 +429,10 @@ def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = mag
         if mode == 1: return white + text + reset
         elif mode == 2: return red + text + reset
         elif mode == 3 or mode == 4: return text + reset
+    
     except: sys.exit(clr(err(sys.exc_info()),2))
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def align(text: str) -> str: 
     
@@ -412,11 +448,13 @@ def align(text: str) -> str:
     for _ in range(len(aligned)): aligned[_] = aligned[_].center(width).replace(aligned[_],text[_])
     return str('\n'.join(aligned) + reset)
 
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def fade(text: str, colour: str = "purple") -> str:
     
     """
     credits to https://github.com/venaxyt/gratient & https://github.com/venaxyt/fade <3
-    - available_colours = [black,red,green,cyan,blue,purple,random,black-v,red-v,green-v,cyan-v,blue-v,purple-v,pink-v]
+    - available_colours = black, red, green, cyan, blue, purple, random, black-v, red-v, green-v, cyan-v, blue-v, purple-v, pink-v
     """
 
     try:
@@ -554,6 +592,8 @@ def fade(text: str, colour: str = "purple") -> str:
         return faded
     except: sys.exit(clr(err(sys.exc_info()),2))
 
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def get_duration(then: datetime, now: datetime = None, interval = "default"):
 
     """
@@ -621,22 +661,23 @@ def get_duration(then: datetime, now: datetime = None, interval = "default"):
 
         return ", ".join(parts)
 
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def err(exc_info) -> str:
     
     """
-    Returns short traceback
+    Returns a short traceback
     
     __________________________________________
-    
-    [EXAMPLE]:
 
+    [ EXAMPLE ]
+
+    ```python
     import sys
-
     from dankware import err, clr
-    
     try: value = 1/0
-
     except: print(clr(err(sys.exc_info()),2))
+    ```
     """
 
     ex_type, ex_value, ex_traceback = exc_info
@@ -656,6 +697,79 @@ def err(exc_info) -> str:
 
     return report
 
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+class SplashScreen(tk.Toplevel):
+
+    def __init__(self, img_path, duration=3):
+        super().__init__()
+        self.img_path = img_path
+        self.duration = duration
+        self.setup_window()
+        self.load_image()
+        self.animate_image()
+
+    def setup_window(self):
+        self.overrideredirect(True)
+        self.wm_attributes("-topmost", True)
+        #self.wm_attributes("-transparentcolor", "white")
+
+        self.image = Image.open(self.img_path)
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+        width = self.image.width
+        height = self.image.height
+        x = (screen_width - width) // 2
+        y = (screen_height - height) // 2
+
+        self.geometry(f"{width}x{height}+{x}+{y}")
+
+        self.canvas = tk.Canvas(self, bg="white", highlightthickness=0)
+        self.canvas.pack()
+
+    def load_image(self):
+        if self.img_path.lower().endswith('.gif'):
+            self.frames = []
+            for i in range(self.image.n_frames):
+                self.image.seek(i)
+                frame = ImageTk.PhotoImage(self.image)
+                self.frames.append(frame)
+        else:
+            self.frames = [ImageTk.PhotoImage(self.image)]
+
+    def animate_image(self, current_frame=0):
+        self.canvas.delete(tk.ALL)
+        self.canvas.config(width=self.frames[current_frame].width(), height=self.frames[current_frame].height())
+        self.canvas.create_image(self.frames[current_frame].width() // 2, self.frames[current_frame].height() // 2, image=self.frames[current_frame])
+        current_frame = (current_frame + 1) % len(self.frames)
+        if len(self.frames) > 1:
+            self.after(int(1000 / self.image.info['duration']), self.animate_image, current_frame)
+
+def splash_screen(img_path: str, duration: int=3) -> None:
+    
+    """
+    Displays a splash screen for the given duration
+    - Supports: GIFs / PNGs / JPGs / BMPs / ICOs
+    
+    __________________________________________
+    
+    [ EXAMPLE ]
+    
+    ```python
+    from concurrent.futures import ThreadPoolExecutor
+    ThreadPoolExecutor().submit(splash_screen, "splash.gif", duration=3)
+    ```
+    """
+    
+    root = tk.Tk()
+    root.withdraw()
+    SplashScreen(img_path)  
+    root.after(int(duration * 1000), root.quit)
+    root.mainloop()
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def cls() -> None: 
     
     """
@@ -666,6 +780,8 @@ def cls() -> None:
     if os.name == 'nt': _ = os.system('cls')
     else: _ = os.system('clear')
 
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def title(title: str) -> None:
     
     """
@@ -673,14 +789,18 @@ def title(title: str) -> None:
     """
 
     if os.name == 'nt': os.system(f"title {title}")
-    
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def rm_line() -> None:
     
     """
     Deletes previous line
     """
 
-    print("\033[A                                                  \033[A")
+    print("\033[A" + " " * (shutil.get_terminal_size().columns - 6) + "\033[A")
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def chdir(mode: str) -> str:
     
@@ -696,6 +816,8 @@ def chdir(mode: str) -> str:
     if mode == "script": return "os.chdir(os.path.dirname(__file__))" # as .py
     elif mode == "exe": return "os.chdir(os.path.dirname(sys.argv[0]))" # as .exe
 
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def sys_open(item: str) -> None:
     
     """
@@ -707,6 +829,8 @@ def sys_open(item: str) -> None:
     
     if os.name == 'nt': os.system(f'start {item}')
     else: os.system(f'xdg-open {item}')
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def dankware_banner() -> None:
     
@@ -771,7 +895,6 @@ def dankware_banner() -> None:
     # start
         
     cls(); print('\n' * 60)
-
     for _, amt in zip(to_print, sleep_time):
         print(_); time.sleep(amt)
     

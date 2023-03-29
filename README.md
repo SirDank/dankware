@@ -109,6 +109,24 @@ export_registry_keys(registry_root, registry_path, recursive=True, export_path=e
 
 ---  
 
+# 🚨 Splash Screen 🚨
+
+```py
+from dankware import splash_screen
+# Supports: GIFs / PNGs / JPGs / BMPs / ICOs
+splash_screen("D:\\splash.gif", duration=5)
+# runs on main thread
+```
+
+```py
+from dankware import splash_screen
+from concurrent.futures import ThreadPoolExecutor
+ThreadPoolExecutor().submit(splash_screen, "splash.png", duration=5)
+# runs on separate thread
+```
+
+> <img width="250" alt="image" src="https://user-images.githubusercontent.com/52797753/228445332-004f8f69-d8be-4d36-95e5-9065891e4d09.gif">
+
 # 🚨 Error Traceback 🚨
 
 ```py
