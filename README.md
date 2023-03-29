@@ -121,7 +121,7 @@ splash_screen("D:\\splash.gif", duration=5)
 ```py
 from dankware import splash_screen
 from concurrent.futures import ThreadPoolExecutor
-ThreadPoolExecutor(10).submit(splash_screen, "splash.png", 5)
+ThreadPoolExecutor(1).submit(splash_screen, "splash.png", 5)
 # runs on separate thread
 ```
 
