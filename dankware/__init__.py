@@ -775,6 +775,45 @@ def splash_screen(img_path: str, duration: int = 3) -> None:
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+def hide_window() -> None:
+
+    """
+    Hides console window
+    """
+    
+    from ctypes import windll
+
+    hWnd = windll.kernel32.GetConsoleWindow()
+    windll.user32.ShowWindow(hWnd, 0)
+
+def show_window() -> None:
+
+    """
+    Shows console window
+    """
+    
+    from ctypes import windll
+
+    hWnd = windll.kernel32.GetConsoleWindow()
+    windll.user32.ShowWindow(hWnd, 1)
+    
+def hide_window_for(duration: int = 3) -> None:
+    
+    """
+    Hides console window for the given duration
+    """
+
+    from concurrent.futures import ThreadPoolExecutor
+    
+    def tmp():
+        hide_window()
+        time.sleep(duration)
+        show_window()
+    
+    ThreadPoolExecutor(10).submit(tmp)
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def cls() -> None: 
     
     """
