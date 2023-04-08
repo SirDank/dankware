@@ -814,6 +814,24 @@ def hide_window_for(duration: int = 3) -> None:
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+def file_selector(title: str = "Open", icon_path: str = "") -> str:
+    
+    """
+    Opens file selector and returns selected file path
+    - Allows custom title and icon
+    """
+    
+    from tkinter import Tk
+    from tkinter.filedialog import askopenfilename
+
+    root = Tk()
+    root.withdraw()
+    if icon_path: root.iconbitmap(icon_path)
+    file_path = askopenfilename(title=title)
+    return file_path
+
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def cls() -> None: 
     
     """
