@@ -828,7 +828,7 @@ def file_selector(title: str = "Open", icon_path: str = "") -> str:
     root.withdraw()
     if icon_path: root.iconbitmap(icon_path)
     file_path = askopenfilename(title=title)
-    return file_path
+    return file_path.replace("/", "\\")
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
