@@ -4,7 +4,7 @@ setup(
 
     license = "MIT",
     name = "dankware",
-    version = "3.3.4",
+    version = "3.3.5",
     author = "SirDank",
     
     author_email = "SirDankenstein@protonmail.com",
@@ -34,6 +34,7 @@ setup(
     ],
 
     classifiers = [
+        "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: Microsoft :: Windows",
