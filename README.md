@@ -262,7 +262,7 @@ print(align(banner)) # also works with single text line (even coloured)
 ## ♦️ Align Coloured Banner ♦️
 ```py
 from dankware import align, clr
-print(align(clr(banner,4)))
+print(clr(align(banner),4)) # OR print(align(clr(banner,4)))
 ```
 > <img width="800" alt="image" src="https://user-images.githubusercontent.com/52797753/153722373-9925dd25-83bb-4d1c-83eb-bfaae1802088.png">
 
