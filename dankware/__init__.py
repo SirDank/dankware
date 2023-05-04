@@ -25,17 +25,7 @@ reset = Style.RESET_ALL
 white = Fore.WHITE + Style.BRIGHT
 yellow = Fore.YELLOW + Style.BRIGHT
 
-# dankware variables
-
-chars = ['>','<','.',',','=','-','_','?','!','|','(',')','{','}','/','\\',':','"',"'","%"]
-words_green = ['true', 'True', 'TRUE', 'online', 'Online', 'ONLINE', 'successfully', 'Successfully', 'SUCCESSFULLY', 'successful', 'Successful', 'SUCCESSFUL', 'success', 'Success', 'SUCCESS']
-words_red = ['falsely', 'Falsely', 'FALSELY', 'false', 'False', 'FALSE', 'offline', 'Offline', 'OFFLINE', 'failures', 'Failures', 'FAILURES', 'failure', 'Failure', 'FAILURE', 'failed', 'Failed', 'FAILED', 'fail', 'Fail', 'FAIL']
-colours_to_replace = [Fore.BLACK, Fore.BLUE, Fore.CYAN, Fore.GREEN, Fore.MAGENTA, Fore.RED, Fore.WHITE, Fore.YELLOW, Style.BRIGHT, Style.RESET_ALL]
-colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW", "BBRIGHTT", "RRESETT"]
-bad_colours = ['BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET']
-codes = vars(Fore); colours = [codes[colour] for colour in codes if colour not in bad_colours]
-styles = [Style.BRIGHT, Style.DIM, Style.NORMAL]
-available_colours = ['black','red','green','cyan','blue','purple','random','black-v','red-v','green-v','cyan-v','blue-v','purple-v','pink-v']
+# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def multithread(function: callable, threads: int = 1, *args, progress_bar: bool = True) -> None:
     
@@ -378,8 +368,20 @@ def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = mag
     
     """
     
+    chars = ['[',']','>','<','.',',','=','-','_','?','!','|','(',')','{','}','/','\\',':','"',"'","%"]
+    
+    words_green = ['true', 'True', 'TRUE', 'online', 'Online', 'ONLINE', 'successfully', 'Successfully', 'SUCCESSFULLY', 'successful', 'Successful', 'SUCCESSFUL', 'success', 'Success', 'SUCCESS']
+    words_red = ['falsely', 'Falsely', 'FALSELY', 'false', 'False', 'FALSE', 'offline', 'Offline', 'OFFLINE', 'failures', 'Failures', 'FAILURES', 'failure', 'Failure', 'FAILURE', 'failed', 'Failed', 'FAILED', 'fail', 'Fail', 'FAIL']
+    
+    colours_to_replace = [Fore.BLACK, Fore.BLUE, Fore.CYAN, Fore.GREEN, Fore.MAGENTA, Fore.RED, Fore.WHITE, Fore.YELLOW, Style.BRIGHT, Style.RESET_ALL]
+    colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW", "BBRIGHTT", "RRESETT"]
+    
+    bad_colours = ['BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET']
+    codes = vars(Fore); colours = [codes[colour] for colour in codes if colour not in bad_colours]
+    styles = [Style.BRIGHT, Style.DIM, Style.NORMAL]
+    
     try:
-        if mode != 3:
+        if mode not in [3, 4]:
             for _ in range(len(colours_to_replace)):
                 text = text.replace(colours_to_replace[_], colours_alt[_])
         else:
@@ -389,7 +391,7 @@ def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = mag
         # default
 
         if mode == 1:
-            text = text.replace("[",f"{colour_two}[{colour_one}").replace("]",f"{colour_two}]{colour_one}")
+            #text = text.replace("[",f"{colour_two}[{colour_one}").replace("]",f"{colour_two}]{colour_one}")
             for char in chars: text = text.replace(char, f"{colour_two}{char}{colour_one}")
             for word in words_green:
                 replacement = green.join(list(word))
@@ -401,31 +403,39 @@ def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = mag
         # for error messages
         
         elif mode == 2:
-            text = text.replace("[",f"{white}[{red}").replace("]",f"{white}]{red}")
+            #text = text.replace("[",f"{white}[{red}").replace("]",f"{white}]{red}")
             for char in chars: text = text.replace(char, f"{white}{char}{red}")
-            #for word in words_green: text = text.replace(word, f"{green}{word}{red}")
+            for word in words_green:
+                replacement = green.join(list(word))
+                text = text.replace(word, f"{green}{replacement}{red}")
         
         # random | TRUE, FALSE will not be coloured!
         
-        elif mode == 3 or mode == 4:
+        elif mode in [3, 4]:
+
             text = [char for char in text]
+            
             if mode == 3: colour_spl = True
             else: colour_spl = False
+    
             for _ in range(len(text)):
                 char = text[_]
                 if char != ' ' and char != '\n':
                     if colour_spl:
-                        if char in ( ['[',']'] + chars ): text[_] = white + char
-                        else: text[_] = random.choice(colours) + Style.BRIGHT + char
+                        if char in chars:
+                            text[_] = white + char
+                        else:
+                            text[_] = random.choice(colours) + Style.BRIGHT + char
                     else:
                         text[_] = random.choice(colours) + Style.BRIGHT + char
+
             text = ''.join(text)
 
         else: raise ValueError(f"\n  {white}> {red}Invalid Mode {white}[{red}{mode}{white}] | Valid Modes{white}: {red}1{white},{red}2{white},{red}3{white},{red}4" + reset)
 
-        if mode != 3:
+        if mode not in [3, 4]:
             for _ in range(len(colours_to_replace)):
-                text = str(text).replace(colours_alt[_], colours_to_replace[_])
+                text = text.replace(colours_alt[_], colours_to_replace[_])
 
         if mode == 1: return white + text + reset
         elif mode == 2: return red + text + reset
@@ -449,7 +459,7 @@ def align(text: str) -> str:
     for style in vars(Style).values(): aligned = aligned.replace(style,'')
     text = text.split('\n'); aligned = aligned.split('\n')
     for _ in range(len(aligned)): aligned[_] = aligned[_].center(width).replace(aligned[_],text[_])
-    return str('\n'.join(aligned))
+    return str('\n'.join(aligned) + reset)
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -459,6 +469,8 @@ def fade(text: str, colour: str = "purple") -> str:
     credits to https://github.com/venaxyt/gratient & https://github.com/venaxyt/fade <3
     - available_colours = black, red, green, cyan, blue, purple, random, black-v, red-v, green-v, cyan-v, blue-v, purple-v, pink-v
     """
+    
+    available_colours = ['black','red','green','cyan','blue','purple','random','black-v','red-v','green-v','cyan-v','blue-v','purple-v','pink-v']
 
     try:
         colour = colour.lower()
