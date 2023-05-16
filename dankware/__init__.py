@@ -623,6 +623,7 @@ def get_duration(then: datetime, now: datetime = None, interval = "default"):
     - minutes -> int
     - seconds -> int
     - dynamic -> str
+    - dynamic-mini -> str
     - default -> str
     """
     
@@ -635,30 +636,38 @@ def get_duration(then: datetime, now: datetime = None, interval = "default"):
     elif interval in ("hour", "hours"): return int(duration.total_seconds() / 3600)
     elif interval in ("minute", "minutes"): return int(duration.total_seconds() / 60)
     elif interval in ("second", "seconds"): return int(duration.total_seconds())
-    elif interval == "dynamic":
+    elif interval in ("dynamic", "dynamic-mini"):
+        
+        mini = True if interval == "dynamic-mini" else False
 
         seconds = duration.total_seconds()
 
         if seconds < 60:
-            return f"{int(seconds)} second{'s' if seconds > 1 else ''}"
+            if mini: return f"{int(seconds)}s"
+            else: return f"{int(seconds)} second{'s' if seconds > 1 else ''}"
         
         elif seconds < 3600:
             minutes = int(seconds / 60)
-            return f"{minutes} minute{'s' if minutes > 1 else ''}"
+            if mini: return f"{minutes}m"
+            else:return f"{minutes} minute{'s' if minutes > 1 else ''}"
         
         elif seconds < 86400:
             hours = int(seconds / 3600)
-            return f"{hours} hour{'s' if hours > 1 else ''}"
+            if mini: return f"{hours}h"
+            else: return f"{hours} hour{'s' if hours > 1 else ''}"
        
         elif seconds < 31536000:
             days = int(seconds / 86400)
-            return f"{days} day{'s' if days > 1 else ''}"
+            if mini: return f"{days}d"
+            else: return f"{days} day{'s' if days > 1 else ''}"
         
         else:
             years = int(seconds / 31536000)
-            return f"{years} year{'s' if years > 1 else ''}"
+            if mini: return f"{years}y"
+            else: return f"{years} year{'s' if years > 1 else ''}"
     
     else:
+
         seconds = duration.total_seconds()
 
         years = int(seconds / 31536000)
