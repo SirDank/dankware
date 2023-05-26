@@ -1,10 +1,12 @@
+"""
+> Please read the documentation on https://github.com/SirDank/dankware before using this module!
+"""
+
 ###################################################################################
 
 #                            https://github.com/SirDank                            
 
 ###################################################################################
-
-# > Please read the documentation on github before using this module!
 
 import os
 import sys
@@ -30,11 +32,9 @@ yellow = Fore.YELLOW + Style.BRIGHT
 def multithread(function: callable, threads: int = 1, *args, progress_bar: bool = True) -> None:
     
     """
-    > Please read the documentation on github before using this function!
-    
-    ________________________________________________________________________________
-
     Run the given function in multiple threads with the specified inputs.
+    
+    ________________________________________________________________________
 
     - function: The function to run in multiple threads.
     - threads: The number of threads to use.
@@ -120,8 +120,6 @@ def github_downloads(user_repo: str) -> list:
     """
     
     import requests
-    
-    urls = []
 
     #if "https://api.github.com/repos/" not in url or "/releases/latest" not in url:
     #    raise ValueError(clr('  > Invalid url! Must follow: "https://api.github.com/repos/NAME/NAME/releases/latest"',2)) 
@@ -129,10 +127,7 @@ def github_downloads(user_repo: str) -> list:
         try: response = requests.get(f"https://api.github.com/repos/{user_repo}/releases/latest").json(); break
         except: input(clr("  > Make sure you are connected to the Internet! Press [ENTER] to try again... ",2))
     
-    for data in response["assets"]:
-        urls.append(data["browser_download_url"])
-
-    return urls
+    return [data["browser_download_url"] for data in response["assets"]]
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -237,10 +232,8 @@ def random_ip() -> str:
         elif second_octet == 255 and third_octet == 255 and third_octet == 255: continue
 
         break
-    
-    ip = f"{first_octet}.{second_octet}.{third_octet}.{fourth_octet}"
         
-    return ip
+    return f"{first_octet}.{second_octet}.{third_octet}.{fourth_octet}"
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -268,7 +261,7 @@ def run_as_admin() -> None:
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def export_registry_keys(registry_root: str, registry_path: str, recursive: bool = True, export_path: str = "export.reg") -> None:
+def export_registry_keys(registry_root: str, registry_path: str, recursive: bool = True, export_path: str = "export.reg", verbose: bool = True) -> None:
 
     """
     Function to export registry keys with or without its subkeys and saves them to export_path
@@ -331,7 +324,9 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
         key = key_map[registry_root]
         exporter(key, registry_root, registry_path, key_data, recursive)
         open(export_path, 'w', encoding='utf-16').write('Windows Registry Editor Version 5.00\n\n' + '\n'.join(key_data))
-        print(clr(f"\n  > Successfully exported registry keys to \"{os.path.join(os.getcwd(), 'export.reg') if export_path == 'export.reg' else export_path}\""))
+        
+        if verbose:
+            print(clr(f"\n  > Successfully exported registry keys to \"{os.path.join(os.getcwd(), 'export.reg') if export_path == 'export.reg' else export_path}\""))
     
     except: sys.exit(clr(err(sys.exc_info()),2))
 
@@ -437,7 +432,7 @@ def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = mag
             for _ in range(len(colours_to_replace)):
                 text = text.replace(colours_alt[_], colours_to_replace[_])
 
-        if mode == 1: return white + text + reset
+        if mode == 1: return colour_one + text + reset
         elif mode == 2: return red + text + reset
         elif mode == 3 or mode == 4: return text + reset
     
@@ -605,6 +600,7 @@ def fade(text: str, colour: str = "purple") -> str:
         
         if multi_line: faded = faded[:-1]
         return faded
+
     except: sys.exit(clr(err(sys.exc_info()),2))
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -862,15 +858,15 @@ def get_path(name: str) -> str:
     - Supports: Desktop / Documents / Favorites / Pictures / Videos / Music
     """
     
+    import os
+    import winreg
+    
     if name in ["Desktop", "Documents", "Favorites", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music"]:
         
         if name == "Documents": name = "Personal"
         elif name == "Pictures": name = "My Pictures"
         elif name == "Videos": name = "My Video"
         elif name == "Music": name = "My Music"
-        
-        import winreg
-        import os
 
         key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", access=winreg.KEY_READ)
         path = os.path.expandvars(winreg.QueryValueEx(key, name)[0])
