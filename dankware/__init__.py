@@ -48,11 +48,11 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
     from shutil import get_terminal_size
     from concurrent.futures import ThreadPoolExecutor, as_completed
     from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn, TimeElapsedColumn
+    
+    def submit_task(executor, *args):
+            return executor.submit(function, *args)
 
     try:
-        
-        def submit_task(executor, *args):
-            return executor.submit(function, *args)
         
         if threads < 1:
             raise ValueError("The number of threads must be a positive integer.")
@@ -188,14 +188,21 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
     """
 
     urls = []
+
     for file_url in github_downloads(user_repo):
-        if filter_mode == "add": valid = False
-        elif filter_mode == "remove": valid = True
+
+        if filter_mode == "add":
+            valid = False
+        elif filter_mode == "remove":
+            valid = True
         for name in name_list:
             if name in file_url.split('/')[-1]:
-                if filter_mode == "add": valid = True
-                elif filter_mode == "remove": valid = False
+                if filter_mode == "add":
+                    valid = True
+                elif filter_mode == "remove":
+                    valid = False
         if valid: urls.append(file_url)
+
     return urls
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -239,12 +246,12 @@ def random_ip() -> str:
 
 def is_admin() -> bool:
     
-    import ctypes
-    
     """
     Checks if the current user has admin privileges and returns True if found else False
     """
     
+    import ctypes
+
     try: return ctypes.windll.shell32.IsUserAnAdmin()
     except: return False
     
