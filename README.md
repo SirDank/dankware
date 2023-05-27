@@ -1,3 +1,4 @@
+
 <p align="center">
   <b>~ Visits ~</b><br><br>
   <img src="https://profile-counter.glitch.me/dankware/count.svg" />
@@ -376,6 +377,28 @@ print(fade(banner, "random"))
 </p>
 
 <p>&nbsp;</p>    
+
+---  
+
+# 🚨 Wallpapers 🚨
+
+## ♦️ Style 1 ♦️
+
+<br><p align="center"><img width="800" alt="image" src="__wallpapers__/1.png"></p><br>
+
+## ♦️ Style 2 ♦️
+
+<br><p align="center"><img width="800" alt="image" src="__wallpapers__/2.jpg"></p><br>
+
+## ♦️ Style 3 ♦️
+
+<br><p align="center"><img width="800" alt="image" src="__wallpapers__/3.png"></p><br>
+
+## ♦️ Style 4 ♦️
+
+<br><p align="center"><img width="800" alt="image" src="__wallpapers__/4.png"></p><br>
+
+<p>&nbsp;</p>
 
 ---  
 
