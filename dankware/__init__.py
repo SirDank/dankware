@@ -75,10 +75,10 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
 
         if progress_bar:
             width = get_terminal_size().columns
-            job_progress = Progress("{task.description}", SpinnerColumn(), BarColumn(bar_width=width), TextColumn("[deep_pink1][progress.percentage][bright_cyan]{task.percentage:>3.0f}%"), "[bright_cyan]ETA", TimeRemainingColumn(), TimeElapsedColumn())
+            job_progress = Progress("{task.description}", SpinnerColumn(), BarColumn(bar_width=width), TextColumn("[progress.percentage][bright_green]{task.percentage:>3.0f}%"), "[bright_cyan]ETA", TimeRemainingColumn(), TimeElapsedColumn())
             overall_task = job_progress.add_task("[bright_green]Progress", total=int(len(futures)))
             progress_table = Table.grid()
-            progress_table.add_row(Panel.fit(job_progress, title="[bright_red]Jobs", border_style="magenta1", padding=(1, 2)))
+            progress_table.add_row(Panel.fit(job_progress, title="[bright_white]Jobs", border_style="bright_red", padding=(1, 2)))
 
             with Live(progress_table, refresh_per_second=10):
                 while not job_progress.finished:

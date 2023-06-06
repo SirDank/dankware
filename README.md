@@ -296,74 +296,56 @@ Y8b d88P
 ## ♦️ Black ♦️
 ```py
 print(fade(banner, "black"))
-```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153722811-b257611e-9111-4a0e-92fb-7dbe503ce6db.png">
-```py
 print(fade(banner, "black-v"))
 ```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723205-a91eb1c6-07bc-4bc6-9fa6-52231e50a25c.png">
+> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153722811-b257611e-9111-4a0e-92fb-7dbe503ce6db.png"> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153723205-a91eb1c6-07bc-4bc6-9fa6-52231e50a25c.png">
 
 ## ♦️ Red ♦️
 ```py
 print(fade(banner, "red"))
-```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153722946-3221bfd8-ff9d-4c9d-8b70-0c2736ec4e30.png">
-```py
 print(fade(banner, "red-v"))
 ```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723473-bdb75ea7-2df2-4f70-adb5-cf5caa57200a.png">
+> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153722946-3221bfd8-ff9d-4c9d-8b70-0c2736ec4e30.png"> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153723473-bdb75ea7-2df2-4f70-adb5-cf5caa57200a.png">
 
 ## ♦️ Green ♦️
 ```py
 print(fade(banner, "green"))
-```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723050-c30bd3f1-989a-4141-b40a-2869a2dadef6.png">
-```py
 print(fade(banner, "green-v"))
 ```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723481-2e5c21b2-0f12-4d99-ab8d-a3e5c40e4c16.png">
+> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153723050-c30bd3f1-989a-4141-b40a-2869a2dadef6.png"> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153723481-2e5c21b2-0f12-4d99-ab8d-a3e5c40e4c16.png">
 
 ## ♦️ Cyan ♦️
 ```py
 print(fade(banner, "cyan"))
-```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723059-b4808365-6006-4726-b427-b6848e0fc0e5.png">
-```py
 print(fade(banner, "cyan-v"))
 ```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723496-8d03c5d3-601e-499d-80cd-51c3648957bf.png">
+> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153723059-b4808365-6006-4726-b427-b6848e0fc0e5.png"> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153723496-8d03c5d3-601e-499d-80cd-51c3648957bf.png">
 
 ## ♦️ Blue ♦️
 ```py
 print(fade(banner, "blue"))
-```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723092-0a32d8e6-680e-4df3-bdf1-089663f25f45.png">
-```py
 print(fade(banner, "blue-v"))
 ```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723509-41732010-b7d5-4867-95f9-690d47322536.png">
+> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153723092-0a32d8e6-680e-4df3-bdf1-089663f25f45.png"> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153723509-41732010-b7d5-4867-95f9-690d47322536.png">
 
 ## ♦️ Purple ♦️
 ```py
 print(fade(banner, "purple"))
-```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723148-2c94c459-1441-4752-a11f-a547754da7bc.png">
-```py
 print(fade(banner, "purple-v"))
 ```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723519-00aa980e-4a04-4d8d-a319-5691c1f8e517.png">
+> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153723148-2c94c459-1441-4752-a11f-a547754da7bc.png"> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153723519-00aa980e-4a04-4d8d-a319-5691c1f8e517.png">
 
 ## ♦️ Pink ♦️
 ```py
 print(fade(banner, "pink-v"))
 ```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723540-b324dfe1-5ae2-4b66-ad3a-546a589558c8.png">
+> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153723540-b324dfe1-5ae2-4b66-ad3a-546a589558c8.png">
 
 ## ♦️ Random ♦️
 ```py
 print(fade(banner, "random"))
 ```
-> <img width="475" alt="image" src="https://user-images.githubusercontent.com/52797753/153723545-0ea34ea7-1844-4ace-8948-3e71e28c0a30.png">
+> <img width="400" alt="image" src="https://user-images.githubusercontent.com/52797753/153723545-0ea34ea7-1844-4ace-8948-3e71e28c0a30.png">
 
 <p>&nbsp;</p>    
 
