@@ -27,6 +27,15 @@ reset = Style.RESET_ALL
 white = Fore.WHITE + Style.BRIGHT
 yellow = Fore.YELLOW + Style.BRIGHT
 
+black_dim = Fore.BLACK + Style.DIM
+blue_dim = Fore.BLUE + Style.DIM
+cyan_dim = Fore.CYAN + Style.DIM
+green_dim = Fore.GREEN + Style.DIM
+magenta_dim = Fore.MAGENTA + Style.DIM
+red_dim = Fore.RED + Style.DIM
+white_dim = Fore.WHITE + Style.DIM
+yellow_dim = Fore.YELLOW + Style.DIM
+
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def multithread(function: callable, threads: int = 1, *args, progress_bar: bool = True) -> None:
@@ -396,8 +405,8 @@ def clr(text: str, preset: int = 1, colour_one: str = white, colour_two: str = r
         # default
 
         if preset == 1:
-            #text = text.replace("[",f"{colour_two}[{colour_one}").replace("]",f"{colour_two}]{colour_one}")
-            for symbol in symbols: text = text.replace(symbol, f"{colour_two}{symbol}{colour_one}")
+            for symbol in symbols:
+                text = text.replace(symbol, f"{colour_two}{symbol}{colour_one}")
             for word in words_green:
                 replacement = green.join(list(word))
                 text = text.replace(word, f"{green}{replacement}{colour_one}")
@@ -408,8 +417,8 @@ def clr(text: str, preset: int = 1, colour_one: str = white, colour_two: str = r
         # for error messages
         
         elif preset == 2:
-            #text = text.replace("[",f"{white}[{red}").replace("]",f"{white}]{red}")
-            for symbol in symbols: text = text.replace(symbol, f"{white}{symbol}{red}")
+            for symbol in symbols:
+                text = text.replace(symbol, f"{white}{symbol}{red}")
             for word in words_green:
                 replacement = green.join(list(word))
                 text = text.replace(word, f"{green}{replacement}{red}")

@@ -159,11 +159,24 @@ def main():
     
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
     
-    print(clr("\n  > Error in sector [7] redirecting... | INTEGRITY_CHECK_SUCCESS: TRUE",2))
+    print(clr("\n  > Error in sector [7] redirecting... | INTEGRITY_CHECK: SUCCESS",2))
     
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
     
     print(clr("\n  > Is this a randomly coloured string: TRUE | As you can see it does not colour True/False",3))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(clr("\n  > Is this a randomly coloured string (magenta,white,red): TRUE | As you can see it does not colour True/False",3,colours=[magenta,white,red]))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    codes = vars(Fore)
+    colours = [codes[colour] for colour in codes]
+    for colour in colours:
+        print(colour + Style.BRIGHT, "BRIGHT", reset)
+        print(colour + Style.NORMAL, "NORMAL", reset)
+        print(colour + Style.DIM, "DIM", reset)
     
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
     
