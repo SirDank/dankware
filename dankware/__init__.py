@@ -55,7 +55,7 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
     try:
         
         if threads < 1:
-            raise ValueError("The number of threads must be a positive integer.")
+            raise ValueError("The number of threads must be a positive integer!")
 
         futures = []
         executor = ThreadPoolExecutor(max_workers=threads)
@@ -304,7 +304,7 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
         if not export_path.endswith('.reg'):
             raise ValueError("Invalid Export Path! export_path must end with '.reg'")
         if registry_root not in key_map.keys():
-            raise ValueError(f"Invalid Registry Root! Use one of the following: {', '.join(key_map.keys())}")
+            raise ValueError(f"Invalid Registry Root: {registry_root} | Valid Roots: {', '.join(key_map.keys())}")
         if not is_admin():
             raise RuntimeError("Current user is not an administrator! Exporting registry keys requires admin privileges!")
             # If the current user is not an admin, relaunch the script with admin privileges
@@ -339,38 +339,38 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = magenta) -> str:
+def clr(text: str, preset: int = 1, colour_one: str = white, colour_two: str = red, colours: list = []) -> str:
     
     """
     
-    this function colours special characters inside the 'chars' list
+    this function colours special characters inside the 'symbols' list
     
     ___________________________________________
     
-    - mode: 1 | to display general text (default)
+    - preset: 1 | to display general text (default)
     - text = white (default) / specified colour
-    - spl = magenta (default) / specified colour
+    - spl = red (default) / specified colour
 
     ___________________________________________
 
-    - mode: 2 | to display error messages
+    - preset: 2 | to display error messages
     - text = red (fixed colour)
     - spl = white (fixed colour)
 
     ___________________________________________
 
-    - mode: 3
+    - preset: 3
     - text = random (fixed colour)
     - spl = white (fixed colour)
 
     ___________________________________________
 
-    - mode: 4 | to display banners
-    - text & spl = random (fixed colour)
+    - preset: 4 | to display banners
+    - text & spl = random / (colours inside list)
     
     """
     
-    chars = ['[',']','>','<','.',',','=','-','_','?','!','|','(',')','{','}','/','\\',':','"',"'","%"]
+    symbols = ['[', ']', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '-', '=', '{', '}', '|', '\\', ';', ':', "'", '"', ',', '.', '<', '>', '/', '?', '`', '~']
     
     words_green = ['true', 'True', 'TRUE', 'online', 'Online', 'ONLINE', 'successfully', 'Successfully', 'SUCCESSFULLY', 'successful', 'Successful', 'SUCCESSFUL', 'success', 'Success', 'SUCCESS']
     words_red = ['falsely', 'Falsely', 'FALSELY', 'false', 'False', 'FALSE', 'offline', 'Offline', 'OFFLINE', 'failures', 'Failures', 'FAILURES', 'failure', 'Failure', 'FAILURE', 'failed', 'Failed', 'FAILED', 'fail', 'Fail', 'FAIL']
@@ -379,11 +379,14 @@ def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = mag
     colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW", "BBRIGHTT", "RRESETT"]
     
     bad_colours = ['BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET']
-    codes = vars(Fore); colours = [codes[colour] for colour in codes if colour not in bad_colours]
     styles = [Style.BRIGHT, Style.DIM, Style.NORMAL]
     
+    if colours == []:
+        codes = vars(Fore)
+        colours = [codes[colour] for colour in codes if colour not in bad_colours]
+    
     try:
-        if mode not in [3, 4]:
+        if preset not in [3, 4]:
             for _ in range(len(colours_to_replace)):
                 text = text.replace(colours_to_replace[_], colours_alt[_])
         else:
@@ -392,9 +395,9 @@ def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = mag
 
         # default
 
-        if mode == 1:
+        if preset == 1:
             #text = text.replace("[",f"{colour_two}[{colour_one}").replace("]",f"{colour_two}]{colour_one}")
-            for char in chars: text = text.replace(char, f"{colour_two}{char}{colour_one}")
+            for symbol in symbols: text = text.replace(symbol, f"{colour_two}{symbol}{colour_one}")
             for word in words_green:
                 replacement = green.join(list(word))
                 text = text.replace(word, f"{green}{replacement}{colour_one}")
@@ -404,27 +407,27 @@ def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = mag
         
         # for error messages
         
-        elif mode == 2:
+        elif preset == 2:
             #text = text.replace("[",f"{white}[{red}").replace("]",f"{white}]{red}")
-            for char in chars: text = text.replace(char, f"{white}{char}{red}")
+            for symbol in symbols: text = text.replace(symbol, f"{white}{symbol}{red}")
             for word in words_green:
                 replacement = green.join(list(word))
                 text = text.replace(word, f"{green}{replacement}{red}")
         
         # random | TRUE, FALSE will not be coloured!
         
-        elif mode in [3, 4]:
+        elif preset in [3, 4]:
 
-            text = [char for char in text]
+            text = [_ for _ in text]
             
-            if mode == 3: colour_spl = True
-            else: colour_spl = False
+            if preset == 3: colour_spl = True
+            elif preset == 4: colour_spl = False
     
             for _ in range(len(text)):
                 char = text[_]
                 if char != ' ' and char != '\n':
                     if colour_spl:
-                        if char in chars:
+                        if char in symbols:
                             text[_] = white + char
                         else:
                             text[_] = random.choice(colours) + Style.BRIGHT + char
@@ -433,15 +436,15 @@ def clr(text: str, mode: int = 1, colour_one: str = white, colour_two: str = mag
 
             text = ''.join(text)
 
-        else: raise ValueError(f"\n  {white}> {red}Invalid Mode {white}[{red}{mode}{white}] | Valid Modes{white}: {red}1{white},{red}2{white},{red}3{white},{red}4" + reset)
+        else: raise ValueError(f"Invalid Preset: {preset} | Valid Presets: 1, 2, 3, 4")
 
-        if mode not in [3, 4]:
+        if preset not in [3, 4]:
             for _ in range(len(colours_to_replace)):
                 text = text.replace(colours_alt[_], colours_to_replace[_])
 
-        if mode == 1: return colour_one + text + reset
-        elif mode == 2: return red + text + reset
-        elif mode == 3 or mode == 4: return text + reset
+        if preset == 1: return colour_one + text + reset
+        elif preset == 2: return red + text + reset
+        elif preset == 3 or preset == 4: return text + reset
     
     except: sys.exit(clr(err(sys.exc_info()),2))
 
@@ -456,11 +459,21 @@ def align(text: str) -> str:
     
     from shutil import get_terminal_size
 
-    width = get_terminal_size().columns; aligned = text
-    for colour in vars(Fore).values(): aligned = aligned.replace(colour,'')
-    for style in vars(Style).values(): aligned = aligned.replace(style,'')
-    text = text.split('\n'); aligned = aligned.split('\n')
-    for _ in range(len(aligned)): aligned[_] = aligned[_].center(width).replace(aligned[_],text[_])
+    width = get_terminal_size().columns
+    aligned = text
+    
+    for colour in vars(Fore).values():
+        aligned = aligned.replace(colour,'')
+    
+    for style in vars(Style).values():
+        aligned = aligned.replace(style,'')
+    
+    text = text.split('\n')
+    aligned = aligned.split('\n')
+    
+    for _ in range(len(aligned)):
+        aligned[_] = aligned[_].center(width).replace(aligned[_],text[_])
+
     return str('\n'.join(aligned) + reset)
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -476,7 +489,7 @@ def fade(text: str, colour: str = "purple") -> str:
 
     try:
         colour = colour.lower()
-        if not colour in available_colours: raise ValueError(clr(f"\n  > Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}",2))
+        if not colour in available_colours: raise ValueError(f"Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}")
             
         faded = ""
         if len(text.splitlines()) > 1: multi_line = True
@@ -603,7 +616,7 @@ def fade(text: str, colour: str = "purple") -> str:
                     faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
                 if multi_line: faded += "\n"
         
-        else: raise ValueError(clr(f"\n  > FADE ERROR! - [{colour}] is not supported yet!",2))
+        else: raise ValueError(f"Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}")
         
         if multi_line: faded = faded[:-1]
         return faded
@@ -858,28 +871,34 @@ def file_selector(title: str = "Open", icon_path: str = "") -> str:
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def get_path(name: str) -> str:
+def get_path(location: str) -> str:
     
     """
     Returns path from registry
     - Supports: Desktop / Documents / Favorites / Pictures / Videos / Music
     """
     
-    import os
-    import winreg
+    try:
     
-    if name in ["Desktop", "Documents", "Favorites", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music"]:
+        import os
+        import winreg
         
-        if name == "Documents": name = "Personal"
-        elif name == "Pictures": name = "My Pictures"
-        elif name == "Videos": name = "My Video"
-        elif name == "Music": name = "My Music"
+        valid_locations = ["Desktop", "Documents", "Favorites", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music"]
+        
+        if location in valid_locations:
+            
+            if location == "Documents": location = "Personal"
+            elif location == "Pictures": location = "My Pictures"
+            elif location == "Videos": location = "My Video"
+            elif location == "Music": location = "My Music"
 
-        key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", access=winreg.KEY_READ)
-        path = os.path.expandvars(winreg.QueryValueEx(key, name)[0])
-        return path
-    
-    else: raise ValueError("Invalid name")
+            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", access=winreg.KEY_READ)
+            path = os.path.expandvars(winreg.QueryValueEx(key, location)[0])
+            return path
+        
+        else: raise ValueError(f"Invalid location: {location} | Valid locations: {', '.join(valid_locations)}")
+
+    except: sys.exit(clr(err(sys.exc_info()),2))
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
