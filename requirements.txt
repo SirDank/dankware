@@ -1,5 +1,4 @@
-build
-twine
-requests
-colorama
 rich
+colorama
+requests
+pillow
