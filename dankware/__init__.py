@@ -16,6 +16,7 @@ from datetime import datetime
 from colorama import Fore, Style
 
 # colorama colours
+reset = Style.RESET_ALL
 
 black = Fore.BLACK + Style.BRIGHT
 blue = Fore.BLUE + Style.BRIGHT
@@ -23,9 +24,17 @@ cyan = Fore.CYAN + Style.BRIGHT
 green = Fore.GREEN + Style.BRIGHT
 magenta = Fore.MAGENTA + Style.BRIGHT
 red = Fore.RED + Style.BRIGHT
-reset = Style.RESET_ALL
 white = Fore.WHITE + Style.BRIGHT
 yellow = Fore.YELLOW + Style.BRIGHT
+
+black_normal = Fore.BLACK + Style.NORMAL
+blue_normal = Fore.BLUE + Style.NORMAL
+cyan_normal = Fore.CYAN + Style.NORMAL
+green_normal = Fore.GREEN + Style.NORMAL
+magenta_normal = Fore.MAGENTA + Style.NORMAL
+red_normal = Fore.RED + Style.NORMAL
+white_normal = Fore.WHITE + Style.NORMAL
+yellow_normal = Fore.YELLOW + Style.NORMAL
 
 black_dim = Fore.BLACK + Style.DIM
 blue_dim = Fore.BLUE + Style.DIM
@@ -375,7 +384,7 @@ def clr(text: str, preset: int = 1, colour_one: str = white, colour_two: str = r
     ___________________________________________
 
     - preset: 4 | to display banners
-    - text & spl = random / (colours inside list)
+    - text & spl = random (default) / colours inside input list
     
     """
     
@@ -862,7 +871,7 @@ def hide_window_for(duration: int = 3) -> None:
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def file_selector(title: str = "Open", icon_path: str = "") -> str:
+def file_selector(title: str = "Select File", icon_path: str = "") -> str:
     
     """
     Opens file selector and returns selected file path
@@ -878,6 +887,23 @@ def file_selector(title: str = "Open", icon_path: str = "") -> str:
     file_path = askopenfilename(title=title)
     return file_path.replace("/", "\\")
 
+def folder_selector(title: str = "Select Folder", icon_path: str = "") -> str:
+
+    """
+    Opens folder selector and returns selected folder path
+    - Allows custom title and icon
+    """
+
+    from tkinter import Tk
+    from tkinter.filedialog import askdirectory
+
+    root = Tk()
+    root.withdraw()
+    if icon_path:
+        root.iconbitmap(icon_path)
+    folder_path = askdirectory(title=title)
+    return folder_path.replace("/", "\\")
+
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def get_path(location: str) -> str:
@@ -892,7 +918,7 @@ def get_path(location: str) -> str:
         import os
         import winreg
         
-        valid_locations = ["Desktop", "Documents", "Favorites", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music"]
+        valid_locations = ["AppData", "Desktop", "Documents", "Personal", "Favorites", "Local AppData", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music"]
         
         if location in valid_locations:
             
@@ -942,22 +968,6 @@ def rm_line() -> None:
     from shutil import get_terminal_size
 
     print("\033[A" + " " * (get_terminal_size().columns - 6) + "\033[A")
-
-# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-def chdir(mode: str) -> str:
-    
-    """
-    - running "os.chdir(os.path.dirname(__file__))" inside example.py will change its directory to the example.py file's location
-    - running "os.chdir(os.path.dirname(sys.argv[0]))" inside example.exe will change its directory to the example.exe file's location (nuitka)
-    - for changing directory to exe's path as exe: exec(chdir("exe"))
-    - for changing directory to script's path as script: exec(chdir("script"))
-    - [NOTE] When I build executables, the [ exec_mode = "script" ] is automatically replaced with [ exec_mode = "exe" ] inside the script
-    - [NOTE] If you run "os.chdir(os.path.dirname(__file__))" as an executable, it will change its directory to its temp folder [ C:\\Users\\user\\AppData\\Local\\Temp\\dankware_PPID ]
-    """
-
-    if mode == "script": return "os.chdir(os.path.dirname(__file__))" # as .py
-    elif mode == "exe": return "os.chdir(os.path.dirname(sys.argv[0]))" # as .exe
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

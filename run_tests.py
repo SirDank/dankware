@@ -167,7 +167,7 @@ def main():
     
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
     
-    print(clr("\n  > Is this a randomly coloured string (magenta,white,red): TRUE | As you can see it does not colour True/False",3,colours=[magenta,white,red]))
+    print(clr("\n  > This is a randomly coloured string based on the input colours!",3,colours=[white, white_normal, white_dim, red, red_normal, red_dim]))
     
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
     

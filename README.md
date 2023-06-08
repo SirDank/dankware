@@ -112,10 +112,12 @@ export_registry_keys(registry_root, registry_path, recursive=True, export_path=e
 # 🚨 Splash Screen 🚨
 
 ```py
-from dankware import splash_screen
+from dankware import splash_screen, hide_window, show_window
 # Supports: GIFs / PNGs / JPGs / BMPs / ICOs
-splash_screen("D:\\splash.gif", duration=5)
-# runs on main thread
+
+# hide_window()
+splash_screen("D:\\splash.gif", duration=5) # runs on main thread
+# show_window()
 ```
 
 ```py
@@ -173,23 +175,48 @@ print(random_ip())
 
 ---  
 
+# 🚨 Get Path 🚨
+
+```py
+from dankware import file_selector
+path = file_selector() # opens file explorer to select a file
+print(path)
+```
+
+```py
+from dankware import folder_selector
+path = folder_selector() # opens file explorer to select a folder
+print(path)
+```
+
+```py
+from dankware import get_path
+for location in ["AppData", "Desktop", "Documents", "Personal", "Favorites", "Local AppData", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music"]:
+    path = get_path(location) # extracts path from registry
+    print(path)
+```
+
+<p>&nbsp;</p>    
+
+---  
+
 # 🚨 Colour Special Characters 🚨
 
 ```py
 from dankware import clr
-# default mode = 1
+# default preset = 1
 # default colour_one = white
-# default colour_two = magenta
+# default colour_two = red
 print(clr("\n  > Hey! Long time no see :)"))
-#print(clr("\n  > Hey! Long time no see :)", colour_one = white, colour_two = magenta))
+#print(clr("\n  > Hey! Long time no see :)", colour_one = white, colour_two = red))
 ```
-<img width="350" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153749617-bb0483fe-0385-490b-8695-72f448300c39.png"><br>
+<img width="350" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/f8cd517e-c3df-4038-a1b1-df16f9d6ab8c"><br>
 
 ```py
 from dankware import clr, white, magenta
-# default mode = 1
-# default colour_one = white
-# default colour_two = magenta
+# default preset = 1
+# default colour_one = magenta
+# default colour_two = white
 print(clr("\n  > Hey! Long time no see :)", colour_one = magenta, colour_two = white))
 ```
 <img width="350" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/220981909-d6361e6a-d109-447a-8401-85e2813e7859.png"><br>
@@ -198,7 +225,7 @@ print(clr("\n  > Hey! Long time no see :)", colour_one = magenta, colour_two = w
 from dankware import clr
 print(clr("\n  This is a string: True | This is an integer: False"))
 ```
-<img width="350" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153749921-3332f3e6-eaa8-4bf1-ab4d-3fe35d245492.png"><br>
+<img width="350" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/5bab7947-ffd1-49a9-b10b-dce31acf65fb"><br>
 
 ```py
 from dankware import clr, green, magenta
@@ -210,17 +237,24 @@ print(clr(f"\n  > {magenta}Purple{white} thinks he's better than everyone else :
 
 ```py
 from dankware import clr
-# mode = 2
-print(clr("\n  > Error in sector [7] redirecting... | INTEGRITY_CHECK_SUCCESS: TRUE",2))
+# preset = 2
+print(clr("\n  > Error in sector [7] redirecting... | INTEGRITY_CHECK: SUCCESS",2))
 ```
-<img width="500" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153749821-ae3e4dfd-26dc-4e08-a06e-677ac26457a1.png"><br>
+<img width="500" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/4824a90f-411c-4e1d-b81c-a99dd2c6b815"><br>
 
 ```py
 from dankware import clr
-# mode = 3
+# preset = 3
 print(clr("\n  > Is this a randomly coloured string: TRUE | As you can see it does not colour True/False",3))
 ```
 <img width="650" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/155293415-7b065b5a-44dd-4fe7-995d-a25582f904cb.png"><br>
+
+```py
+from dankware import clr, white, white_normal, white_dim, red, red_normal, red_dim
+# preset = 3
+print(clr("\n  > This is a randomly coloured string based on the input colours!",3,colours=[white, white_normal, white_dim, red, red_normal, red_dim]))
+```
+<img width="650" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/1ef2e6b1-0597-494a-8b84-e20efee48415"><br>
 
 <p>&nbsp;</p>    
 
@@ -246,7 +280,7 @@ Y88b 888 888  888 888  888 888 "88b Y88b 888 d88P 888  888 888    Y8b.
 ## ♦️ Colourize Banner (random) ♦️
 ```py
 from dankware import clr
-# mode = 4
+# preset = 4
 print(clr(banner,4))
 ```
 <img width="550" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153722086-2f372bfa-4872-46a0-81f8-cdf7c2344fd6.png"><br>
