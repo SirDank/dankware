@@ -420,19 +420,19 @@ print(fade(banner, "random"))
 
 ## ♦️ Style 1 ♦️
 
-<br><p align="center"><img width="700" alt="image" src="__wallpapers__/1.png"></p><br>
+<br><p align="center"><img width="700" alt="image" src="https://github.com/SirDank/dankware/raw/main/__wallpapers__/1.png"></p><br>
 
 ## ♦️ Style 2 ♦️
 
-<br><p align="center"><img width="700" alt="image" src="__wallpapers__/2.jpg"></p><br>
+<br><p align="center"><img width="700" alt="image" src="https://github.com/SirDank/dankware/raw/main/__wallpapers__/2.jpg"></p><br>
 
 ## ♦️ Style 3 ♦️
 
-<br><p align="center"><img width="700" alt="image" src="__wallpapers__/3.png"></p><br>
+<br><p align="center"><img width="700" alt="image" src="https://github.com/SirDank/dankware/raw/main/__wallpapers__/3.png"></p><br>
 
 ## ♦️ Style 4 ♦️
 
-<br><p align="center"><img width="700" alt="image" src="__wallpapers__/4.png"></p><br>
+<br><p align="center"><img width="700" alt="image" src="https://github.com/SirDank/dankware/raw/main/__wallpapers__/4.png"></p><br>
 
 <p>&nbsp;</p>
 
