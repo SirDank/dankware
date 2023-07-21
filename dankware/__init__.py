@@ -13,7 +13,9 @@ import sys
 import time
 import random
 from datetime import datetime
-from colorama import Fore, Style
+from colorama import Fore, Style, init
+
+init(autoreset=True)
 
 # colorama colours
 reset = Style.RESET_ALL
@@ -776,7 +778,10 @@ def splash_screen(img_path: str, duration: int = 3) -> None:
     """
     
     import tkinter as tk
-    from PIL import Image, ImageTk
+    try:
+        from PIL import Image, ImageTk
+    except:
+        raise ImportError("Pillow is not installed! Run 'pip install pillow' to install it!")
     
     class SplashScreen(tk.Toplevel):
 

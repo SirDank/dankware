@@ -4,7 +4,7 @@ setup(
 
     license = "MIT",
     name = "dankware",
-    version = "3.4",
+    version = "3.4.1",
     author = "SirDank",
     
     author_email = "SirDankenstein@protonmail.com",
@@ -50,6 +50,5 @@ setup(
         "rich",
         "colorama",
         "requests",
-        "pillow",
     ],
 )
