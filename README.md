@@ -331,8 +331,8 @@ print(fade(banner, "black2white"))
 print(fade(banner, "black2white-v"))
 ```
 <p align="left">
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153722811-b257611e-9111-4a0e-92fb-7dbe503ce6db.png" />
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723205-a91eb1c6-07bc-4bc6-9fa6-52231e50a25c.png" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/9cd7e49c-fb2a-4973-87a9-6bfae1967db3" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/ed997994-8cce-47dd-bd8e-9db8293606ea" />
 </p>
 
 ## ♦️ Yellow To Red ♦️
@@ -341,8 +341,8 @@ print(fade(banner, "yellow2red"))
 print(fade(banner, "yellow2red-v"))
 ```
 <p align="left">
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153722946-3221bfd8-ff9d-4c9d-8b70-0c2736ec4e30.png" />
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723473-bdb75ea7-2df2-4f70-adb5-cf5caa57200a.png" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/c92aed4e-a883-44c8-a9cc-c7916fae9b18" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/c9f07d49-3d7b-4213-addd-51d5af46fa87" />
 </p>
 
 ## ♦️ Green To Yellow ♦️
@@ -351,8 +351,8 @@ print(fade(banner, "green2yellow"))
 print(fade(banner, "green2yellow-v"))
 ```
 <p align="left">
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723050-c30bd3f1-989a-4141-b40a-2869a2dadef6.png" />
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723481-2e5c21b2-0f12-4d99-ab8d-a3e5c40e4c16.png" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/4d6e9eed-7f51-46fe-9188-48adcb20d7c9" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/8c6c1c6a-fbcc-4170-a527-1b8856d1d1c1" />
 </p>
 
 ## ♦️ Green To Cyan ♦️
@@ -361,8 +361,8 @@ print(fade(banner, "green2cyan"))
 print(fade(banner, "green2cyan-v"))
 ```
 <p align="left">
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723059-b4808365-6006-4726-b427-b6848e0fc0e5.png" />
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723496-8d03c5d3-601e-499d-80cd-51c3648957bf.png" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/5565e166-767a-4cb6-ba5a-a090b0348bc7" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/92252aaa-ad8f-42d9-93da-7e2926f69408" />
 </p>
 
 ## ♦️ Blue To Cyan ♦️
@@ -371,8 +371,8 @@ print(fade(banner, "blue2cyan"))
 print(fade(banner, "blue2cyan-v"))
 ```
 <p align="left">
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723092-0a32d8e6-680e-4df3-bdf1-089663f25f45.png" />
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723509-41732010-b7d5-4867-95f9-690d47322536.png" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/49a6b5ee-1d23-44bb-908f-9515ff2877ca" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/6011a3ae-0922-4b4c-9ca8-33384293188c" />
 </p>
 
 ## ♦️ Blue To Pink ♦️
@@ -381,8 +381,8 @@ print(fade(banner, "blue2pink"))
 print(fade(banner, "blue2pink-v"))
 ```
 <p align="left">
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723148-2c94c459-1441-4752-a11f-a547754da7bc.png" />
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723519-00aa980e-4a04-4d8d-a319-5691c1f8e517.png" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/ce5e798a-f6b9-408f-800c-980b8079caba" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/2f4fa5d0-121b-46a0-992f-457c7e404ecc" />
 </p>
 
 ## ♦️ Pink To Red ♦️
@@ -391,8 +391,8 @@ print(fade(banner, "pink2red"))
 print(fade(banner, "pink2red-v"))
 ```
 <p align="left">
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723540-b324dfe1-5ae2-4b66-ad3a-546a589558c8.png" />
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723540-b324dfe1-5ae2-4b66-ad3a-546a589558c8.png" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/7063ec77-16a9-42f0-9f46-3bc9284e4397" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/46ff4976-8c2a-491b-b4a5-979aab2f7a6a" />
 </p>
 
 ## ♦️ Random ♦️
