@@ -284,5 +284,9 @@ Y8b d88P
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
     
     print(fade(banner, "pink2red-v"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade("\n  > This is a test string!", "pink2red"))
 
 if __name__ == "__main__": main()
