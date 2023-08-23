@@ -325,71 +325,73 @@ Y8b d88P
 '''
 ```
 
-## ♦️ Black ♦️
+## ♦️ Black To White ♦️
 ```py
-print(fade(banner, "black"))
-print(fade(banner, "black-v"))
+print(fade(banner, "black2white"))
+print(fade(banner, "black2white-v"))
 ```
 <p align="left">
   <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153722811-b257611e-9111-4a0e-92fb-7dbe503ce6db.png" />
   <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723205-a91eb1c6-07bc-4bc6-9fa6-52231e50a25c.png" />
 </p>
 
-## ♦️ Red ♦️
+## ♦️ Yellow To Red ♦️
 ```py
-print(fade(banner, "red"))
-print(fade(banner, "red-v"))
+print(fade(banner, "yellow2red"))
+print(fade(banner, "yellow2red-v"))
 ```
 <p align="left">
   <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153722946-3221bfd8-ff9d-4c9d-8b70-0c2736ec4e30.png" />
   <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723473-bdb75ea7-2df2-4f70-adb5-cf5caa57200a.png" />
 </p>
 
-## ♦️ Green ♦️
+## ♦️ Green To Yellow ♦️
 ```py
-print(fade(banner, "green"))
-print(fade(banner, "green-v"))
+print(fade(banner, "green2yellow"))
+print(fade(banner, "green2yellow-v"))
 ```
 <p align="left">
   <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723050-c30bd3f1-989a-4141-b40a-2869a2dadef6.png" />
   <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723481-2e5c21b2-0f12-4d99-ab8d-a3e5c40e4c16.png" />
 </p>
 
-## ♦️ Cyan ♦️
+## ♦️ Green To Cyan ♦️
 ```py
-print(fade(banner, "cyan"))
-print(fade(banner, "cyan-v"))
+print(fade(banner, "green2cyan"))
+print(fade(banner, "green2cyan-v"))
 ```
 <p align="left">
   <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723059-b4808365-6006-4726-b427-b6848e0fc0e5.png" />
   <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723496-8d03c5d3-601e-499d-80cd-51c3648957bf.png" />
 </p>
 
-## ♦️ Blue ♦️
+## ♦️ Blue To Cyan ♦️
 ```py
-print(fade(banner, "blue"))
-print(fade(banner, "blue-v"))
+print(fade(banner, "blue2cyan"))
+print(fade(banner, "blue2cyan-v"))
 ```
 <p align="left">
   <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723092-0a32d8e6-680e-4df3-bdf1-089663f25f45.png" />
   <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723509-41732010-b7d5-4867-95f9-690d47322536.png" />
 </p>
 
-## ♦️ Purple ♦️
+## ♦️ Blue To Pink ♦️
 ```py
-print(fade(banner, "purple"))
-print(fade(banner, "purple-v"))
+print(fade(banner, "blue2pink"))
+print(fade(banner, "blue2pink-v"))
 ```
 <p align="left">
   <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723148-2c94c459-1441-4752-a11f-a547754da7bc.png" />
   <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723519-00aa980e-4a04-4d8d-a319-5691c1f8e517.png" />
 </p>
 
-## ♦️ Pink ♦️
+## ♦️ Pink To Red ♦️
 ```py
-print(fade(banner, "pink-v"))
+print(fade(banner, "pink2red"))
+print(fade(banner, "pink2red-v"))
 ```
 <p align="left">
+  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723540-b324dfe1-5ae2-4b66-ad3a-546a589558c8.png" />
   <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723540-b324dfe1-5ae2-4b66-ad3a-546a589558c8.png" />
 </p>
 

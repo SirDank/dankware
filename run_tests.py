@@ -130,6 +130,11 @@ def main():
     except: print(clr(err(sys.exc_info()), 2))
     
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    try: value = 1/0
+    except: print(clr(err(sys.exc_info(),"mini"), 2))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     for url in github_downloads("EssentialsX/Essentials"): print(url)
     
@@ -221,58 +226,63 @@ Y8b d88P
 
 
 '''
-    print(fade(banner, "black"))
-    
-    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
-    
-    print(fade(banner, "black-v"))
-    
-    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
-    
-    print(fade(banner, "red"))
-    
-    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
-    
-    print(fade(banner, "red-v"))
-    
-    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
-    
-    print(fade(banner, "green"))
-    
-    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
-    
-    print(fade(banner, "green-v"))
-    
-    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
-    
-    print(fade(banner, "cyan"))
-    
-    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
-    
-    print(fade(banner, "cyan-v"))
-    
-    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
-    
-    print(fade(banner, "blue"))
-    
-    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
-    
-    print(fade(banner, "blue-v"))
-    
-    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
-    
-    print(fade(banner, "purple"))
-    
-    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
-    
-    print(fade(banner, "purple-v"))
-    
-    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
-    
-    print(fade(banner, "pink-v"))
-    
-    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
-    
+
     print(fade(banner, "random"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+
+    print(fade(banner, "black2white"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade(banner, "black2white-v"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade(banner, "yellow2red"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade(banner, "yellow2red-v"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade(banner, "green2yellow"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade(banner, "green2yellow-v"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade(banner, "green2cyan"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade(banner, "green2cyan-v"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade(banner, "blue2cyan"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade(banner, "blue2cyan-v"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade(banner, "blue2pink"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade(banner, "blue2pink-v"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade(banner, "pink2red"))
+    
+    COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+    
+    print(fade(banner, "pink2red-v"))
 
 if __name__ == "__main__": main()

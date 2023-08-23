@@ -70,7 +70,7 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
     from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn, TimeElapsedColumn
     
     def submit_task(executor, *args):
-            return executor.submit(function, *args)
+        return executor.submit(function, *args)
 
     try:
         
@@ -81,7 +81,8 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
         executor = ThreadPoolExecutor(max_workers=threads)
 
         if not args:
-            for _ in range(threads): futures.append(executor.submit(function))
+            for _ in range(threads):
+                futures.append(executor.submit(function))
         else:
             input_lists = []
             for arg in args:
@@ -141,8 +142,6 @@ def github_downloads(user_repo: str) -> list:
     
     import requests
 
-    #if "https://api.github.com/repos/" not in url or "/releases/latest" not in url:
-    #    raise ValueError(clr('  > Invalid url! Must follow: "https://api.github.com/repos/NAME/NAME/releases/latest"',2)) 
     while True:
         try: response = requests.get(f"https://api.github.com/repos/{user_repo}/releases/latest").json(); break
         except: input(clr("  > Make sure you are connected to the Internet! Press [ENTER] to try again... ",2))
@@ -498,14 +497,56 @@ def align(text: str) -> str:
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def fade(text: str, colour: str = "purple") -> str:
+def fade(text: str, colour: str = "pink2red") -> str:
     
     """
     credits to https://github.com/venaxyt/gratient & https://github.com/venaxyt/fade <3
-    - available_colours = black, red, green, cyan, blue, purple, random, black-v, red-v, green-v, cyan-v, blue-v, purple-v, pink-v
+    - available_colours: [
+        random,
+        black2white,
+        black2white-v,
+        yellow2red,
+        yellow2red-v,
+        green2yellow,
+        green2yellow-v,
+        green2cyan,
+        green2cyan-v,
+        blue2cyan,
+        blue2cyan-v,
+        blue2pink,
+        blue2pink-v,
+        pink2red,
+        pink2red-v,
+    ]
+    
+    __________________________________________
+
+    [ EXAMPLE ]
+
+    ```python
+    from dankware import fade
+    # define banner
+    print(fade(banner,"pink2red-v"))
+    ```
     """
     
-    available_colours = ['black','red','green','cyan','blue','purple','random','black-v','red-v','green-v','cyan-v','blue-v','purple-v','pink-v']
+    available_colours = [
+        "random",
+        "black2white",
+        "black2white-v",
+        "yellow2red",
+        "yellow2red-v",
+        "green2yellow",
+        "green2yellow-v",
+        "green2cyan",
+        "green2cyan-v",
+        "blue2cyan",
+        "blue2cyan-v",
+        "blue2pink",
+        "blue2pink-v",
+        "pink2red",
+        "pink2red-v",
+    ]
 
     try:
         colour = colour.lower()
@@ -514,135 +555,180 @@ def fade(text: str, colour: str = "purple") -> str:
         faded = ""
         if len(text.splitlines()) > 1: multi_line = True
         else: multi_line = False
-
-        if colour == "black":
-            for line in text.splitlines():
-                R = 0; G = 0; B = 0
-                for char in line:
-                    R += 3; G += 3; B += 3
-                    if R > 255 and G > 255 and B > 255: R = 255; G = 255; B = 255
-                    faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
-                if multi_line: faded += "\n"
-                
-        elif colour == "red":
-            for line in text.splitlines():
-                G = 250
-                for char in line:
-                    G -= 5
-                    if G < 0: G = 0
-                    faded += f"\033[38;2;255;{G};0m{char}\033[0m"
-                if multi_line: faded += "\n"
-                
-        elif colour == "green":
-            for line in text.splitlines():
-                R = 0
-                for char in line:
-                    if not R > 200: R += 3
-                    faded += f"\033[38;2;{R};255;0m{char}\033[0m"
-                if multi_line: faded += "\n"
-                
-        elif colour == "cyan":
-            for line in text.splitlines():
-                B = 100
-                for char in line:
-                    B += 2
-                    if B > 255: B = 255
-                    faded += f"\033[38;2;0;255;{B}m{char}\033[0m"
-                if multi_line: faded += "\n"
-
-        elif colour == "blue":
-            for line in text.splitlines():
-                G = 0
-                for char in line:
-                    G += 3
-                    if G > 255: G = 255
-                    faded += f"\033[38;2;0;{G};255m{char}\033[0m"
-                if multi_line: faded += "\n"
-            
-        elif colour == "purple":
-            for line in text.splitlines():
-                R = 35
-                for char in line:
-                    R += 3
-                    if R > 255: R = 255
-                    faded += f"\033[38;2;{R};0;220m{char}\033[0m"
-                if multi_line: faded += "\n"
-
-        elif colour == "black-v":
-            R = 0; G = 0; B = 0
-            for line in text.splitlines():
-                faded += (f"\033[38;2;{R};{G};{B}m{line}\033[0m")
-                if not R == 255 and not G == 255 and not B == 255:
-                    R += 20; G += 20; B += 20
-                    if R > 255 and G > 255 and B > 255: R = 255; G = 255; B = 255
-                if multi_line: faded += "\n"
-                        
-        elif colour == "red-v":
-            G = 250
-            for line in text.splitlines():
-                faded += f"\033[38;2;255;{G};0m{line}\033[0m"
-                if not G == 0:
-                    G -= 25
-                    if G < 0: G = 0
-                if multi_line:faded += "\n"
-
-        elif colour == "green-v":
-            R = 0
-            for line in text.splitlines():
-                faded += f"\033[38;2;{R};255;0m{line}\033[0m"
-                if not R > 200: R += 30
-                if multi_line: faded += "\n"
-            
-        elif colour == "cyan-v":
-            B = 100
-            for line in text.splitlines():
-                faded += f"\033[38;2;0;255;{B}m{line}\033[0m"
-                if not B == 255:
-                    B += 15
-                    if B > 255: B = 255
-                if multi_line: faded += "\n"
-            
-        elif colour == "blue-v":
-            G = 10
-            for line in text.splitlines():
-                faded += f"\033[38;2;0;{G};255m{line}\033[0m"
-                if not G == 255:
-                    G += 15
-                    if G > 255: G = 255
-                if multi_line: faded += "\n"
-            
-        elif colour == "purple-v":
-            R = 40
-            for line in text.splitlines():
-                faded += f"\033[38;2;{R};0;220m{line}\033[0m"
-                if not R == 255:
-                    R += 15
-                    if R > 255: R = 255
-                if multi_line: faded += "\n"
-            
-        elif colour == "pink-v":
-            B = 255
-            for line in text.splitlines():
-                faded += f"\033[38;2;255;0;{B}m{line}\033[0m"
-                if not B == 0:
-                    B -= 20
-                    if B < 0: B = 0
-                if multi_line: faded += "\n"
-
-        elif colour == "random":
+        
+        if colour == "random":
             for line in text.splitlines():
                 for char in line:
                     R, G, B = random.randint(0,255), random.randint(0,255), random.randint(0,255)
                     faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
                 if multi_line: faded += "\n"
+
+        elif colour == "black2white":
+            for line in text.splitlines():
+                R = 0; G = 0; B = 0
+                shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                for char in line:
+                    if not R == 255 and not G == 255 and not B == 255:
+                        R += shift; G += shift; B += shift
+                        if R > 255 and G > 255 and B > 255:
+                            R = 255; G = 255; B = 255
+                    faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
+                if multi_line: faded += "\n"
+                
+        elif colour == "black2white-v":
+            R = 0; G = 0; B = 0
+            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+            for line in text.splitlines():
+                faded += (f"\033[38;2;{R};{G};{B}m{line}\033[0m")
+                if not R == 255 and not G == 255 and not B == 255:
+                    R += shift; G += shift; B += shift
+                    if R > 255 and G > 255 and B > 255:
+                        R = 255; G = 255; B = 255
+                if multi_line: faded += "\n"
+     
+        elif colour == "yellow2red":
+            for line in text.splitlines():
+                G = 255
+                shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                for char in line:
+                    if not G == 0:
+                        G -= shift
+                        if G < 0:
+                            G = 0
+                    faded += f"\033[38;2;255;{G};0m{char}\033[0m"
+                if multi_line: faded += "\n"
         
+        elif colour == "yellow2red-v":
+            G = 255
+            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+            for line in text.splitlines():
+                faded += f"\033[38;2;255;{G};0m{line}\033[0m"
+                if not G == 0:
+                    G -= shift
+                    if G < 0:
+                        G = 0
+                if multi_line:faded += "\n"
+                
+        elif colour == "green2yellow":
+            for line in text.splitlines():
+                R = 0
+                shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                for char in line:
+                    if not R == 255:
+                        R += shift
+                        if R > 255:
+                            R = 255
+                    faded += f"\033[38;2;{R};255;0m{char}\033[0m"
+                if multi_line: faded += "\n"
+        
+        elif colour == "green2yellow-v":
+            R = 0
+            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+            for line in text.splitlines():
+                faded += f"\033[38;2;{R};255;0m{line}\033[0m"
+                if not R == 255:
+                    R += shift
+                    if R > 255:
+                        R = 255
+                if multi_line: faded += "\n"
+                
+        elif colour == "green2cyan":
+            for line in text.splitlines():
+                B = 100
+                shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                for char in line:
+                    if not B == 255:
+                        B += shift
+                        if B > 255:
+                            B = 255
+                    faded += f"\033[38;2;0;255;{B}m{char}\033[0m"
+                if multi_line: faded += "\n"
+        
+        elif colour == "green2cyan-v":
+            B = 100
+            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+            for line in text.splitlines():
+                faded += f"\033[38;2;0;255;{B}m{line}\033[0m"
+                if not B == 255:
+                    B += shift
+                    if B > 255:
+                        B = 255
+                if multi_line: faded += "\n"
+
+        elif colour == "blue2cyan":
+            for line in text.splitlines():
+                G = 0
+                shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                for char in line:
+                    if not G == 255:
+                        G += shift
+                        if G > 255:
+                            G = 255
+                    faded += f"\033[38;2;0;{G};255m{char}\033[0m"
+                if multi_line: faded += "\n"
+                
+        elif colour == "blue2cyan-v":
+            G = 10
+            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+            for line in text.splitlines():
+                faded += f"\033[38;2;0;{G};255m{line}\033[0m"
+                if not G == 255:
+                    G += shift
+                    if G > 255:
+                        G = 255
+                if multi_line: faded += "\n"
+            
+        elif colour == "blue2pink":
+            for line in text.splitlines():
+                R = 35
+                shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                for char in line:
+                    if not R == 255:
+                        R += shift
+                        if R > 255:
+                            R = 255
+                    faded += f"\033[38;2;{R};0;220m{char}\033[0m"
+                if multi_line: faded += "\n"
+                
+        elif colour == "blue2pink-v":
+            R = 40
+            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+            for line in text.splitlines():
+                faded += f"\033[38;2;{R};0;220m{line}\033[0m"
+                if not R == 255:
+                    R += shift
+                    if R > 255:
+                        R = 255
+                if multi_line: faded += "\n"
+ 
+        elif colour == "pink2red":
+            for line in text.splitlines():
+                B = 255
+                shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                for char in line:
+                    faded += f"\033[38;2;255;0;{B}m{char}\033[0m"
+                    if not B == 0:
+                        B -= shift
+                        if B < 0:
+                            B = 0
+                if multi_line: faded += "\n"
+            
+        elif colour == "pink2red-v":
+            B = 255
+            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+            for line in text.splitlines():
+                faded += f"\033[38;2;255;0;{B}m{line}\033[0m"
+                if not B == 0:
+                    B -= shift
+                    if B < 0: B = 0
+                if multi_line: faded += "\n"
+
         else: raise ValueError(f"Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}")
         
         if multi_line: faded = faded[:-1]
         return faded
 
     except: sys.exit(clr(err(sys.exc_info()),2))
-
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def get_duration(then: datetime, now: datetime = None, interval = "default"):
@@ -723,7 +809,7 @@ def get_duration(then: datetime, now: datetime = None, interval = "default"):
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def err(exc_info) -> str:
+def err(exc_info, mode = "default") -> str:
     
     """
     Returns a short traceback
@@ -735,8 +821,11 @@ def err(exc_info) -> str:
     ```python
     import sys
     from dankware import err, clr
-    try: value = 1/0
-    except: print(clr(err(sys.exc_info()),2))
+    
+    try:
+        value = 1/0
+    except:
+        print(clr(err(sys.exc_info()),2))
     ```
     """
     
@@ -744,18 +833,36 @@ def err(exc_info) -> str:
 
     ex_type, ex_value, ex_traceback = exc_info
     trace_back = extract_tb(ex_traceback)
-    stack_trace = []
+    
+    if mode == "default":
+    
+        stack_trace = []
 
-    for trace in trace_back:
-        filename = trace[0]
-        if filename == "<string>": filename = str(__name__)
-        #elif filename.endswith(".pyc"): filename = filename[:-1]
-        #elif filename.endswith("$py.class"): filename = filename[:-9] + ".py"
-        stack_trace.append("    - File: {} | Line: {} | Function: {}{}".format(filename, trace[1], trace[2] if trace[2] != '<module>' else 'top-level', ' | ' + trace[3] if trace[3] else ''))
+        for trace in trace_back:
+            filename = trace[0]
+            if filename == "<string>": filename = str(__name__)
+            elif filename.endswith(".pyc"): filename = filename[:-1]
+            elif filename.endswith("$py.class"): filename = filename[:-9] + ".py"
+            stack_trace.append("    - File: {} | Line: {} | Function: {}{}".format(filename, trace[1], trace[2] if trace[2] != '<module>' else 'top-level', ' | ' + trace[3] if trace[3] else ''))
 
-    report = "  > Error Type: {}".format(ex_type.__name__)
-    if ex_value: report += "\n  > Error Message: \n    - {}".format(ex_value)
-    report += "\n  > Error Stack Trace: \n{}".format('\n'.join(stack_trace))
+        report = "  > Error Type: {}".format(ex_type.__name__)
+        if ex_value: report += "\n  > Error Message: \n    - {}".format(ex_value)
+        report += "\n  > Error Stack Trace: \n{}".format('\n'.join(stack_trace))
+
+    elif mode == "mini":
+        
+        stack_trace = []
+
+        for trace in trace_back:
+            filename = trace[0]
+            if filename == "<string>": filename = str(__name__)
+            elif filename.endswith(".pyc"): filename = filename[:-1]
+            elif filename.endswith("$py.class"): filename = filename[:-9] + ".py"
+            stack_trace.append("    - {} | {} | {}{}".format(filename, trace[1], trace[2] if trace[2] != '<module>' else 'top-level', ' | ' + trace[3] if trace[3] else ''))
+
+        report = "  > {}".format(ex_type.__name__)
+        if ex_value: report += " | {}".format(ex_value)
+        report += "\n{}".format('\n'.join(stack_trace))
 
     return report
 
