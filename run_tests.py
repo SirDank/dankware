@@ -179,9 +179,9 @@ def main():
     codes = vars(Fore)
     colours = [codes[colour] for colour in codes]
     for colour in colours:
-        print(colour + Style.BRIGHT, "BRIGHT", reset)
-        print(colour + Style.NORMAL, "NORMAL", reset)
-        print(colour + Style.DIM, "DIM", reset)
+        print(colour + Style.BRIGHT + "BRIGHT" + reset)
+        print(colour + Style.NORMAL + "NORMAL" + reset)
+        print(colour + Style.DIM + "DIM" + reset)
     
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
     

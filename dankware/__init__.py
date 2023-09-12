@@ -266,7 +266,7 @@ def random_ip() -> str:
 def is_admin() -> bool:
     
     """
-    Checks if the current user has admin privileges and returns True if found else False
+    Checks if executed with admin privileges and returns True if found else False
     """
     
     import ctypes
@@ -394,15 +394,10 @@ def clr(text: str, preset: int = 1, colour_one: str = white, colour_two: str = r
     words_green = ('true', 'True', 'TRUE', 'online', 'Online', 'ONLINE', 'successfully', 'Successfully', 'SUCCESSFULLY', 'successful', 'Successful', 'SUCCESSFUL', 'success', 'Success', 'SUCCESS')
     words_red = ('falsely', 'Falsely', 'FALSELY', 'false', 'False', 'FALSE', 'offline', 'Offline', 'OFFLINE', 'failures', 'Failures', 'FAILURES', 'failure', 'Failure', 'FAILURE', 'failed', 'Failed', 'FAILED', 'fail', 'Fail', 'FAIL')
     
-    colours_to_replace = [Fore.BLACK, Fore.BLUE, Fore.CYAN, Fore.GREEN, Fore.MAGENTA, Fore.RED, Fore.WHITE, Fore.YELLOW, Style.BRIGHT, Style.RESET_ALL]
-    colours_alt = ["BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW", "BBRIGHTT", "RRESETT"]
-    
-    bad_colours = ('BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET')
+    colours_to_replace = (Fore.BLACK, Fore.BLUE, Fore.CYAN, Fore.GREEN, Fore.MAGENTA, Fore.RED, Fore.WHITE, Fore.YELLOW, Style.BRIGHT, Style.RESET_ALL)
+    colours_alt = ("BBLACKK", "BBLUEE", "CCYANN", "GGREENN", "MMAGENTAA", "RREDD", "WWHITEE", "YYELLOWW", "BBRIGHTT", "RRESETT")
+
     #styles = (Style.BRIGHT, Style.DIM, Style.NORMAL)
-    
-    if colours == []:
-        codes = vars(Fore)
-        colours = [codes[colour] for colour in codes if colour not in bad_colours]
     
     try:
         if preset not in [3, 4]:
@@ -437,14 +432,18 @@ def clr(text: str, preset: int = 1, colour_one: str = white, colour_two: str = r
         
         elif preset in (3, 4):
 
-            text = [_ for _ in text]
+            text = list(text)
             
             if preset == 3: colour_spl = True
             elif preset == 4: colour_spl = False
+            
+            if colours == []:
+                codes = vars(Fore)
+                colours = [codes[colour] for colour in codes if colour not in ('BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET')]
     
             for _ in range(len(text)):
                 char = text[_]
-                if char != ' ' and char != '\n':
+                if char not in (' ', '\n', '\t'):
                     if colour_spl:
                         if char in symbols:
                             text[_] = white + char
@@ -457,7 +456,7 @@ def clr(text: str, preset: int = 1, colour_one: str = white, colour_two: str = r
 
         else: raise ValueError(f"Invalid Preset: {preset} | Valid Presets: 1, 2, 3, 4")
 
-        if preset not in [3, 4]:
+        if preset not in (3, 4):
             for _ in range(len(colours_to_replace)):
                 text = text.replace(colours_alt[_], colours_to_replace[_])
 
@@ -481,14 +480,11 @@ def align(text: str) -> str:
     width = get_terminal_size().columns
     aligned = text
     
-    for colour in vars(Fore).values():
-        aligned = aligned.replace(colour,'')
+    for _ in tuple(vars(Fore).values()) + tuple(vars(Style).values()):
+        aligned = aligned.replace(_,'')
     
-    for style in vars(Style).values():
-        aligned = aligned.replace(style,'')
-    
-    text = text.split('\n')
-    aligned = aligned.split('\n')
+    text = text.splitlines()
+    aligned = aligned.splitlines()
     
     for _ in range(len(aligned)):
         aligned[_] = aligned[_].center(width).replace(aligned[_],text[_])
@@ -530,7 +526,7 @@ def fade(text: str, colour: str = "pink2red") -> str:
     ```
     """
     
-    available_colours = [
+    available_colours = (
         "random",
         "black2white",
         "black2white-v",
@@ -546,7 +542,7 @@ def fade(text: str, colour: str = "pink2red") -> str:
         "blue2pink-v",
         "pink2red",
         "pink2red-v",
-    ]
+    )
 
     try:
         colour = colour.lower()
@@ -912,7 +908,7 @@ def splash_screen(img_path: str, duration: int = 3) -> None:
 
             self.geometry(f"{width}x{height}+{x}+{y}")
 
-            self.canvas = tk.Canvas(self, bg="white", highlightthickness=0)
+            self.canvas = tk.Canvas(self, bg="black", highlightthickness=0)
             self.canvas.pack()
 
         def load_image(self):
@@ -1008,8 +1004,7 @@ def folder_selector(title: str = "Select Folder", icon_path: str = "") -> str:
 
     root = Tk()
     root.withdraw()
-    if icon_path:
-        root.iconbitmap(icon_path)
+    if icon_path: root.iconbitmap(icon_path)
     folder_path = askdirectory(title=title)
     return folder_path.replace("/", "\\")
 
@@ -1027,7 +1022,7 @@ def get_path(location: str) -> str:
         import os
         import winreg
         
-        valid_locations = ["AppData", "Desktop", "Documents", "Personal", "Favorites", "Local AppData", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music"]
+        valid_locations = ("AppData", "Desktop", "Documents", "Personal", "Favorites", "Local AppData", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music")
         
         if location in valid_locations:
             
