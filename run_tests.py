@@ -46,7 +46,7 @@ def main():
     new_list = [1, 2, 3, 4, 5]
 
     def example(num1, num2):
-        print(num1 * num2)
+        print(f"{num1} + {num2} = {num1 + num2}")
         time.sleep(1)
 
     multithread(example, 10, new_list, 5, progress_bar=False)
@@ -140,7 +140,7 @@ def main():
     
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
-    for url in github_file_selector("EssentialsX/Essentials", "remove", ['AntiBuild', 'Discord', 'GeoIP', 'Protect', 'XMPP']): print(url)
+    for url in github_file_selector("EssentialsX/Essentials", "remove", ('AntiBuild', 'Discord', 'GeoIP', 'Protect', 'XMPP')): print(url)
     
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
     
@@ -172,7 +172,7 @@ def main():
     
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
     
-    print(clr("\n  > This is a randomly coloured string based on the input colours!",3,colours=[white, white_normal, white_dim, red, red_normal, red_dim]))
+    print(clr("\n  > This is a randomly coloured string based on the input colours!",3,colours=(white, white_normal, white_dim, red, red_normal, red_dim)))
     
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
     

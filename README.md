@@ -155,7 +155,7 @@ for url in github_downloads("EssentialsX/Essentials"): print(url)
 ```py
 from dankware import github_file_selector
 # full url > https://api.github.com/repos/EssentialsX/Essentials/releases/latest
-for url in github_file_selector("EssentialsX/Essentials", "remove", ['AntiBuild', 'Discord', 'GeoIP', 'Protect', 'XMPP']): print(url)
+for url in github_file_selector("EssentialsX/Essentials", "remove", ('AntiBuild', 'Discord', 'GeoIP', 'Protect', 'XMPP')): print(url)
 ```
 <img width="700" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/216241961-5359d662-a117-4eb4-b74e-e82b41a895bc.png"><br>
 
@@ -252,7 +252,7 @@ print(clr("\n  > Is this a randomly coloured string: TRUE | As you can see it do
 ```py
 from dankware import clr, white, white_normal, white_dim, red, red_normal, red_dim
 # preset = 3
-print(clr("\n  > This is a randomly coloured string based on the input colours!",3,colours=[white, white_normal, white_dim, red, red_normal, red_dim]))
+print(clr("\n  > This is a randomly coloured string based on the input colours!",3,colours=(white, white_normal, white_dim, red, red_normal, red_dim)))
 ```
 <img width="650" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/1ef2e6b1-0597-494a-8b84-e20efee48415"><br>
 

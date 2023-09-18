@@ -58,7 +58,7 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
 
     - function: The function to run in multiple threads.
     - threads: The number of threads to use.
-    - *args: Input(s) for the function. Can be a list, a single value.
+    - *args: Input(s) for the function. Can be a tuple / list / single value.
     - progress_bar: Whether to display a progress bar.
     """
     
@@ -68,31 +68,30 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
     from shutil import get_terminal_size
     from concurrent.futures import ThreadPoolExecutor, as_completed
     from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn, TimeElapsedColumn
-    
-    def submit_task(executor, *args):
-        return executor.submit(function, *args)
+
 
     try:
         
         if threads < 1:
             raise ValueError("The number of threads must be a positive integer!")
 
-        futures = []
         executor = ThreadPoolExecutor(max_workers=threads)
 
         if not args:
-            for _ in range(threads):
-                futures.append(executor.submit(function))
+            futures = tuple(executor.submit(function) for _ in range(threads))
         else:
+
             input_lists = []
+
             for arg in args:
-                if isinstance(arg, list):
+                if isinstance(arg, list) or isinstance(arg, tuple):
                     input_lists.append(arg)
                 else:
                     input_lists.append([arg] * threads)
-
-            for task_args in zip(*input_lists):
-                futures.append(submit_task(executor, *task_args))
+                
+            futures = tuple(executor.submit(function, *task_args) for task_args in zip(*input_lists))
+            
+            del input_lists
 
         if progress_bar:
             width = get_terminal_size().columns
@@ -123,10 +122,10 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def github_downloads(user_repo: str) -> list:
+def github_downloads(user_repo: str) -> tuple:
 
     """
-    Extracts direct download urls from the latest release on github and returns it as a list
+    Extracts direct download urls from the latest release on github and returns it as a tuple
 
     - Example Input: USER_NAME/REPO_NAME ( from https://api.github.com/repos/USER_NAME/REPO_NAME/releases/latest )
     - Example Output: ['https://github.com/USER_NAME/REPO_NAME/releases/download/VERSION/EXAMPLE.TXT']
@@ -146,11 +145,11 @@ def github_downloads(user_repo: str) -> list:
         try: response = requests.get(f"https://api.github.com/repos/{user_repo}/releases/latest").json(); break
         except: input(clr("  > Make sure you are connected to the Internet! Press [ENTER] to try again... ",2))
     
-    return [data["browser_download_url"] for data in response["assets"]]
+    return tuple(data["browser_download_url"] for data in response["assets"])
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> list:
+def github_file_selector(user_repo: str, filter_mode: str, name_iterable: tuple) -> tuple:
     
     """
     
@@ -158,14 +157,14 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
     
     - user_repo = 'USER_NAME/REPO_NAME' ( from https://api.github.com/repos/USER_NAME/REPO_NAME/releases/latest )
     - filter_mode = 'add' or 'remove'
-    - name_list = list of names to be added or removed
+    - name_iterable = tuple of names to be added or removed
     
     _______________________________________________________________________________________________________________________________________________________________________
     
     [ EXAMPLE ]
     ```python
     from dankware import github_file_selector
-    for file_url in github_file_selector("EssentialsX/Essentials", "remove", ['AntiBuild', 'Discord', 'GeoIP', 'Protect', 'XMPP']):
+    for file_url in github_file_selector("EssentialsX/Essentials", "remove", ('AntiBuild', 'Discord', 'GeoIP', 'Protect', 'XMPP')):
         print(file_url)
     ```
     
@@ -182,7 +181,7 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
     
     _______________________________________________________________________________________________________________________________________________________________________
     
-    Example Input: "EX_USER/EX_REPO", "add", ["EXAMPLE"]
+    Example Input: "EX_USER/EX_REPO", "add", ("EXAMPLE")
         
     Example Output: [
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/EXAMPLE.TXT'
@@ -194,7 +193,7 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
 
     _______________________________________________________________________________________________________________________________________________________________________
 
-    Example Input: "EX_USER/EX_REPO", "remove", ["EXAMPLE"]
+    Example Input: "EX_USER/EX_REPO", "remove", ("EXAMPLE")
     
     Example Output: [
         'https://github.com/EX_USER/EX_REPO/releases/download/VERSION/TEST.TXT'
@@ -214,15 +213,13 @@ def github_file_selector(user_repo: str, filter_mode: str, name_list: list) -> l
             valid = False
         elif filter_mode == "remove":
             valid = True
-        for name in name_list:
+        for name in name_iterable:
             if name in file_url.split('/')[-1]:
-                if filter_mode == "add":
-                    valid = True
-                elif filter_mode == "remove":
-                    valid = False
-        if valid: urls.append(file_url)
+                valid = not valid
+        if valid:
+            urls.append(file_url)
 
-    return urls
+    return tuple(urls)
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -269,10 +266,11 @@ def is_admin() -> bool:
     Checks if executed with admin privileges and returns True if found else False
     """
     
-    import ctypes
-
-    try: return ctypes.windll.shell32.IsUserAnAdmin()
-    except: return False
+    if os.name == 'nt':
+        import ctypes
+        try: return ctypes.windll.shell32.IsUserAnAdmin()
+        except: return False
+    else: return os.getuid() == 0
     
 '''
 def run_as_admin() -> None:
@@ -306,6 +304,9 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
     export_registry_keys('HKEY_CURRENT_USER', r'Software\Google\Chrome\PreferenceMACs')
     ```
     """
+    
+    if os.name != 'nt':
+        raise RuntimeError("This function can only be used on Windows!")
 
     import winreg
     
@@ -358,11 +359,11 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def clr(text: str, preset: int = 1, colour_one: str = white, colour_two: str = red, colours: list = []) -> str:
+def clr(text: str, preset: int = 1, colour_one: str = white, colour_two: str = red, colours: tuple = ()) -> str:
     
     """
     
-    this function colours special characters inside the 'symbols' list
+    this function colours special characters inside the 'symbols' tuple
     
     ___________________________________________
     
@@ -385,7 +386,7 @@ def clr(text: str, preset: int = 1, colour_one: str = white, colour_two: str = r
     ___________________________________________
 
     - preset: 4 | to display banners
-    - text & spl = random (default) / colours inside input list
+    - text & spl = random (default) / colours inside input tuple
     
     """
     
@@ -437,13 +438,13 @@ def clr(text: str, preset: int = 1, colour_one: str = white, colour_two: str = r
             if preset == 3: colour_spl = True
             elif preset == 4: colour_spl = False
             
-            if colours == []:
+            if colours == ():
                 codes = vars(Fore)
-                colours = [codes[colour] for colour in codes if colour not in ('BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET')]
+                colours = tuple(codes[colour] for colour in codes if colour not in ('BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET'))
     
             for _ in range(len(text)):
                 char = text[_]
-                if char not in (' ', '\n', '\t'):
+                if char not in (' ', '\n', '\t', '\r', '\b'):
                     if colour_spl:
                         if char in symbols:
                             text[_] = white + char
@@ -822,9 +823,11 @@ def err(exc_info, mode = "default") -> str:
         value = 1/0
     except:
         print(clr(err(sys.exc_info()),2))
+        # OR
+        print(clr(err(sys.exc_info(),'mini'),2))
     ```
     """
-    
+
     from traceback import extract_tb
 
     ex_type, ex_value, ex_traceback = exc_info
@@ -856,6 +859,10 @@ def err(exc_info, mode = "default") -> str:
         report = "  > {}".format(ex_type.__name__)
         if ex_value: report += " | {}".format(ex_value)
         report += "\n{}".format('\n'.join(stack_trace))
+        
+    else:
+        
+        raise ValueError(f"Invalid Mode: {mode} | Valid Modes: default, mini")
 
     return report
 
@@ -943,10 +950,13 @@ def hide_window() -> None:
     Hides console window
     """
     
-    from ctypes import windll
-
-    hWnd = windll.kernel32.GetConsoleWindow()
-    windll.user32.ShowWindow(hWnd, 0)
+    if os.name == 'nt':
+        from ctypes import windll
+        hWnd = windll.kernel32.GetConsoleWindow()
+        windll.user32.ShowWindow(hWnd, 0)
+    else:
+        import subprocess
+        subprocess.call(["xdotool", "getactivewindow", "windowminimize"])
 
 def show_window() -> None:
 
@@ -954,10 +964,13 @@ def show_window() -> None:
     Shows console window
     """
     
-    from ctypes import windll
-
-    hWnd = windll.kernel32.GetConsoleWindow()
-    windll.user32.ShowWindow(hWnd, 1)
+    if os.name == 'nt':
+        from ctypes import windll
+        hWnd = windll.kernel32.GetConsoleWindow()
+        windll.user32.ShowWindow(hWnd, 1)
+    else:
+        import subprocess
+        subprocess.call(["xdotool", "getactivewindow", "windowactivate"])
     
 def hide_window_for(duration: int = 3) -> None:
     
@@ -1017,27 +1030,30 @@ def get_path(location: str) -> str:
     - Supports: Desktop / Documents / Favorites / Pictures / Videos / Music
     """
     
-    try:
-    
-        import os
-        import winreg
-        
-        valid_locations = ("AppData", "Desktop", "Documents", "Personal", "Favorites", "Local AppData", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music")
-        
-        if location in valid_locations:
+    if os.name == 'nt':
+
+        try:
+
+            import winreg
             
-            if location == "Documents": location = "Personal"
-            elif location == "Pictures": location = "My Pictures"
-            elif location == "Videos": location = "My Video"
-            elif location == "Music": location = "My Music"
+            valid_locations = ("AppData", "Desktop", "Documents", "Personal", "Favorites", "Local AppData", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music")
+            
+            if location in valid_locations:
+                
+                if location == "Documents": location = "Personal"
+                elif location == "Pictures": location = "My Pictures"
+                elif location == "Videos": location = "My Video"
+                elif location == "Music": location = "My Music"
 
-            key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", access=winreg.KEY_READ)
-            path = os.path.expandvars(winreg.QueryValueEx(key, location)[0])
-            return path
-        
-        else: raise ValueError(f"Invalid location: {location} | Valid locations: {', '.join(valid_locations)}")
+                key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", access=winreg.KEY_READ)
+                path = os.path.expandvars(winreg.QueryValueEx(key, location)[0])
+                return path
+            
+            else: raise ValueError(f"Invalid location: {location} | Valid locations: {', '.join(valid_locations)}")
 
-    except: sys.exit(clr(err(sys.exc_info()),2))
+        except: sys.exit(clr(err(sys.exc_info()),2))
+
+    else: raise RuntimeError("This function is only available on windows!")
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1060,6 +1076,9 @@ def title(title: str) -> None:
     """
 
     if os.name == 'nt': os.system(f"title {title}")
+    else:
+        import subprocess
+        subprocess.call(["xdotool", "getactivewindow", "set_window", "--name", title])
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
