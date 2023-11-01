@@ -4,7 +4,7 @@ setup(
 
     license = "MIT",
     name = "dankware",
-    version = "3.5",
+    version = "3.5.1",
     author = "SirDank",
     
     author_email = "SirDankenstein@protonmail.com",
@@ -26,11 +26,10 @@ setup(
         "fade",
         "registry key",
         "error traceback",
-        "random ip generator",
+        "random ip",
         "github scraper",
         "splash screen",
-        "hide window",
-        "file selector",
+        "windows tools",
     ],
 
     classifiers = [
