@@ -364,7 +364,7 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
         open(export_path, 'w', encoding='utf-16').write('Windows Registry Editor Version 5.00\n\n' + '\n'.join(key_data))
         
         if verbose:
-            print(clr(f"\n  > Successfully exported registry keys to \"{os.path.join(os.getcwd(), 'export.reg') if export_path == 'export.reg' else export_path}\""))
+            print(clr(f"\n  - Successfully exported registry keys to \"{os.path.join(os.getcwd(), 'export.reg') if export_path == 'export.reg' else export_path}\""))
     
     except: sys.exit(clr(err(sys.exc_info()),2))
 
@@ -846,9 +846,9 @@ def err(exc_info, mode = "default") -> str:
             elif filename.endswith("$py.class"): filename = filename[:-9] + ".py"
             stack_trace.append("    - File: {} | Line: {} | Function: {}{}".format(filename, trace[1], trace[2] if trace[2] != '<module>' else 'top-level', ' | ' + trace[3] if trace[3] else ''))
 
-        report = "  > Error Type: {}".format(ex_type.__name__)
-        if ex_value: report += "\n  > Error Message: \n    - {}".format(ex_value)
-        report += "\n  > Error Stack Trace: \n{}".format('\n'.join(stack_trace))
+        report = "  - Error Type: {}".format(ex_type.__name__)
+        if ex_value: report += "\n  - Error Message: \n    - {}".format(ex_value)
+        report += "\n  - Error Stack Trace: \n{}".format('\n'.join(stack_trace))
 
     elif mode == "mini":
 
@@ -859,7 +859,7 @@ def err(exc_info, mode = "default") -> str:
             elif filename.endswith("$py.class"): filename = filename[:-9] + ".py"
             stack_trace.append("    - {} | {} | {}{}".format(filename, trace[1], trace[2] if trace[2] != '<module>' else 'top-level', ' | ' + trace[3] if trace[3] else ''))
 
-        report = "  > {}".format(ex_type.__name__)
+        report = "  - {}".format(ex_type.__name__)
         if ex_value: report += " | {}".format(ex_value)
         report += "\n{}".format('\n'.join(stack_trace))
         
