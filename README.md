@@ -42,7 +42,8 @@ multithread(example, 10) # func: example | threads: 10 | single: 50 seconds | mu
 from dankware import multithread
 import time
 
-new_list = [1, 2, 3, 4, 5]; sum = 0
+new_list = [1, 2, 3, 4, 5]
+sum = 0
 
 def example(num):
     global sum
