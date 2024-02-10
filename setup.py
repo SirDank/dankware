@@ -4,9 +4,9 @@ setup(
 
     license = "MIT",
     name = "dankware",
-    version = "3.5.2",
+    version = "3.5.3",
     author = "SirDank",
-    
+
     author_email = "SirDankenstein@protonmail.com",
     description = "Python package with various features!",
     long_description = open("README.md", "r", encoding="utf-8").read(),

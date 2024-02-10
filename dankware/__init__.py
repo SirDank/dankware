@@ -21,32 +21,41 @@ init(autoreset=True)
 
 reset = Style.RESET_ALL
 
-black = Fore.BLACK + Style.BRIGHT
-blue = Fore.BLUE + Style.BRIGHT
-cyan = Fore.CYAN + Style.BRIGHT
-green = Fore.GREEN + Style.BRIGHT
-magenta = Fore.MAGENTA + Style.BRIGHT
-red = Fore.RED + Style.BRIGHT
-white = Fore.WHITE + Style.BRIGHT
-yellow = Fore.YELLOW + Style.BRIGHT
+black = Fore.BLACK
+blue = Fore.BLUE
+cyan = Fore.CYAN
+green = Fore.GREEN
+magenta = Fore.MAGENTA
+red = Fore.RED
+white = Fore.WHITE
+yellow = Fore.YELLOW
 
-black_normal = Fore.BLACK + Style.NORMAL
-blue_normal = Fore.BLUE + Style.NORMAL
-cyan_normal = Fore.CYAN + Style.NORMAL
-green_normal = Fore.GREEN + Style.NORMAL
-magenta_normal = Fore.MAGENTA + Style.NORMAL
-red_normal = Fore.RED + Style.NORMAL
-white_normal = Fore.WHITE + Style.NORMAL
-yellow_normal = Fore.YELLOW + Style.NORMAL
+black_dim = Style.DIM + Fore.BLACK
+blue_dim = Style.DIM + Fore.BLUE
+cyan_dim = Style.DIM + Fore.CYAN
+green_dim = Style.DIM + Fore.GREEN
+magenta_dim = Style.DIM + Fore.MAGENTA
+red_dim = Style.DIM + Fore.RED
+white_dim = Style.DIM + Fore.WHITE
+yellow_dim = Style.DIM + Fore.YELLOW
 
-black_dim = Fore.BLACK + Style.DIM
-blue_dim = Fore.BLUE + Style.DIM
-cyan_dim = Fore.CYAN + Style.DIM
-green_dim = Fore.GREEN + Style.DIM
-magenta_dim = Fore.MAGENTA + Style.DIM
-red_dim = Fore.RED + Style.DIM
-white_dim = Fore.WHITE + Style.DIM
-yellow_dim = Fore.YELLOW + Style.DIM
+black_normal = Style.NORMAL + Fore.BLACK
+blue_normal = Style.NORMAL + Fore.BLUE
+cyan_normal = Style.NORMAL + Fore.CYAN
+green_normal = Style.NORMAL + Fore.GREEN
+magenta_normal = Style.NORMAL + Fore.MAGENTA
+red_normal = Style.NORMAL + Fore.RED
+white_normal = Style.NORMAL + Fore.WHITE
+yellow_normal = Style.NORMAL + Fore.YELLOW
+
+black_bright = Style.BRIGHT + Fore.BLACK
+blue_bright = Style.BRIGHT + Fore.BLUE
+cyan_bright = Style.BRIGHT + Fore.CYAN
+green_bright = Style.BRIGHT + Fore.GREEN
+magenta_bright = Style.BRIGHT + Fore.MAGENTA
+red_bright = Style.BRIGHT + Fore.RED
+white_bright = Style.BRIGHT + Fore.WHITE
+yellow_bright = Style.BRIGHT + Fore.YELLOW
 
 # ---
 
@@ -64,8 +73,8 @@ excluded_prefixes_three = {'8.17.250', '194.36.2', '199.187.168', '192.173.1', '
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def multithread(function: callable, threads: int = 1, *args, progress_bar: bool = True) -> None:
-    
+def multithread(function: callable, threads: int = 1, *args, progress_bar: bool = True) -> None: # pylint: disable=keyword-arg-before-vararg
+
     """
     Run the given function in multiple threads with the specified inputs.
     
@@ -76,7 +85,7 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
     - *args: Input(s) for the function. Can be a tuple / list / single value.
     - progress_bar: Whether to display a progress bar.
     """
-    
+
     from rich.live import Live
     from rich.panel import Panel
     from rich.table import Table
@@ -84,9 +93,8 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
     from concurrent.futures import ThreadPoolExecutor, as_completed
     from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn, TimeElapsedColumn
 
-
     try:
-        
+
         if threads < 1:
             raise ValueError("The number of threads must be a positive integer!")
 
@@ -99,13 +107,14 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
             input_lists = []
 
             for arg in args:
-                if isinstance(arg, list) or isinstance(arg, tuple):
+                if isinstance(arg, (list, tuple)):
                     input_lists.append(arg)
                 else:
                     input_lists.append([arg] * threads)
-                
+            del args
+
             futures = tuple(executor.submit(function, *task_args) for task_args in zip(*input_lists))
-            
+
             del input_lists
 
         if progress_bar:
@@ -129,8 +138,8 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
                 if future.done():
                     try: future.result()
                     except: pass
-                
-    except: 
+
+    except:
         try: executor.shutdown()
         except: pass
         sys.exit(clr(err(sys.exc_info()),2))
@@ -153,26 +162,24 @@ def github_downloads(user_repo: str) -> tuple:
     for _ in github_downloads("SirDank/dank.tool"): print(_)
     ```
     """
-    
+
     import requests
 
-    while True:
-        try: response = requests.get(f"https://api.github.com/repos/{user_repo}/releases/latest").json(); break
-        except: input(clr("  > Make sure you are connected to the Internet! Press [ENTER] to try again... ",2))
-    
+    response = requests.get(f"https://api.github.com/repos/{user_repo}/releases/latest", headers = {"User-Agent": "dank.tool"}, timeout=1).json()
+
     return tuple(data["browser_download_url"] for data in response["assets"])
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def github_file_selector(user_repo: str, filter_mode: str, name_iterable: tuple) -> tuple:
-    
+def github_file_selector(user_repo: str, filter_mode: str, filter_iterable: tuple) -> tuple:
+
     """
     
     This function is used to filter the output from github_downloads()
     
     - user_repo = 'USER_NAME/REPO_NAME' ( from https://api.github.com/repos/USER_NAME/REPO_NAME/releases/latest )
     - filter_mode = 'add' or 'remove'
-    - name_iterable = tuple of names to be added or removed
+    - filter_iterable = tuple of strings used to filter results
     
     _______________________________________________________________________________________________________________________________________________________________________
     
@@ -220,6 +227,9 @@ def github_file_selector(user_repo: str, filter_mode: str, name_iterable: tuple)
     
     """
 
+    if filter_mode not in ("add", "remove"):
+        raise ValueError(f"Invalid Filter Mode: {filter_mode} | Valid Modes: 'add', 'remove'")
+
     urls = []
 
     for file_url in github_downloads(user_repo):
@@ -228,9 +238,10 @@ def github_file_selector(user_repo: str, filter_mode: str, name_iterable: tuple)
             valid = False
         elif filter_mode == "remove":
             valid = True
-        for name in name_iterable:
+        for name in filter_iterable:
             if name in file_url.split('/')[-1]:
                 valid = not valid
+                break
         if valid:
             urls.append(file_url)
 
@@ -239,50 +250,47 @@ def github_file_selector(user_repo: str, filter_mode: str, name_iterable: tuple)
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def random_ip() -> str:
-    
+
     """
     Generates a random valid computer ip
     - Follows: https://github.com/robertdavidgraham/masscan/blob/master/data/exclude.conf
     """
 
     while True:
-        
+
         first_octet = random.randint(1, 223)
         if f"{first_octet}" in excluded_prefixes_one: continue
-        
+
         second_octet = random.randint(0, 255)
         if f"{first_octet}.{second_octet}" in excluded_prefixes_two: continue
-        
+        if first_octet == 172 and 16 <= second_octet <= 31: continue
+
         third_octet = random.randint(0, 255)
         if f"{first_octet}.{second_octet}.{third_octet}" in excluded_prefixes_three: continue
-        
+        if first_octet == 203 and third_octet == 113: continue
+        if first_octet == 216 and second_octet == 83 and 33 <= third_octet <= 63: continue
+
         fourth_octet = random.randint(0, 255)
-        
-        if first_octet == 172 and second_octet >= 16 and second_octet <= 31: continue
-        elif first_octet == 192:
-            if fourth_octet == 170 or fourth_octet == 171 or third_octet == 2: continue
-        elif first_octet == 203 and third_octet == 113: continue
-        elif first_octet == 216 and second_octet == 83 and third_octet >= 33 and third_octet <= 63: continue
-        elif second_octet == 255 and third_octet == 255 and third_octet == 255: continue
+        if first_octet == 192:
+            if third_octet == 2 or fourth_octet in (170, 171): continue
 
         break
-        
+
     return f"{first_octet}.{second_octet}.{third_octet}.{fourth_octet}"
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def is_admin() -> bool:
-    
+
     """
     Checks if executed with admin privileges and returns True if found else False
     """
-    
+
     if os.name == 'nt':
         import ctypes
         try: return ctypes.windll.shell32.IsUserAnAdmin()
         except: return False
-    else: return os.getuid() == 0
-    
+
 '''
 def run_as_admin() -> None:
     
@@ -315,14 +323,14 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
     export_registry_keys('HKEY_CURRENT_USER', r'Software\Google\Chrome\PreferenceMACs')
     ```
     """
-    
+
     if os.name != 'nt':
         raise RuntimeError("This function can only be used on Windows!")
 
     import winreg
-    
+
     try:
-    
+
         key_data = []
         key_map = {
             'HKEY_CLASSES_ROOT': winreg.HKEY_CLASSES_ROOT,
@@ -331,22 +339,22 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
             'HKEY_USERS': winreg.HKEY_USERS,
             'HKEY_CURRENT_CONFIG': winreg.HKEY_CURRENT_CONFIG,
         }
-        
+
         if not export_path.endswith('.reg'):
             raise ValueError("Invalid Export Path! export_path must end with '.reg'")
-        if registry_root not in key_map.keys():
-            raise ValueError(f"Invalid Registry Root: {registry_root} | Valid Roots: {', '.join(key_map.keys())}")
+        if registry_root not in key_map:
+            raise ValueError(f"Invalid Registry Root: {registry_root} | Valid Roots: {', '.join(key_map)}")
         if not is_admin():
             raise RuntimeError("Current user is not an administrator! Exporting registry keys requires admin privileges!")
             # If the current user is not an admin, relaunch the script with admin privileges
             #run_as_admin()
-            
+
         def exporter(key, registry_root, subkey_path, key_data, recursive) -> None:
 
             subkey = winreg.OpenKey(key, subkey_path, 0, winreg.KEY_READ | winreg.KEY_WOW64_64KEY)
             subkey_count = winreg.QueryInfoKey(subkey)[0]
             key_data.append(f'[{registry_root}\\{subkey_path}]')
-    
+
             for i in range(winreg.QueryInfoKey(subkey)[1]):
                 value_name, value_data, value_type = winreg.EnumValue(subkey, i)
                 key_data.append(f'"{value_name}"="{value_data}"')
@@ -361,17 +369,18 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
 
         key = key_map[registry_root]
         exporter(key, registry_root, registry_path, key_data, recursive)
-        open(export_path, 'w', encoding='utf-16').write('Windows Registry Editor Version 5.00\n\n' + '\n'.join(key_data))
-        
+        with open(export_path, 'w', encoding='utf-16') as _:
+            _.write('Windows Registry Editor Version 5.00\n\n' + '\n'.join(key_data))
+
         if verbose:
             print(clr(f"\n  - Successfully exported registry keys to \"{os.path.join(os.getcwd(), 'export.reg') if export_path == 'export.reg' else export_path}\""))
-    
+
     except: sys.exit(clr(err(sys.exc_info()),2))
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def clr(text: str, preset: int = 1, colour_one: str = white, colour_two: str = red, colours: tuple = ()) -> str:
-    
+def clr(text: str, preset: int = 1, colour_one: str = white_bright, colour_two: str = red_bright, colours: tuple = ()) -> str:
+
     """
     
     this function colours special characters inside the 'symbols' tuple
@@ -379,126 +388,126 @@ def clr(text: str, preset: int = 1, colour_one: str = white, colour_two: str = r
     ___________________________________________
     
     - preset: 1 | to display general text (default)
-    - text = white (default) / specified colour
-    - spl = red (default) / specified colour
+    - text = bright white (default) / specified colour
+    - symbols = bright red (default) / specified colour
+    - special = bright green / bright red
 
     ___________________________________________
 
     - preset: 2 | to display error messages
-    - text = red (fixed colour)
-    - spl = white (fixed colour)
+    - text = normal red (fixed colour)
+    - symbols = bright white (fixed colour)
+    - special = bright green / bright red
 
     ___________________________________________
 
     - preset: 3
-    - text = random (fixed colour)
-    - spl = white (fixed colour)
+    - text = random (default) / colours inside input tuple
+    - symbols = bright white (fixed colour)
 
     ___________________________________________
 
     - preset: 4 | to display banners
-    - text & spl = random (default) / colours inside input tuple
+    - text & symbols = random (default) / colours inside input tuple
     
     """
 
-    #styles = (Style.BRIGHT, Style.DIM, Style.NORMAL)
-    
     try:
-        if preset not in [3, 4]:
-            for _ in range(len(colours_to_replace)):
-                text = text.replace(colours_to_replace[_], colours_alt[_])
-        else:
-            for _ in range(len(colours_to_replace)):
-                text = text.replace(colours_to_replace[_], '')
 
         # default
 
         if preset == 1:
+            for _, __ in zip(colours_to_replace, colours_alt):
+                text = text.replace(_, __)
             for symbol in symbols:
-                text = text.replace(symbol, f"{colour_two}{symbol}{colour_one}")
+                text = text.replace(symbol, f"{reset}{colour_two}{symbol}{colour_one}")
             for word in words_green:
-                replacement = green.join(list(word))
-                text = text.replace(word, f"{green}{replacement}{colour_one}")
+                replacement = green_bright + str(green_bright).join(list(word))
+                text = text.replace(word, f"{reset}{replacement}{colour_one}")
             for word in words_red:
-                replacement = red.join(list(word))
-                text = text.replace(word, f"{red}{replacement}{colour_one}")
-        
+                replacement = red_bright + str(red_bright).join(list(word))
+                text = text.replace(word, f"{reset}{replacement}{colour_one}")
+            for _, __ in zip(colours_alt, colours_to_replace):
+                text = text.replace(_, __)
+            return reset + colour_one + text + reset
+
         # for error messages
-        
-        elif preset == 2:
+
+        if preset == 2:
+            for _, __ in zip(colours_to_replace, colours_alt):
+                text = text.replace(_, __)
             for symbol in symbols:
-                text = text.replace(symbol, f"{white}{symbol}{red}")
+                text = text.replace(symbol, f"{reset}{white_bright}{symbol}{red_normal}")
             for word in words_green:
-                replacement = green.join(list(word))
-                text = text.replace(word, f"{green}{replacement}{red}")
-        
-        # random | TRUE, FALSE will not be coloured!
-        
-        elif preset in (3, 4):
+                replacement = green_bright + str(green_bright).join(list(word))
+                text = text.replace(word, f"{reset}{replacement}{red}")
+            for word in words_red:
+                replacement = red_bright + str(red_bright).join(list(word))
+                text = text.replace(word, f"{reset}{replacement}{colour_one}")
+            for _, __ in zip(colours_alt, colours_to_replace):
+                text = text.replace(_, __)
+            return reset + red_normal + text + reset
+
+        # random | words_green, words_red will not be coloured!
+
+        if preset in (3, 4):
+
+            for _ in colours_to_replace:
+                text = text.replace(_, '')
 
             text = list(text)
-            
-            if preset == 3: colour_spl = True
-            elif preset == 4: colour_spl = False
-            
-            if colours == ():
+            colour_spl = bool(preset == 3)
+
+            if not colours:
+                text.insert(0, str(Style.BRIGHT))
                 codes = vars(Fore)
                 colours = tuple(codes[colour] for colour in codes if colour not in ('BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET'))
-    
-            for _ in range(len(text)):
-                char = text[_]
+
+            for _, char in enumerate(text):
                 if char not in (' ', '\n', '\t', '\r', '\b'):
                     if colour_spl:
                         if char in symbols:
-                            text[_] = white + char
+                            text[_] = reset + white_bright + char
                         else:
-                            text[_] = random.choice(colours) + Style.BRIGHT + char
+                            text[_] = reset + random.choice(colours) + char
                     else:
-                        text[_] = random.choice(colours) + Style.BRIGHT + char
+                        text[_] = reset + random.choice(colours) + char
 
-            text = ''.join(text)
+            return reset + ''.join(text) + reset
 
-        else: raise ValueError(f"Invalid Preset: {preset} | Valid Presets: 1, 2, 3, 4")
+        raise ValueError(f"Invalid Preset: {preset} | Valid Presets: 1, 2, 3, 4")
 
-        if preset not in (3, 4):
-            for _ in range(len(colours_to_replace)):
-                text = text.replace(colours_alt[_], colours_to_replace[_])
-
-        if preset == 1: return colour_one + text + reset
-        elif preset == 2: return red + text + reset
-        elif preset == 3 or preset == 4: return text + reset
-    
     except: sys.exit(clr(err(sys.exc_info()),2))
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def align(text: str) -> str: 
-    
+def align(text: str) -> str:
+
     """
     center align banner / line ( supports both coloured and non-coloured )
     - [NOTE] align supports: clr, does not support: fade
     """
-    
+
     from shutil import get_terminal_size
 
     width = get_terminal_size().columns
     aligned = text
-    
+
     for _ in tuple(vars(Fore).values()) + tuple(vars(Style).values()):
         aligned = aligned.replace(_,'')
-    
+
     text = text.splitlines()
     aligned = aligned.splitlines()
-    
-    for _ in range(len(aligned)):
-        aligned[_] = aligned[_].center(width).replace(aligned[_],text[_])
 
-    return str('\n'.join(aligned) + reset)
+    for _, __ in enumerate(aligned):
+        aligned[_] = __.center(width).replace(__,text[_])
+
+    return str(reset + '\n'.join(aligned) + reset)
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def fade(text: str, colour: str = "pink2red") -> str:
-    
+
     """
     credits to https://github.com/venaxyt/gratient & https://github.com/venaxyt/fade <3
     - available_colours: [
@@ -529,7 +538,7 @@ def fade(text: str, colour: str = "pink2red") -> str:
     print(fade(banner,"pink2red-v"))
     ```
     """
-    
+
     available_colours = (
         "random",
         "black2white",
@@ -550,12 +559,12 @@ def fade(text: str, colour: str = "pink2red") -> str:
 
     try:
         colour = colour.lower()
-        if not colour in available_colours: raise ValueError(f"Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}")
-            
+        if colour not in available_colours:
+            raise ValueError(f"Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}")
+
         faded = ""
-        if len(text.splitlines()) > 1: multi_line = True
-        else: multi_line = False
-        
+        multi_line = bool(len(text.splitlines()) > 1)
+
         if colour == "random":
             for line in text.splitlines():
                 for char in line:
@@ -568,91 +577,75 @@ def fade(text: str, colour: str = "pink2red") -> str:
                 R = 0; G = 0; B = 0
                 shift = (int(255 / len(line)) if len(line) > 0 else 5)
                 for char in line:
-                    if not R == 255 and not G == 255 and not B == 255:
-                        R += shift; G += shift; B += shift
-                        if R > 255 and G > 255 and B > 255:
-                            R = 255; G = 255; B = 255
+                    R += shift; G += shift; B += shift
+                    R = min(R, 255); G = min(G, 255); B = min(B, 255)
                     faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
                 if multi_line: faded += "\n"
-                
+
         elif colour == "black2white-v":
             R = 0; G = 0; B = 0
             shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
             for line in text.splitlines():
                 faded += (f"\033[38;2;{R};{G};{B}m{line}\033[0m")
-                if not R == 255 and not G == 255 and not B == 255:
-                    R += shift; G += shift; B += shift
-                    if R > 255 and G > 255 and B > 255:
-                        R = 255; G = 255; B = 255
+                R += shift; G += shift; B += shift
+                R = min(R, 255); G = min(G, 255); B = min(B, 255)
                 if multi_line: faded += "\n"
-     
+
         elif colour == "yellow2red":
             for line in text.splitlines():
                 G = 255
                 shift = (int(255 / len(line)) if len(line) > 0 else 5)
                 for char in line:
-                    if not G == 0:
-                        G -= shift
-                        if G < 0:
-                            G = 0
+                    G -= shift
+                    G = max(G, 0)
                     faded += f"\033[38;2;255;{G};0m{char}\033[0m"
                 if multi_line: faded += "\n"
-        
+
         elif colour == "yellow2red-v":
             G = 255
             shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
             for line in text.splitlines():
                 faded += f"\033[38;2;255;{G};0m{line}\033[0m"
-                if not G == 0:
-                    G -= shift
-                    if G < 0:
-                        G = 0
+                G -= shift
+                G = max(G, 0)
                 if multi_line:faded += "\n"
-                
+
         elif colour == "green2yellow":
             for line in text.splitlines():
                 R = 0
                 shift = (int(255 / len(line)) if len(line) > 0 else 5)
                 for char in line:
-                    if not R == 255:
-                        R += shift
-                        if R > 255:
-                            R = 255
+                    R += shift
+                    R = min(R, 255)
                     faded += f"\033[38;2;{R};255;0m{char}\033[0m"
                 if multi_line: faded += "\n"
-        
+
         elif colour == "green2yellow-v":
             R = 0
             shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
             for line in text.splitlines():
                 faded += f"\033[38;2;{R};255;0m{line}\033[0m"
-                if not R == 255:
-                    R += shift
-                    if R > 255:
-                        R = 255
+                R += shift
+                R = min(R, 255)
                 if multi_line: faded += "\n"
-                
+
         elif colour == "green2cyan":
             for line in text.splitlines():
                 B = 100
                 shift = (int(255 / len(line)) if len(line) > 0 else 5)
                 for char in line:
-                    if not B == 255:
-                        B += shift
-                        if B > 255:
-                            B = 255
+                    B += shift
+                    B = min(B, 255)
                     faded += f"\033[38;2;0;255;{B}m{char}\033[0m"
                 if multi_line: faded += "\n"
-        
+
         elif colour == "green2cyan-v":
             B = 100
             shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
             for line in text.splitlines():
                 faded += f"\033[38;2;0;255;{B}m{line}\033[0m"
-                if not B == 255:
-                    B += shift
-                    if B > 255:
-                        B = 255
+                B += shift
+                B = min(B, 255)
                 if multi_line: faded += "\n"
 
         elif colour == "blue2cyan":
@@ -660,71 +653,61 @@ def fade(text: str, colour: str = "pink2red") -> str:
                 G = 0
                 shift = (int(255 / len(line)) if len(line) > 0 else 5)
                 for char in line:
-                    if not G == 255:
-                        G += shift
-                        if G > 255:
-                            G = 255
+                    G += shift
+                    G = min(G, 255)
                     faded += f"\033[38;2;0;{G};255m{char}\033[0m"
                 if multi_line: faded += "\n"
-                
+
         elif colour == "blue2cyan-v":
             G = 10
             shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
             for line in text.splitlines():
                 faded += f"\033[38;2;0;{G};255m{line}\033[0m"
-                if not G == 255:
+                if G != 255:
                     G += shift
-                    if G > 255:
-                        G = 255
+                    G = min(G, 255)
                 if multi_line: faded += "\n"
-            
+
         elif colour == "blue2pink":
             for line in text.splitlines():
                 R = 35
                 shift = (int(255 / len(line)) if len(line) > 0 else 5)
                 for char in line:
-                    if not R == 255:
-                        R += shift
-                        if R > 255:
-                            R = 255
+                    R += shift
+                    R = min(R, 255)
                     faded += f"\033[38;2;{R};0;220m{char}\033[0m"
                 if multi_line: faded += "\n"
-                
+
         elif colour == "blue2pink-v":
             R = 40
             shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
             for line in text.splitlines():
                 faded += f"\033[38;2;{R};0;220m{line}\033[0m"
-                if not R == 255:
-                    R += shift
-                    if R > 255:
-                        R = 255
+                R += shift
+                R = min(R, 255)
                 if multi_line: faded += "\n"
- 
+
         elif colour == "pink2red":
             for line in text.splitlines():
                 B = 255
                 shift = (int(255 / len(line)) if len(line) > 0 else 5)
                 for char in line:
                     faded += f"\033[38;2;255;0;{B}m{char}\033[0m"
-                    if not B == 0:
-                        B -= shift
-                        if B < 0:
-                            B = 0
+                    B -= shift
+                    B = max(B, 0)
                 if multi_line: faded += "\n"
-            
+
         elif colour == "pink2red-v":
             B = 255
             shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
             for line in text.splitlines():
                 faded += f"\033[38;2;255;0;{B}m{line}\033[0m"
-                if not B == 0:
-                    B -= shift
-                    if B < 0: B = 0
+                B -= shift
+                B = max(B, 0)
                 if multi_line: faded += "\n"
 
         else: raise ValueError(f"Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}")
-        
+
         if multi_line: faded = faded[:-1]
         return faded
 
@@ -748,69 +731,64 @@ def get_duration(then: datetime, now: datetime = None, interval = "default"):
     - dynamic-mini -> str
     - default -> str
     """
-    
+
     if now is None: now = datetime.now()
 
     duration = now - then
 
     if interval in ("year", "years"): return int(duration.days / 365)
-    elif interval in ("day", "days"): return duration.days
-    elif interval in ("hour", "hours"): return int(duration.total_seconds() / 3600)
-    elif interval in ("minute", "minutes"): return int(duration.total_seconds() / 60)
-    elif interval in ("second", "seconds"): return int(duration.total_seconds())
-    elif interval in ("dynamic", "dynamic-mini"):
-        
-        mini = True if interval == "dynamic-mini" else False
+    if interval in ("day", "days"): return duration.days
+    if interval in ("hour", "hours"): return int(duration.total_seconds() / 3600)
+    if interval in ("minute", "minutes"): return int(duration.total_seconds() / 60)
+    if interval in ("second", "seconds"): return int(duration.total_seconds())
+    if interval in ("dynamic", "dynamic-mini"):
 
+        mini = bool(interval == "dynamic-mini")
         seconds = duration.total_seconds()
 
         if seconds < 60:
             if mini: return f"{int(seconds)}s"
-            else: return f"{int(seconds)} second{'s' if seconds > 1 else ''}"
-        
-        elif seconds < 3600:
+            return f"{int(seconds)} second{'s' if seconds > 1 else ''}"
+
+        if seconds < 3600:
             minutes = int(seconds / 60)
             if mini: return f"{minutes}m"
-            else:return f"{minutes} minute{'s' if minutes > 1 else ''}"
-        
-        elif seconds < 86400:
+            return f"{minutes} minute{'s' if minutes > 1 else ''}"
+
+        if seconds < 86400:
             hours = int(seconds / 3600)
             if mini: return f"{hours}h"
-            else: return f"{hours} hour{'s' if hours > 1 else ''}"
-       
-        elif seconds < 31536000:
+            return f"{hours} hour{'s' if hours > 1 else ''}"
+
+        if seconds < 31536000:
             days = int(seconds / 86400)
             if mini: return f"{days}d"
-            else: return f"{days} day{'s' if days > 1 else ''}"
-        
-        else:
-            years = int(seconds / 31536000)
-            if mini: return f"{years}y"
-            else: return f"{years} year{'s' if years > 1 else ''}"
-    
-    else:
-
-        seconds = duration.total_seconds()
+            return f"{days} day{'s' if days > 1 else ''}"
 
         years = int(seconds / 31536000)
-        days = int((seconds % 31536000) / 86400)
-        hours = int((seconds % 86400) / 3600)
-        minutes = int((seconds % 3600) / 60)
-        seconds = int(seconds % 60)
+        if mini: return f"{years}y"
+        return f"{years} year{'s' if years > 1 else ''}"
 
-        parts = []
-        if years: parts.append(f"{years} year{'s' if years > 1 else ''}")
-        if days: parts.append(f"{days} day{'s' if days > 1 else ''}")
-        if hours: parts.append(f"{hours} hour{'s' if hours > 1 else ''}")
-        if minutes: parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
-        if seconds: parts.append(f"{seconds} second{'s' if seconds > 1 else ''}")
+    seconds = duration.total_seconds()
+    years = int(seconds / 31536000)
+    days = int((seconds % 31536000) / 86400)
+    hours = int((seconds % 86400) / 3600)
+    minutes = int((seconds % 3600) / 60)
+    seconds = int(seconds % 60)
 
-        return ", ".join(parts)
+    parts = []
+    if years: parts.append(f"{years} year{'s' if years > 1 else ''}")
+    if days: parts.append(f"{days} day{'s' if days > 1 else ''}")
+    if hours: parts.append(f"{hours} hour{'s' if hours > 1 else ''}")
+    if minutes: parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
+    if seconds: parts.append(f"{seconds} second{'s' if seconds > 1 else ''}")
+
+    return ", ".join(parts)
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def err(exc_info, mode = "default") -> str:
-    
+
     """
     Returns a short traceback
     
@@ -836,18 +814,16 @@ def err(exc_info, mode = "default") -> str:
     ex_type, ex_value, ex_traceback = exc_info
     trace_back = extract_tb(ex_traceback)
     stack_trace = []
-    
+
     if mode == "default":
 
         for trace in trace_back:
             filename = trace[0]
             if filename == "<string>": filename = str(__name__)
-            elif filename.endswith(".pyc"): filename = filename[:-1]
-            elif filename.endswith("$py.class"): filename = filename[:-9] + ".py"
-            stack_trace.append("    - File: {} | Line: {} | Function: {}{}".format(filename, trace[1], trace[2] if trace[2] != '<module>' else 'top-level', ' | ' + trace[3] if trace[3] else ''))
+            stack_trace.append(f"    - File: {filename} | Line: {trace[1]} | Function: {trace[2] if trace[2] != '<module>' else 'top-level'}{' | ' + trace[3] if trace[3] else ''}")
 
-        report = "  - Error Type: {}".format(ex_type.__name__)
-        if ex_value: report += "\n  - Error Message: \n    - {}".format(ex_value)
+        report = f"  - Error Type: {ex_type.__name__}"
+        if ex_value: report += f"\n  - Error Message: \n    - {ex_value}"
         report += "\n  - Error Stack Trace: \n{}".format('\n'.join(stack_trace))
 
     elif mode == "mini":
@@ -855,16 +831,14 @@ def err(exc_info, mode = "default") -> str:
         for trace in trace_back:
             filename = trace[0]
             if filename == "<string>": filename = str(__name__)
-            elif filename.endswith(".pyc"): filename = filename[:-1]
-            elif filename.endswith("$py.class"): filename = filename[:-9] + ".py"
-            stack_trace.append("    - {} | {} | {}{}".format(filename, trace[1], trace[2] if trace[2] != '<module>' else 'top-level', ' | ' + trace[3] if trace[3] else ''))
+            stack_trace.append(f"    - {filename} | {trace[1]} | {trace[2] if trace[2] != '<module>' else 'top-level'}{' | ' + trace[3] if trace[3] else ''}")
 
-        report = "  - {}".format(ex_type.__name__)
-        if ex_value: report += " | {}".format(ex_value)
-        report += "\n{}".format('\n'.join(stack_trace))
-        
+        report = f"  - {ex_type.__name__}"
+        if ex_value: report += f" | {ex_value}"
+        report += ('\n' + '\n'.join(stack_trace))
+
     else:
-        
+
         raise ValueError(f"Invalid Mode: {mode} | Valid Modes: default, mini")
 
     return report
@@ -872,7 +846,7 @@ def err(exc_info, mode = "default") -> str:
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def splash_screen(img_path: str, duration: int = 3) -> None:
-    
+
     """
     Displays a splash screen for the given duration
     - Supports: GIFs / PNGs / JPGs / BMPs / ICOs
@@ -886,13 +860,13 @@ def splash_screen(img_path: str, duration: int = 3) -> None:
     ThreadPoolExecutor().submit(splash_screen, "splash.gif", duration=3)
     ```
     """
-    
+
     import tkinter as tk
     try:
         from PIL import Image, ImageTk
-    except:
-        raise ImportError("Pillow is not installed! Run 'pip install pillow' to install it!")
-    
+    except Exception as exc:
+        raise ImportError("Pillow is not installed! Run 'pip install pillow' to install it!") from exc
+
     class SplashScreen(tk.Toplevel):
 
         def __init__(self, img_path):
@@ -917,7 +891,6 @@ def splash_screen(img_path: str, duration: int = 3) -> None:
             y = (screen_height - height) // 2
 
             self.geometry(f"{width}x{height}+{x}+{y}")
-
             self.canvas = tk.Canvas(self, bg="black", highlightthickness=0)
             self.canvas.pack()
 
@@ -938,10 +911,10 @@ def splash_screen(img_path: str, duration: int = 3) -> None:
             current_frame = (current_frame + 1) % len(self.frames)
             if len(self.frames) > 1:
                 self.after(int(1000 / self.image.info['duration']), self.animate_image, current_frame)
-    
+
     root = tk.Tk()
     root.withdraw()
-    SplashScreen(img_path)  
+    SplashScreen(img_path)
     root.after(int(duration * 1000), root.quit)
     root.mainloop()
 
@@ -955,7 +928,7 @@ def hide_window() -> None:
     Related to:
       - show_window()
     """
-    
+
     if os.name == 'nt':
         from ctypes import windll
         hWnd = windll.kernel32.GetConsoleWindow()
@@ -972,7 +945,7 @@ def show_window() -> None:
     Related to:
       - hide_window()
     """
-    
+
     if os.name == 'nt':
         from ctypes import windll
         hWnd = windll.kernel32.GetConsoleWindow()
@@ -980,9 +953,9 @@ def show_window() -> None:
     else:
         import subprocess
         subprocess.call(["xdotool", "getactivewindow", "windowactivate"])
-    
+
 def hide_window_for(duration: int = 3) -> None:
-    
+
     """
     Hides console window for the given duration
     
@@ -992,16 +965,16 @@ def hide_window_for(duration: int = 3) -> None:
     """
 
     from concurrent.futures import ThreadPoolExecutor
-    
+
     def tmp():
         hide_window()
         time.sleep(duration)
         show_window()
-    
-    ThreadPoolExecutor(10).submit(tmp)
+
+    ThreadPoolExecutor(1).submit(tmp)
 
 def minimise_window() -> None:
-    
+
     """
     Minimises console window
     
@@ -1019,7 +992,7 @@ def minimise_window() -> None:
         subprocess.call(["xdotool", "getactivewindow", "windowminimize"])
 
 def maximise_window() -> None:
-    
+
     """
     Maximises console window
     
@@ -1035,9 +1008,9 @@ def maximise_window() -> None:
     else:
         import subprocess
         subprocess.call(["xdotool", "getactivewindow", "windowactivate", "windowmaximize"])
-    
+
 def restore_window() -> None:
-    
+
     """
     Restores console window to its original size
     
@@ -1057,12 +1030,12 @@ def restore_window() -> None:
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def file_selector(title: str = "Select File", icon_path: str = "") -> str:
-    
+
     """
     Opens file selector and returns selected file path
     - Allows custom title and icon
     """
-    
+
     from tkinter import Tk
     from tkinter.filedialog import askopenfilename
 
@@ -1091,22 +1064,22 @@ def folder_selector(title: str = "Select Folder", icon_path: str = "") -> str:
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def get_path(location: str) -> str:
-    
+
     """
     Returns path from registry
     - Supports: Desktop / Documents / Favorites / Pictures / Videos / Music
     """
-    
+
     if os.name == 'nt':
 
         try:
 
             import winreg
-            
+
             valid_locations = ("AppData", "Desktop", "Documents", "Personal", "Favorites", "Local AppData", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music")
-            
+
             if location in valid_locations:
-                
+
                 if location == "Documents": location = "Personal"
                 elif location == "Pictures": location = "My Pictures"
                 elif location == "Videos": location = "My Video"
@@ -1115,7 +1088,7 @@ def get_path(location: str) -> str:
                 key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", access=winreg.KEY_READ)
                 path = os.path.expandvars(winreg.QueryValueEx(key, location)[0])
                 return path
-            
+
             else: raise ValueError(f"Invalid location: {location} | Valid locations: {', '.join(valid_locations)}")
 
         except: sys.exit(clr(err(sys.exc_info()),2))
@@ -1124,12 +1097,12 @@ def get_path(location: str) -> str:
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def cls() -> None: 
-    
+def cls() -> None:
+
     """
     Clear screen for multi-os
     """
-    
+
     print(reset)
     if os.name == 'nt': _ = os.system('cls')
     else: _ = os.system('clear')
@@ -1137,7 +1110,7 @@ def cls() -> None:
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def title(title: str) -> None:
-    
+
     """
     Changes console window title
     """
@@ -1150,11 +1123,11 @@ def title(title: str) -> None:
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def rm_line() -> None:
-    
+
     """
     Deletes previous line
     """
-    
+
     from shutil import get_terminal_size
 
     print("\033[A" + " " * (get_terminal_size().columns - 6) + "\033[A")
@@ -1162,16 +1135,15 @@ def rm_line() -> None:
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def sys_open(item: str) -> None:
-    
+
     """
     Can do the following:
     - Open the url on the default browser on windows / linux
     - Open directory
     - Start file
     """
-    
+
     if os.name == 'nt': os.system(f'start {item}')
     else: os.system(f'xdg-open {item}')
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-

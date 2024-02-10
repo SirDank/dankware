@@ -6,9 +6,9 @@
 
 <p align="center">
   <b>~ Stats ~</b><br><br>
-  <img src="https://static.pepy.tech/personalized-badge/dankware?period=total&units=international_system&left_color=black&right_color=brightgreen&left_text=downloads" />
-  <img src="https://static.pepy.tech/personalized-badge/dankware?period=month&units=international_system&left_color=black&right_color=brightgreen&left_text=downloads%20/%20month" />
-  <img src="https://static.pepy.tech/personalized-badge/dankware?period=week&units=international_system&left_color=black&right_color=brightgreen&left_text=downloads%20/%20week" />
+  <img src="https://static.pepy.tech/badge/dankware" />
+  <img src="https://static.pepy.tech/badge/dankware/month" />
+  <img src="https://static.pepy.tech/badge/dankware/week" />
 </p>
 
 # 🚨 dankware 🚨
@@ -137,8 +137,11 @@ import sys
 from dankware import err, clr
 try: value = 1/0
 except: print(clr(err(sys.exc_info()),2))
+try: value = 1/0
+except: print(clr(err(sys.exc_info(),"mini"),2))
 ```
-<img width="700" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/221346044-db739b15-b365-47b3-b6f1-20d199c58ab2.png"><br>
+<img width="700" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/e2a22bab-05c7-4d10-abbe-9fcd6d3ecf4e"><br>
+<img width="700" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/15a930c9-2633-42a9-a3eb-bbe0956624b0"><br>
 
 <p>&nbsp;</p>    
 
@@ -176,7 +179,7 @@ print(random_ip())
 
 ---  
 
-# 🚨 Get Path 🚨
+# 🚨 GUI File / Path Selector 🚨
 
 ```py
 from dankware import file_selector
@@ -190,12 +193,15 @@ path = folder_selector() # opens file explorer to select a folder
 print(path)
 ```
 
+# 🚨 Path Extractor 🚨
+
 ```py
 from dankware import get_path
 for location in ["AppData", "Desktop", "Documents", "Personal", "Favorites", "Local AppData", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music"]:
     path = get_path(location) # extracts path from registry
     print(path)
 ```
+<img width="200" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/ee06bdd9-fbd3-4765-9450-6e2435dd6880"><br>
 
 <p>&nbsp;</p>    
 
@@ -206,21 +212,21 @@ for location in ["AppData", "Desktop", "Documents", "Personal", "Favorites", "Lo
 ```py
 from dankware import clr
 # default preset = 1
-# default colour_one = white
-# default colour_two = red
+# default colour_one = white_bright
+# default colour_two = red_bright
 print(clr("\n  > Hey! Long time no see :)"))
-#print(clr("\n  > Hey! Long time no see :)", colour_one = white, colour_two = red))
+#print(clr("\n  > Hey! Long time no see :)", colour_one = white_bright, colour_two = red_bright))
 ```
 <img width="350" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/f8cd517e-c3df-4038-a1b1-df16f9d6ab8c"><br>
 
 ```py
 from dankware import clr, white, magenta
 # default preset = 1
-# default colour_one = magenta
-# default colour_two = white
+# colour_one = magenta
+# colour_two = white
 print(clr("\n  > Hey! Long time no see :)", colour_one = magenta, colour_two = white))
 ```
-<img width="350" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/220981909-d6361e6a-d109-447a-8401-85e2813e7859.png"><br>
+<img width="350" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/40dec334-39b7-4fcb-90c8-b6b824c372cb"><br>
 
 ```py
 from dankware import clr
@@ -229,33 +235,33 @@ print(clr("\n  This is a string: True | This is an integer: False"))
 <img width="350" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/5bab7947-ffd1-49a9-b10b-dce31acf65fb"><br>
 
 ```py
-from dankware import clr, green, magenta
-# dankware now supports adding custom colours on both the text and the function itself!
+from dankware import clr, green, magenta, white
+# default colour_one = white_bright
 # colour_two = green
 print(clr(f"\n  > {magenta}Purple{white} thinks he's better than everyone else :(", colour_two=green))
 ```
-<img width="350" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/190898116-750e256e-a1d9-4c8a-a3b2-d0ac209fa0f7.png"><br>
+<img width="350" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/e43774dd-b76e-43af-832b-0305e282e565"><br>
 
 ```py
 from dankware import clr
 # preset = 2
 print(clr("\n  > Error in sector [7] redirecting... | INTEGRITY_CHECK: SUCCESS",2))
 ```
-<img width="500" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/4824a90f-411c-4e1d-b81c-a99dd2c6b815"><br>
+<img width="500" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/c69d3eeb-b4a0-45df-ab86-def37ac0f179"><br>
 
 ```py
 from dankware import clr
 # preset = 3
 print(clr("\n  > Is this a randomly coloured string: TRUE | As you can see it does not colour True/False",3))
 ```
-<img width="650" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/155293415-7b065b5a-44dd-4fe7-995d-a25582f904cb.png"><br>
+<img width="650" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/f89c5126-c7a0-4060-ab01-8783f95224f4"><br>
 
 ```py
 from dankware import clr, white, white_normal, white_dim, red, red_normal, red_dim
 # preset = 3
-print(clr("\n  > This is a randomly coloured string based on the input colours!",3,colours=(white, white_normal, white_dim, red, red_normal, red_dim)))
+print(clr("\n  > This is a randomly coloured string based on the input colours!",3,colours=(white_bright, white_normal, white_dim, red_bright, red_normal, red_dim)))
 ```
-<img width="650" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/1ef2e6b1-0597-494a-8b84-e20efee48415"><br>
+<img width="650" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/bf27ee3e-a72b-4e52-85e5-85fa4df8fba6"><br>
 
 <p>&nbsp;</p>    
 
@@ -284,21 +290,21 @@ from dankware import clr
 # preset = 4
 print(clr(banner,4))
 ```
-<img width="550" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153722086-2f372bfa-4872-46a0-81f8-cdf7c2344fd6.png"><br>
+<img width="550" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/c34c6f9d-de2a-4a91-bb46-b262248caab4"><br>
 
 ## ♦️ Align Banner (console center) ♦️
 ```py
 from dankware import align
 print(align(banner)) # also works with single text line (even coloured)
 ```
-<img width="800" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153722230-1f3b6103-6d8a-4537-9828-1718a6bd3367.png"><br>
+<img width="800" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/678296e6-3668-4d54-bbb1-273547f7f654"><br>
 
 ## ♦️ Align Coloured Banner ♦️
 ```py
 from dankware import align, clr
-print(clr(align(banner),4)) # OR print(align(clr(banner,4)))
+print(clr(align(banner),4)) # OR (preferably not) print(align(clr(banner,4)))
 ```
-<img width="800" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153722373-9925dd25-83bb-4d1c-83eb-bfaae1802088.png"><br>
+<img width="800" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/a90e4bc3-1c08-48e4-801a-2403c6b08d16"><br>
 
 <p>&nbsp;</p>    
 
@@ -401,7 +407,7 @@ print(fade(banner, "pink2red-v"))
 print(fade(banner, "random"))
 ```
 <p align="left">
-  <img width="400" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153723545-0ea34ea7-1844-4ace-8948-3e71e28c0a30.png" />
+  <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/58a13389-7620-4c63-b967-c057b022af90" />
 </p>
 
 <p>&nbsp;</p>    
