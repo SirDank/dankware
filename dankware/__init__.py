@@ -30,6 +30,8 @@ red = Fore.RED
 white = Fore.WHITE
 yellow = Fore.YELLOW
 
+# ---
+
 black_dim = Style.DIM + Fore.BLACK
 blue_dim = Style.DIM + Fore.BLUE
 cyan_dim = Style.DIM + Fore.CYAN
@@ -39,6 +41,8 @@ red_dim = Style.DIM + Fore.RED
 white_dim = Style.DIM + Fore.WHITE
 yellow_dim = Style.DIM + Fore.YELLOW
 
+# ---
+
 black_normal = Style.NORMAL + Fore.BLACK
 blue_normal = Style.NORMAL + Fore.BLUE
 cyan_normal = Style.NORMAL + Fore.CYAN
@@ -47,6 +51,8 @@ magenta_normal = Style.NORMAL + Fore.MAGENTA
 red_normal = Style.NORMAL + Fore.RED
 white_normal = Style.NORMAL + Fore.WHITE
 yellow_normal = Style.NORMAL + Fore.YELLOW
+
+# ---
 
 black_bright = Style.BRIGHT + Fore.BLACK
 blue_bright = Style.BRIGHT + Fore.BLUE
@@ -122,7 +128,7 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
             job_progress = Progress("{task.description}", SpinnerColumn(), BarColumn(bar_width=width), TextColumn("[progress.percentage][bright_green]{task.percentage:>3.0f}%"), "[bright_cyan]ETA", TimeRemainingColumn(), TimeElapsedColumn())
             overall_task = job_progress.add_task("[bright_green]Progress", total=int(len(futures)))
             progress_table = Table.grid()
-            progress_table.add_row(Panel.fit(job_progress, title="[bright_white]Jobs", border_style="bright_red", padding=(1, 2)))
+            progress_table.add_row(Panel.fit(job_progress, title="[bright_white]Jobs", border_style="red", padding=(1, 2)))
 
             with Live(progress_table, refresh_per_second=10):
                 while not job_progress.finished:
@@ -165,7 +171,7 @@ def github_downloads(user_repo: str) -> tuple:
 
     import requests
 
-    response = requests.get(f"https://api.github.com/repos/{user_repo}/releases/latest", headers = {"User-Agent": "dank.tool"}, timeout=1).json()
+    response = requests.get(f"https://api.github.com/repos/{user_repo}/releases/latest", headers = {"User-Agent": "dank.tool"}, timeout=3).json()
 
     return tuple(data["browser_download_url"] for data in response["assets"])
 
@@ -312,7 +318,8 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
     - Example for registry_path: r'Software\Google\Chrome\PreferenceMACs'
     - recursive: True (subkeys saved)
     - recursive: False (subkeys not saved)
-    - export_path: "exported.reg" (default)
+    - export_path: "export.reg" (default)
+    - verbose: True (prints success message)
     
     _______________________________________________________________________________________________________________________________________________________________________
     
@@ -379,7 +386,7 @@ def export_registry_keys(registry_root: str, registry_path: str, recursive: bool
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def clr(text: str, preset: int = 1, colour_one: str = white_bright, colour_two: str = red_bright, colours: tuple = ()) -> str:
+def clr(text: str, preset: int = 1, colour_one: str = white_bright, colour_two: str = red, colours: tuple = ()) -> str:
 
     """
     
@@ -395,7 +402,7 @@ def clr(text: str, preset: int = 1, colour_one: str = white_bright, colour_two: 
     ___________________________________________
 
     - preset: 2 | to display error messages
-    - text = normal red (fixed colour)
+    - text = red (fixed colour)
     - symbols = bright white (fixed colour)
     - special = bright green / bright red
 
@@ -420,13 +427,11 @@ def clr(text: str, preset: int = 1, colour_one: str = white_bright, colour_two: 
             for _, __ in zip(colours_to_replace, colours_alt):
                 text = text.replace(_, __)
             for symbol in symbols:
-                text = text.replace(symbol, f"{reset}{colour_two}{symbol}{colour_one}")
+                text = text.replace(symbol, reset + colour_two + symbol + reset + colour_one)
             for word in words_green:
-                replacement = green_bright + str(green_bright).join(list(word))
-                text = text.replace(word, f"{reset}{replacement}{colour_one}")
+                text = text.replace(word, reset + green_bright + str(green_bright).join(list(word)) + reset + colour_one)
             for word in words_red:
-                replacement = red_bright + str(red_bright).join(list(word))
-                text = text.replace(word, f"{reset}{replacement}{colour_one}")
+                text = text.replace(word, reset + red_bright + str(red_bright).join(list(word)) + reset + colour_one)
             for _, __ in zip(colours_alt, colours_to_replace):
                 text = text.replace(_, __)
             return reset + colour_one + text + reset
@@ -437,13 +442,11 @@ def clr(text: str, preset: int = 1, colour_one: str = white_bright, colour_two: 
             for _, __ in zip(colours_to_replace, colours_alt):
                 text = text.replace(_, __)
             for symbol in symbols:
-                text = text.replace(symbol, f"{reset}{white_bright}{symbol}{red_normal}")
+                text = text.replace(symbol, reset + white_bright + symbol + reset + red)
             for word in words_green:
-                replacement = green_bright + str(green_bright).join(list(word))
-                text = text.replace(word, f"{reset}{replacement}{red}")
+                text = text.replace(word, reset + green_bright + str(green_bright).join(list(word)) + reset + red)
             for word in words_red:
-                replacement = red_bright + str(red_bright).join(list(word))
-                text = text.replace(word, f"{reset}{replacement}{colour_one}")
+                text = text.replace(word, reset + red_bright + str(red_bright).join(list(word)) + reset + red)
             for _, __ in zip(colours_alt, colours_to_replace):
                 text = text.replace(_, __)
             return reset + red_normal + text + reset
