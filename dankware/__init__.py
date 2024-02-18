@@ -505,7 +505,7 @@ def align(text: str) -> str:
     for _, __ in enumerate(aligned):
         aligned[_] = __.center(width).replace(__,text[_])
 
-    return str(reset + '\n'.join(aligned) + reset)
+    return str('\n'.join(aligned))
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
