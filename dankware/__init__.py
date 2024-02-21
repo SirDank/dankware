@@ -240,10 +240,11 @@ def github_file_selector(user_repo: str, filter_mode: str, filter_iterable: tupl
 
     for file_url in github_downloads(user_repo):
 
-        if filter_mode == "add":
-            valid = False
-        elif filter_mode == "remove":
-            valid = True
+        match filter_mode:
+            case "add":
+                valid = False
+            case "remove":
+                valid = True
         for name in filter_iterable:
             if name in file_url.split('/')[-1]:
                 valid = not valid
@@ -423,62 +424,64 @@ def clr(text: str, preset: int = 1, colour_one: str = white_bright, colour_two: 
 
         # default
 
-        if preset == 1:
-            for _, __ in zip(colours_to_replace, colours_alt):
-                text = text.replace(_, __)
-            for symbol in symbols:
-                text = text.replace(symbol, reset + colour_two + symbol + reset + colour_one)
-            for word in words_green:
-                text = text.replace(word, reset + green_bright + str(green_bright).join(list(word)) + reset + colour_one)
-            for word in words_red:
-                text = text.replace(word, reset + red_bright + str(red_bright).join(list(word)) + reset + colour_one)
-            for _, __ in zip(colours_alt, colours_to_replace):
-                text = text.replace(_, __)
-            return reset + colour_one + text + reset
+        match preset:
+            case 1:
+                for _, __ in zip(colours_to_replace, colours_alt):
+                    text = text.replace(_, __)
+                for symbol in symbols:
+                    text = text.replace(symbol, reset + colour_two + symbol + reset + colour_one)
+                for word in words_green:
+                    text = text.replace(word, reset + green_bright + str(green_bright).join(list(word)) + reset + colour_one)
+                for word in words_red:
+                    text = text.replace(word, reset + red_bright + str(red_bright).join(list(word)) + reset + colour_one)
+                for _, __ in zip(colours_alt, colours_to_replace):
+                    text = text.replace(_, __)
+                return reset + colour_one + text + reset
 
-        # for error messages
+            # for error messages
 
-        if preset == 2:
-            for _, __ in zip(colours_to_replace, colours_alt):
-                text = text.replace(_, __)
-            for symbol in symbols:
-                text = text.replace(symbol, reset + white_bright + symbol + reset + red)
-            for word in words_green:
-                text = text.replace(word, reset + green_bright + str(green_bright).join(list(word)) + reset + red)
-            for word in words_red:
-                text = text.replace(word, reset + red_bright + str(red_bright).join(list(word)) + reset + red)
-            for _, __ in zip(colours_alt, colours_to_replace):
-                text = text.replace(_, __)
-            return reset + red_normal + text + reset
+            case 2:
+                for _, __ in zip(colours_to_replace, colours_alt):
+                    text = text.replace(_, __)
+                for symbol in symbols:
+                    text = text.replace(symbol, reset + white_bright + symbol + reset + red)
+                for word in words_green:
+                    text = text.replace(word, reset + green_bright + str(green_bright).join(list(word)) + reset + red)
+                for word in words_red:
+                    text = text.replace(word, reset + red_bright + str(red_bright).join(list(word)) + reset + red)
+                for _, __ in zip(colours_alt, colours_to_replace):
+                    text = text.replace(_, __)
+                return reset + red_normal + text + reset
 
-        # random | words_green, words_red will not be coloured!
+            # random | words_green, words_red will not be coloured!
 
-        if preset in (3, 4):
+            case 3 | 4:
 
-            for _ in colours_to_replace:
-                text = text.replace(_, '')
+                for _ in colours_to_replace:
+                    text = text.replace(_, '')
 
-            text = list(text)
-            colour_spl = bool(preset == 3)
+                text = list(text)
+                colour_spl = bool(preset == 3)
 
-            if not colours:
-                text.insert(0, str(Style.BRIGHT))
-                codes = vars(Fore)
-                colours = tuple(codes[colour] for colour in codes if colour not in ('BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET'))
+                if not colours:
+                    text.insert(0, str(Style.BRIGHT))
+                    codes = vars(Fore)
+                    colours = tuple(codes[colour] for colour in codes if colour not in ('BLACK', 'WHITE', 'LIGHTBLACK_EX', 'LIGHTWHITE_EX', 'RESET'))
 
-            for _, char in enumerate(text):
-                if char not in (' ', '\n', '\t', '\r', '\b'):
-                    if colour_spl:
-                        if char in symbols:
-                            text[_] = reset + white_bright + char
+                for _, char in enumerate(text):
+                    if char not in (' ', '\n', '\t', '\r', '\b'):
+                        if colour_spl:
+                            if char in symbols:
+                                text[_] = reset + white_bright + char
+                            else:
+                                text[_] = reset + random.choice(colours) + char
                         else:
                             text[_] = reset + random.choice(colours) + char
-                    else:
-                        text[_] = reset + random.choice(colours) + char
 
-            return reset + ''.join(text) + reset
+                return reset + ''.join(text) + reset
 
-        raise ValueError(f"Invalid Preset: {preset} | Valid Presets: 1, 2, 3, 4")
+            case _:
+                raise ValueError(f"Invalid Preset: {preset} | Valid Presets: 1, 2, 3, 4")
 
     except: sys.exit(clr(err(sys.exc_info()),2))
 
@@ -568,148 +571,149 @@ def fade(text: str, colour: str = "pink2red") -> str:
         faded = ""
         multi_line = bool(len(text.splitlines()) > 1)
 
-        if colour == "random":
-            for line in text.splitlines():
-                for char in line:
-                    R, G, B = random.randint(0,255), random.randint(0,255), random.randint(0,255)
-                    faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
-                if multi_line: faded += "\n"
+        match colour:
+            case "random":
+                for line in text.splitlines():
+                    for char in line:
+                        R, G, B = random.randint(0,255), random.randint(0,255), random.randint(0,255)
+                        faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
+                    if multi_line: faded += "\n"
 
-        elif colour == "black2white":
-            for line in text.splitlines():
+            case "black2white":
+                for line in text.splitlines():
+                    R = 0; G = 0; B = 0
+                    shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                    for char in line:
+                        R += shift; G += shift; B += shift
+                        R = min(R, 255); G = min(G, 255); B = min(B, 255)
+                        faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
+                    if multi_line: faded += "\n"
+
+            case "black2white-v":
                 R = 0; G = 0; B = 0
-                shift = (int(255 / len(line)) if len(line) > 0 else 5)
-                for char in line:
+                shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+                for line in text.splitlines():
+                    faded += (f"\033[38;2;{R};{G};{B}m{line}\033[0m")
                     R += shift; G += shift; B += shift
                     R = min(R, 255); G = min(G, 255); B = min(B, 255)
-                    faded += f"\033[38;2;{R};{G};{B}m{char}\033[0m"
-                if multi_line: faded += "\n"
+                    if multi_line: faded += "\n"
 
-        elif colour == "black2white-v":
-            R = 0; G = 0; B = 0
-            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
-            for line in text.splitlines():
-                faded += (f"\033[38;2;{R};{G};{B}m{line}\033[0m")
-                R += shift; G += shift; B += shift
-                R = min(R, 255); G = min(G, 255); B = min(B, 255)
-                if multi_line: faded += "\n"
+            case "yellow2red":
+                for line in text.splitlines():
+                    G = 255
+                    shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                    for char in line:
+                        G -= shift
+                        G = max(G, 0)
+                        faded += f"\033[38;2;255;{G};0m{char}\033[0m"
+                    if multi_line: faded += "\n"
 
-        elif colour == "yellow2red":
-            for line in text.splitlines():
+            case "yellow2red-v":
                 G = 255
-                shift = (int(255 / len(line)) if len(line) > 0 else 5)
-                for char in line:
+                shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+                for line in text.splitlines():
+                    faded += f"\033[38;2;255;{G};0m{line}\033[0m"
                     G -= shift
                     G = max(G, 0)
-                    faded += f"\033[38;2;255;{G};0m{char}\033[0m"
-                if multi_line: faded += "\n"
+                    if multi_line:faded += "\n"
 
-        elif colour == "yellow2red-v":
-            G = 255
-            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
-            for line in text.splitlines():
-                faded += f"\033[38;2;255;{G};0m{line}\033[0m"
-                G -= shift
-                G = max(G, 0)
-                if multi_line:faded += "\n"
+            case "green2yellow":
+                for line in text.splitlines():
+                    R = 0
+                    shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                    for char in line:
+                        R += shift
+                        R = min(R, 255)
+                        faded += f"\033[38;2;{R};255;0m{char}\033[0m"
+                    if multi_line: faded += "\n"
 
-        elif colour == "green2yellow":
-            for line in text.splitlines():
+            case "green2yellow-v":
                 R = 0
-                shift = (int(255 / len(line)) if len(line) > 0 else 5)
-                for char in line:
+                shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+                for line in text.splitlines():
+                    faded += f"\033[38;2;{R};255;0m{line}\033[0m"
                     R += shift
                     R = min(R, 255)
-                    faded += f"\033[38;2;{R};255;0m{char}\033[0m"
-                if multi_line: faded += "\n"
+                    if multi_line: faded += "\n"
 
-        elif colour == "green2yellow-v":
-            R = 0
-            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
-            for line in text.splitlines():
-                faded += f"\033[38;2;{R};255;0m{line}\033[0m"
-                R += shift
-                R = min(R, 255)
-                if multi_line: faded += "\n"
+            case "green2cyan":
+                for line in text.splitlines():
+                    B = 100
+                    shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                    for char in line:
+                        B += shift
+                        B = min(B, 255)
+                        faded += f"\033[38;2;0;255;{B}m{char}\033[0m"
+                    if multi_line: faded += "\n"
 
-        elif colour == "green2cyan":
-            for line in text.splitlines():
+            case "green2cyan-v":
                 B = 100
-                shift = (int(255 / len(line)) if len(line) > 0 else 5)
-                for char in line:
+                shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+                for line in text.splitlines():
+                    faded += f"\033[38;2;0;255;{B}m{line}\033[0m"
                     B += shift
                     B = min(B, 255)
-                    faded += f"\033[38;2;0;255;{B}m{char}\033[0m"
-                if multi_line: faded += "\n"
+                    if multi_line: faded += "\n"
 
-        elif colour == "green2cyan-v":
-            B = 100
-            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
-            for line in text.splitlines():
-                faded += f"\033[38;2;0;255;{B}m{line}\033[0m"
-                B += shift
-                B = min(B, 255)
-                if multi_line: faded += "\n"
+            case "blue2cyan":
+                for line in text.splitlines():
+                    G = 0
+                    shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                    for char in line:
+                        G += shift
+                        G = min(G, 255)
+                        faded += f"\033[38;2;0;{G};255m{char}\033[0m"
+                    if multi_line: faded += "\n"
 
-        elif colour == "blue2cyan":
-            for line in text.splitlines():
-                G = 0
-                shift = (int(255 / len(line)) if len(line) > 0 else 5)
-                for char in line:
-                    G += shift
-                    G = min(G, 255)
-                    faded += f"\033[38;2;0;{G};255m{char}\033[0m"
-                if multi_line: faded += "\n"
+            case "blue2cyan-v":
+                G = 10
+                shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+                for line in text.splitlines():
+                    faded += f"\033[38;2;0;{G};255m{line}\033[0m"
+                    if G != 255:
+                        G += shift
+                        G = min(G, 255)
+                    if multi_line: faded += "\n"
 
-        elif colour == "blue2cyan-v":
-            G = 10
-            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
-            for line in text.splitlines():
-                faded += f"\033[38;2;0;{G};255m{line}\033[0m"
-                if G != 255:
-                    G += shift
-                    G = min(G, 255)
-                if multi_line: faded += "\n"
+            case "blue2pink":
+                for line in text.splitlines():
+                    R = 35
+                    shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                    for char in line:
+                        R += shift
+                        R = min(R, 255)
+                        faded += f"\033[38;2;{R};0;220m{char}\033[0m"
+                    if multi_line: faded += "\n"
 
-        elif colour == "blue2pink":
-            for line in text.splitlines():
-                R = 35
-                shift = (int(255 / len(line)) if len(line) > 0 else 5)
-                for char in line:
+            case "blue2pink-v":
+                R = 40
+                shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+                for line in text.splitlines():
+                    faded += f"\033[38;2;{R};0;220m{line}\033[0m"
                     R += shift
                     R = min(R, 255)
-                    faded += f"\033[38;2;{R};0;220m{char}\033[0m"
-                if multi_line: faded += "\n"
+                    if multi_line: faded += "\n"
 
-        elif colour == "blue2pink-v":
-            R = 40
-            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
-            for line in text.splitlines():
-                faded += f"\033[38;2;{R};0;220m{line}\033[0m"
-                R += shift
-                R = min(R, 255)
-                if multi_line: faded += "\n"
+            case "pink2red":
+                for line in text.splitlines():
+                    B = 255
+                    shift = (int(255 / len(line)) if len(line) > 0 else 5)
+                    for char in line:
+                        faded += f"\033[38;2;255;0;{B}m{char}\033[0m"
+                        B -= shift
+                        B = max(B, 0)
+                    if multi_line: faded += "\n"
 
-        elif colour == "pink2red":
-            for line in text.splitlines():
+            case "pink2red-v":
                 B = 255
-                shift = (int(255 / len(line)) if len(line) > 0 else 5)
-                for char in line:
-                    faded += f"\033[38;2;255;0;{B}m{char}\033[0m"
+                shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
+                for line in text.splitlines():
+                    faded += f"\033[38;2;255;0;{B}m{line}\033[0m"
                     B -= shift
                     B = max(B, 0)
-                if multi_line: faded += "\n"
+                    if multi_line: faded += "\n"
 
-        elif colour == "pink2red-v":
-            B = 255
-            shift = (int(255 / len(text.splitlines())) if len(text.splitlines()) > 0 else 25)
-            for line in text.splitlines():
-                faded += f"\033[38;2;255;0;{B}m{line}\033[0m"
-                B -= shift
-                B = max(B, 0)
-                if multi_line: faded += "\n"
-
-        else: raise ValueError(f"Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}")
+            case _: raise ValueError(f"Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}")
 
         if multi_line: faded = faded[:-1]
         return faded
@@ -739,38 +743,39 @@ def get_duration(then: datetime, now: datetime = None, interval = "default"):
 
     duration = now - then
 
-    if interval in ("year", "years"): return int(duration.days / 365)
-    if interval in ("day", "days"): return duration.days
-    if interval in ("hour", "hours"): return int(duration.total_seconds() / 3600)
-    if interval in ("minute", "minutes"): return int(duration.total_seconds() / 60)
-    if interval in ("second", "seconds"): return int(duration.total_seconds())
-    if interval in ("dynamic", "dynamic-mini"):
+    match interval:
+        case "year" | "years": return int(duration.days / 365)
+        case "day" | "days": return duration.days
+        case "hour" | "hours": return int(duration.total_seconds() / 3600)
+        case "minute" | "minutes": return int(duration.total_seconds() / 60)
+        case "second" | "seconds": return int(duration.total_seconds())
+        case "dynamic" | "dynamic-mini":
 
-        mini = bool(interval == "dynamic-mini")
-        seconds = duration.total_seconds()
+            mini = bool(interval == "dynamic-mini")
+            seconds = duration.total_seconds()
 
-        if seconds < 60:
-            if mini: return f"{int(seconds)}s"
-            return f"{int(seconds)} second{'s' if seconds > 1 else ''}"
+            if seconds < 60:
+                if mini: return f"{int(seconds)}s"
+                return f"{int(seconds)} second{'s' if seconds > 1 else ''}"
 
-        if seconds < 3600:
-            minutes = int(seconds / 60)
-            if mini: return f"{minutes}m"
-            return f"{minutes} minute{'s' if minutes > 1 else ''}"
+            if seconds < 3600:
+                minutes = int(seconds / 60)
+                if mini: return f"{minutes}m"
+                return f"{minutes} minute{'s' if minutes > 1 else ''}"
 
-        if seconds < 86400:
-            hours = int(seconds / 3600)
-            if mini: return f"{hours}h"
-            return f"{hours} hour{'s' if hours > 1 else ''}"
+            if seconds < 86400:
+                hours = int(seconds / 3600)
+                if mini: return f"{hours}h"
+                return f"{hours} hour{'s' if hours > 1 else ''}"
 
-        if seconds < 31536000:
-            days = int(seconds / 86400)
-            if mini: return f"{days}d"
-            return f"{days} day{'s' if days > 1 else ''}"
+            if seconds < 31536000:
+                days = int(seconds / 86400)
+                if mini: return f"{days}d"
+                return f"{days} day{'s' if days > 1 else ''}"
 
-        years = int(seconds / 31536000)
-        if mini: return f"{years}y"
-        return f"{years} year{'s' if years > 1 else ''}"
+            years = int(seconds / 31536000)
+            if mini: return f"{years}y"
+            return f"{years} year{'s' if years > 1 else ''}"
 
     seconds = duration.total_seconds()
     years = int(seconds / 31536000)
@@ -818,31 +823,27 @@ def err(exc_info, mode = "default") -> str:
     trace_back = extract_tb(ex_traceback)
     stack_trace = []
 
-    if mode == "default":
+    match mode:
+        case "default":
+            for trace in trace_back:
+                filename = trace[0]
+                if filename == "<string>": filename = str(__name__)
+                stack_trace.append(f"    - File: {filename} | Line: {trace[1]} | Function: {trace[2] if trace[2] != '<module>' else 'top-level'}{' | ' + trace[3] if trace[3] else ''}")
+            report = f"  - Error Type: {ex_type.__name__}"
+            if ex_value: report += f"\n  - Error Message: \n    - {ex_value}"
+            report += "\n  - Error Stack Trace: \n{}".format('\n'.join(stack_trace))
 
-        for trace in trace_back:
-            filename = trace[0]
-            if filename == "<string>": filename = str(__name__)
-            stack_trace.append(f"    - File: {filename} | Line: {trace[1]} | Function: {trace[2] if trace[2] != '<module>' else 'top-level'}{' | ' + trace[3] if trace[3] else ''}")
+        case "mini":
+            for trace in trace_back:
+                filename = trace[0]
+                if filename == "<string>": filename = str(__name__)
+                stack_trace.append(f"    - {filename} | {trace[1]} | {trace[2] if trace[2] != '<module>' else 'top-level'}{' | ' + trace[3] if trace[3] else ''}")
+            report = f"  - {ex_type.__name__}"
+            if ex_value: report += f" | {ex_value}"
+            report += ('\n' + '\n'.join(stack_trace))
 
-        report = f"  - Error Type: {ex_type.__name__}"
-        if ex_value: report += f"\n  - Error Message: \n    - {ex_value}"
-        report += "\n  - Error Stack Trace: \n{}".format('\n'.join(stack_trace))
-
-    elif mode == "mini":
-
-        for trace in trace_back:
-            filename = trace[0]
-            if filename == "<string>": filename = str(__name__)
-            stack_trace.append(f"    - {filename} | {trace[1]} | {trace[2] if trace[2] != '<module>' else 'top-level'}{' | ' + trace[3] if trace[3] else ''}")
-
-        report = f"  - {ex_type.__name__}"
-        if ex_value: report += f" | {ex_value}"
-        report += ('\n' + '\n'.join(stack_trace))
-
-    else:
-
-        raise ValueError(f"Invalid Mode: {mode} | Valid Modes: default, mini")
+        case _:
+            raise ValueError(f"Invalid Mode: {mode} | Valid Modes: default, mini")
 
     return report
 
@@ -1083,16 +1084,17 @@ def get_path(location: str) -> str:
 
             if location in valid_locations:
 
-                if location == "Documents": location = "Personal"
-                elif location == "Pictures": location = "My Pictures"
-                elif location == "Videos": location = "My Video"
-                elif location == "Music": location = "My Music"
+                match location:
+                    case "Documents": location = "Personal"
+                    case "Pictures": location = "My Pictures"
+                    case "Videos": location = "My Video"
+                    case "Music": location = "My Music"
 
                 key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", access=winreg.KEY_READ)
                 path = os.path.expandvars(winreg.QueryValueEx(key, location)[0])
                 return path
 
-            else: raise ValueError(f"Invalid location: {location} | Valid locations: {', '.join(valid_locations)}")
+            raise ValueError(f"Invalid location: {location} | Valid locations: {', '.join(valid_locations)}")
 
         except: sys.exit(clr(err(sys.exc_info()),2))
 
