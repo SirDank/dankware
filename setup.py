@@ -4,7 +4,7 @@ setup(
 
     license = "MIT",
     name = "dankware",
-    version = "3.5.7",
+    version = "3.6",
     author = "SirDank",
 
     author_email = "SirDankenstein@protonmail.com",
@@ -30,13 +30,15 @@ setup(
         "github scraper",
         "splash screen",
         "windows tools",
+        "terminal"
     ],
 
     classifiers = [
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
         "Operating System :: Microsoft :: Windows",
+        "Operating System :: POSIX :: Linux"
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Natural Language :: English",

@@ -1,6 +1,13 @@
-from dankware import *
 import os
+import sys
+import time
+import random
+from colorama import Style, Fore
+from datetime import datetime
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+from dankware import err, fade, get_duration, get_path, github_downloads, github_file_selector, multithread, random_ip, clr, align, cls
+from dankware import white_bright, white_normal, white_dim, red_bright, red_normal, red_dim, green, white, magenta, reset
 
 cls()
 a = 0
@@ -146,7 +153,11 @@ def main():
 
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
-    for location in ["AppData", "Desktop", "Documents", "Personal", "Favorites", "Local AppData", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music"]:
+    if os.name == 'nt':
+        locations = ("AppData", "Desktop", "Documents", "Personal", "Favorites", "Local AppData", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music")
+    elif os.name == 'posix':
+        locations = ("Desktop", "Documents", "Downloads", "Pictures", "Videos", "Music")
+    for location in locations:
         path = get_path(location)
         print(path)
 
@@ -296,5 +307,9 @@ Y8b d88P
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade("\n  > This is a test string!", "pink2red"))
+
+    #COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+
+    #print('\n'.join(sorted(tuple(sys.modules))))
 
 if __name__ == "__main__": main()

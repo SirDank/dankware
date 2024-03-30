@@ -92,7 +92,7 @@ multithread(example, 10, new_list, 5, progress_bar=False) # input_two: 5 | disab
 
 ```py
 import os
-from dankware import export_registry_keys, is_admin
+from dankware import export_registry_keys
 
 # [NOTE]: this function requires admin privileges!
 
@@ -113,7 +113,9 @@ export_registry_keys(registry_root, registry_path, recursive=True, export_path=e
 # 🚨 Splash Screen 🚨
 
 ```py
-from dankware import splash_screen, hide_window, show_window
+from dankware.pillow import splash_screen
+#from dankware import hide_window, show_window
+
 # Supports: GIFs / PNGs / JPGs / BMPs / ICOs
 
 # hide_window()
@@ -122,7 +124,7 @@ splash_screen("D:\\splash.gif", duration=5) # runs on main thread
 ```
 
 ```py
-from dankware import splash_screen
+from dankware.pillow import splash_screen
 from concurrent.futures import ThreadPoolExecutor
 ThreadPoolExecutor(1).submit(splash_screen, "splash.png", 5)
 # runs on separate thread
@@ -182,13 +184,13 @@ print(random_ip())
 # 🚨 GUI File / Path Selector 🚨
 
 ```py
-from dankware import file_selector
+from dankware.tkinter import file_selector
 path = file_selector() # opens file explorer to select a file
 print(path)
 ```
 
 ```py
-from dankware import folder_selector
+from dankware.tkinter import folder_selector
 path = folder_selector() # opens file explorer to select a folder
 print(path)
 ```
@@ -196,9 +198,15 @@ print(path)
 # 🚨 Path Extractor 🚨
 
 ```py
+import os
 from dankware import get_path
-for location in ["AppData", "Desktop", "Documents", "Personal", "Favorites", "Local AppData", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music"]:
-    path = get_path(location) # extracts path from registry
+
+if os.name == 'nt': # extracts path from registry
+    locations = ("AppData", "Desktop", "Documents", "Favorites", "Local AppData", "Pictures", "Videos", "Music")
+elif os.name == 'posix':
+    locations = ("Desktop", "Documents", "Downloads", "Pictures", "Videos", "Music")
+for location in locations:
+    path = get_path(location)
     print(path)
 ```
 <img width="200" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/ee06bdd9-fbd3-4765-9450-6e2435dd6880"><br>
@@ -429,19 +437,19 @@ print(fade(banner, "random"))
 
 ## ♦️ Style 1 ♦️
 
-<br><p align="center"><img width="700" alt="image" src="https://github.com/SirDank/dankware/raw/main/__wallpapers__/1.png"></p><br>
+<br><p align="center"><img width="700" alt="image" src="__wallpapers__/1.png"></p><br>
 
 ## ♦️ Style 2 ♦️
 
-<br><p align="center"><img width="700" alt="image" src="https://github.com/SirDank/dankware/raw/main/__wallpapers__/2.jpg"></p><br>
+<br><p align="center"><img width="700" alt="image" src="__wallpapers__/2.png"></p><br>
 
 ## ♦️ Style 3 ♦️
 
-<br><p align="center"><img width="700" alt="image" src="https://github.com/SirDank/dankware/raw/main/__wallpapers__/3.png"></p><br>
+<br><p align="center"><img width="700" alt="image" src="__wallpapers__/3.png"></p><br>
 
 ## ♦️ Style 4 ♦️
 
-<br><p align="center"><img width="700" alt="image" src="https://github.com/SirDank/dankware/raw/main/__wallpapers__/4.png"></p><br>
+<br><p align="center"><img width="700" alt="image" src="__wallpapers__/4.png"></p><br>
 
 <p>&nbsp;</p>
 
