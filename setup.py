@@ -4,7 +4,7 @@ setup(
 
     license = "MIT",
     name = "dankware",
-    version = "3.6",
+    version = "3.6.1",
     author = "SirDank",
 
     author_email = "SirDankenstein@protonmail.com",
@@ -47,9 +47,10 @@ setup(
 
     package_dir = {"": "."},
     packages = find_packages(where = "."),
+    extras_require={'extras': ['pillow']},
     install_requires = [
         "rich",
         "colorama",
         "requests",
-    ],
+    ]
 )

@@ -63,7 +63,7 @@ def get_duration(then: datetime, now: datetime = None, interval: str = "default"
 
         if seconds < 31536000:
             months = int(seconds / 2592000)
-            if mini: return f"{months}m"
+            if mini: return f"{months}mo"
             return f"{months} month{'s' if months > 1 else ''}"
 
         years = int(seconds / 31536000)
