@@ -17,10 +17,10 @@ def github_downloads(user_repo: str) -> tuple[str]:
     ```
     """
 
-    response = requests.get(f"https://api.github.com/repos/{user_repo}/releases/latest", headers = {"User-Agent": "dankware"}, timeout=3).json()
+    response = requests.get(f"https://api.github.com/repos/{user_repo}/releases/latest", headers = {"User-Agent": "dankware"}, timeout=3)
 
     if response.status_code == 200:
-        return tuple(data["browser_download_url"] for data in response["assets"])
+        return tuple(data["browser_download_url"] for data in response.json()["assets"])
     raise RuntimeError(f"Failed to get latest release from github: [{response.status_code}] {response.reason}")
 
 def github_file_selector(user_repo: str, filter_mode: str, filter_iterable: list[str] | tuple[str]) -> tuple[str]:

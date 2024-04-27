@@ -154,7 +154,7 @@ def main():
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     if os.name == 'nt':
-        locations = ("AppData", "Desktop", "Documents", "Personal", "Favorites", "Local AppData", "Pictures", "My Pictures", "Videos", "My Video", "Music", "My Music")
+        locations = ("AppData", "Desktop", "Documents", "Favorites", "Local AppData", "Music", "Pictures", "Videos")
     elif os.name == 'posix':
         locations = ("Desktop", "Documents", "Downloads", "Pictures", "Videos", "Music")
     for location in locations:
