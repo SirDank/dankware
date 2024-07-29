@@ -11,7 +11,7 @@ def get_path(location: str) -> str:
 
     """
     Returns path from registry
-    - Supports: Desktop / Documents / Favorites / Pictures / Videos / Music
+    - Supports: AppData / Desktop / Documents / Favorites / Pictures / Videos / Music
     """
 
     if os.name == 'nt':

@@ -17,6 +17,8 @@ def github_downloads(user_repo: str) -> tuple[str]:
     ```
     """
 
+    # [NOTE] needs to be updated to not use api. Example: https://github.com/EssentialsX/Essentials/releases/expanded_assets/2.20.1
+
     response = requests.get(f"https://api.github.com/repos/{user_repo}/releases/latest", headers = {"User-Agent": "dankware"}, timeout=3)
 
     if response.status_code == 200:
