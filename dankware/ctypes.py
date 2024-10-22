@@ -4,8 +4,6 @@ from concurrent.futures import ThreadPoolExecutor
 
 if os.name == 'nt':
     import ctypes
-elif os.name == 'posix':
-    import pwd # pylint: disable=import-error
 
 def is_admin() -> bool:
 
@@ -17,7 +15,8 @@ def is_admin() -> bool:
         try: return ctypes.windll.shell32.IsUserAnAdmin()
         except: return False
     elif os.name == 'posix':
-        return pwd.getpwuid(os.getuid())[0] in ('root', '0') # pylint: disable=no-member
+        from pwd import getpwuid # pylint: disable=import-error, import-outside-toplevel
+        return getpwuid(os.getuid())[0] in ('root', '0') # pylint: disable=no-member
     else:
         raise ValueError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 

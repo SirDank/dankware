@@ -93,11 +93,11 @@ if 'NO_COLOR' in os.environ:
     white_dim = ''
     yellow_dim = ''
 
-from .text import clr, align, fade, random_ip
-from .terminal import cls, title, rm_line, sys_open
-from .multithread import multithread
+from .text import clr, align, fade, random_ip  # pylint: disable=wrong-import-position # noqa: E402
+from .terminal import cls, title, rm_line, sys_open  # pylint: disable=wrong-import-position # noqa: E402
+from .multithread import multithread  # pylint: disable=wrong-import-position # noqa: E402
 #from .pillow import splash_screen
-from .winreg import get_path
+from .winreg import get_path # pylint: disable=wrong-import-position # noqa: E402
 
 if os.name == 'nt':
     from .winreg import export_registry_keys
