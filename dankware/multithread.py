@@ -59,17 +59,21 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
                     time.sleep(0.1)
                     for future in as_completed(futures):
                         if future.done():
-                            try: future.result()
-                            except: pass
+                            try:
+                                future.result()
+                            except Exception as e:
+                                raise RuntimeError("An error occurred while processing the future result") from e
                             job_progress.advance(overall_task)
 
         else:
             for future in as_completed(futures):
                 if future.done():
-                    try: future.result()
-                    except: pass
+                    try:
+                        future.result()
+                    except Exception as e:
+                        raise RuntimeError("An error occurred while processing the future result") from e
 
     except:
-        try: executor.shutdown()
+        try: executor.shutdown(wait=False, cancel_futures=True)
         except: pass
         sys.exit(clr(err(sys.exc_info()),2))
