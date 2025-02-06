@@ -4,7 +4,7 @@ setup(
 
     license = "MIT",
     name = "dankware",
-    version = "3.6.5",
+    version = "3.6.6",
     author = "SirDank",
 
     author_email = "SirDankenstein@protonmail.com",

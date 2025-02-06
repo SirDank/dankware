@@ -10,11 +10,22 @@ if os.name == 'nt':
 def get_path(location: str) -> str:
 
     """
-    Returns path from registry
-    - Supports: AppData / Desktop / Documents / Favorites / Pictures / Videos / Music
+    Returns path from registry or environment variables
+    - Supports: AppData / Desktop / Documents / Favorites / Pictures / Videos / Music / Downloads / Temp
     """
 
     if os.name == 'nt':
+
+        if location in ('Downloads', 'Temp'):
+
+            match location:
+                case 'Downloads':
+                    path = os.path.join(os.environ['USERPROFILE'], 'Downloads')
+                case 'Temp':
+                    path = os.path.expandvars("%temp%")
+            if os.path.exists(path):
+                return path
+            raise FileNotFoundError(f"{location} path not found!")
 
         valid_locations = ("AppData", "Desktop", "Documents", "Favorites", "Local AppData", "Music", "Pictures", "Videos")
 
@@ -33,11 +44,15 @@ def get_path(location: str) -> str:
 
     if os.name == 'posix':
 
-        valid_locations = ("Desktop", "Documents", "Downloads", "Music", "Pictures", "Videos")
+        valid_locations = ("Desktop", "Documents", "Downloads", "Music", "Pictures", "Videos", "Temp")
 
         if location in valid_locations:
-            path = os.path.expanduser(f"~/{location}")
-            return path
+            if location == "Temp":
+                path = os.path.expandvars("/tmp")
+            else:
+                path = os.path.expanduser(f"~/{location}")
+            if os.path.exists(path):
+                return path
 
         raise ValueError(f"Invalid location: {location} | Valid locations: {', '.join(valid_locations)}")
 

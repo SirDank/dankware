@@ -25,7 +25,7 @@ def github_downloads(user_repo: str) -> tuple[str]:
         return tuple(data["browser_download_url"] for data in response.json()["assets"])
     raise RuntimeError(f"Failed to get latest release from github: [{response.status_code}] {response.reason}")
 
-def github_file_selector(user_repo: str, filter_mode: str, filter_iterable: list[str] | tuple[str]) -> tuple[str]:
+def github_file_selector(user_repo: str, filter_mode: str, filter_iterable: list[str]) -> tuple[str]:
 
     """
     
