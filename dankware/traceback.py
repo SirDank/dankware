@@ -12,13 +12,17 @@ def err(exc_info, mode: str = "default") -> str:
     ```python
     import sys
     from dankware import err, clr
-    
-    try:
-        value = 1/0
-    except:
-        print(clr(err(sys.exc_info()),2))
+    try: value = 1/0
+    except Exception as exc:
+        print(clr(err((type(exc), exc, exc.__traceback__)),2))
         # OR
-        print(clr(err(sys.exc_info(),'mini'),2))
+        print(clr(err(sys.exc_info()),2))
+    # OR
+    try: value = 1/0
+    except Exception as exc:
+        print(clr(err((type(exc), exc, exc.__traceback__),'mini'),2))
+        # OR
+        print(clr(err(sys.exc_info(),"mini"),2))
     ```
     """
 

@@ -136,12 +136,12 @@ def main():
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     try: value = 1/0
-    except: print(clr(err(sys.exc_info()), 2))
+    except Exception as exc: print(clr(err((type(exc), exc, exc.__traceback__)), 2))
 
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     try: value = 1/0
-    except: print(clr(err(sys.exc_info(),"mini"), 2))
+    except Exception as exc: print(clr(err((type(exc), exc, exc.__traceback__),'mini'), 2))
 
     COUNTER += 1; print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
