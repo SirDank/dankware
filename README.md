@@ -219,9 +219,9 @@ import os
 from dankware import get_path
 
 if os.name == 'nt': # extracts path from registry
-    locations = ("AppData", "Desktop", "Documents", "Favorites", "Local AppData", "Pictures", "Videos", "Music")
+    locations = ("AppData", "Desktop", "Documents", "Favorites", "Local AppData", "Pictures", "Videos", "Music", "Downloads", "Temp")
 elif os.name == 'posix':
-    locations = ("Desktop", "Documents", "Downloads", "Pictures", "Videos", "Music")
+    locations = ("Desktop", "Documents", "Downloads", "Music", "Pictures", "Videos", "Temp")
 for location in locations:
     path = get_path(location)
     print(path)
