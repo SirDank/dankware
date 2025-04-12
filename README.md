@@ -151,9 +151,15 @@ ThreadPoolExecutor(1).submit(splash_screen, "splash.png", 5)
 import sys
 from dankware import err, clr
 try: value = 1/0
-except: print(clr(err(sys.exc_info()),2))
+except:
+  print(clr(err((type(exc), exc, exc.__traceback__)),2))
+  # OR
+  print(clr(err(sys.exc_info()),2))
 try: value = 1/0
-except: print(clr(err(sys.exc_info(),"mini"),2))
+except:
+  print(clr(err((type(exc), exc, exc.__traceback__),'mini'),2))
+  # OR
+  print(clr(err(sys.exc_info(),"mini"),2))
 ```
 
 <img width="700" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/e2a22bab-05c7-4d10-abbe-9fcd6d3ecf4e"><br>
