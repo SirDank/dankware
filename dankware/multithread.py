@@ -8,13 +8,22 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.live import Live
 from rich.panel import Panel
 from rich.table import Table
-from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeRemainingColumn, TimeElapsedColumn
+from rich.progress import (
+    Progress,
+    SpinnerColumn,
+    BarColumn,
+    TextColumn,
+    TimeRemainingColumn,
+    TimeElapsedColumn,
+)
 
-def multithread(function: callable, threads: int = 1, *args, progress_bar: bool = True) -> None: # pylint: disable=keyword-arg-before-vararg # type: ignore
 
+def multithread( # pylint: disable=keyword-arg-before-vararg
+    function: callable, threads: int = 1, *args, progress_bar: bool = True # type: ignore
+) -> None:
     """
     Run the given function in multiple threads with the specified inputs.
-    
+
     ________________________________________________________________________
 
     - function: The function to run in multiple threads.
@@ -24,16 +33,16 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
     """
 
     try:
-
         if threads < 1:
             raise ValueError("The number of threads must be a positive integer!")
 
-        executor = ThreadPoolExecutor(max_workers=threads)
+        executor = ThreadPoolExecutor(
+            max_workers=threads, thread_name_prefix="dankware"
+        )
 
         if not args:
             futures = tuple(executor.submit(function) for _ in range(threads))
         else:
-
             input_lists = []
 
             for arg in args:
@@ -43,16 +52,37 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
                     input_lists.append([arg] * threads)
             del args
 
-            futures = tuple(executor.submit(function, *task_args) for task_args in zip(*input_lists))
+            futures = tuple(
+                executor.submit(function, *task_args) for task_args in zip(*input_lists)
+            )
 
             del input_lists
 
         if progress_bar:
             width = get_terminal_size().columns
-            job_progress = Progress("{task.description}", SpinnerColumn(), BarColumn(bar_width=width), TextColumn("[progress.percentage][bright_green]{task.percentage:>3.0f}%"), "[bright_cyan]ETA", TimeRemainingColumn(), TimeElapsedColumn())
-            overall_task = job_progress.add_task("[bright_green]Progress", total=int(len(futures)))
+            job_progress = Progress(
+                "{task.description}",
+                SpinnerColumn(),
+                BarColumn(bar_width=width),
+                TextColumn(
+                    "[progress.percentage][bright_green]{task.percentage:>3.0f}%"
+                ),
+                "[bright_cyan]ETA",
+                TimeRemainingColumn(),
+                TimeElapsedColumn(),
+            )
+            overall_task = job_progress.add_task(
+                "[bright_green]Progress", total=int(len(futures))
+            )
             progress_table = Table.grid()
-            progress_table.add_row(Panel.fit(job_progress, title="[bright_white]Jobs", border_style="red", padding=(1, 2)))
+            progress_table.add_row(
+                Panel.fit(
+                    job_progress,
+                    title="[bright_white]Jobs",
+                    border_style="red",
+                    padding=(1, 2),
+                )
+            )
 
             with Live(progress_table, refresh_per_second=10):
                 while not job_progress.finished:
@@ -62,7 +92,9 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
                             try:
                                 future.result()
                             except Exception as e:
-                                raise RuntimeError("An error occurred while processing the future result") from e
+                                raise RuntimeError(
+                                    "An error occurred while processing the future result"
+                                ) from e
                             job_progress.advance(overall_task)
 
         else:
@@ -71,9 +103,13 @@ def multithread(function: callable, threads: int = 1, *args, progress_bar: bool 
                     try:
                         future.result()
                     except Exception as e:
-                        raise RuntimeError("An error occurred while processing the future result") from e
+                        raise RuntimeError(
+                            "An error occurred while processing the future result"
+                        ) from e
 
-    except:
-        try: executor.shutdown(wait=False, cancel_futures=True)
-        except: pass
-        sys.exit(clr(err(sys.exc_info()),2))
+    except Exception as exc:
+        try:
+            executor.shutdown(wait=False, cancel_futures=True)
+        except:
+            pass
+        sys.exit(clr(err((type(exc), exc, exc.__traceback__)), 2))
