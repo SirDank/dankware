@@ -37,7 +37,7 @@ def err(exc_info, mode: str = "default") -> str:
             if filename == "<string>":
                 filename = str(__name__)
             stack_trace.append(
-                f"    - File: {filename} | Line: {trace[1]} | Function: {trace[2] if trace[2] != '<module>' else 'top-level'}{f' | {trace[3]}' if trace[3] else ''}"
+                f"    - File: {filename} | Function: {trace[2] if trace[2] != '<module>' else 'top-level'} | Line: {trace[3]}"
             )
         report = f"  - Error Type: {ex_type.__name__}"
         if ex_value:
@@ -50,7 +50,7 @@ def err(exc_info, mode: str = "default") -> str:
             if filename == "<string>":
                 filename = str(__name__)
             stack_trace.append(
-                f"    - {filename} | {trace[1]} | {trace[2] if trace[2] != '<module>' else 'top-level'}{f' | {trace[3]}' if trace[3] else ''}"
+                f"    - {filename} | {trace[2] if trace[2] != '<module>' else 'top-level'} | {trace[3]}"
             )
         report = f"  - {ex_type.__name__}"
         if ex_value:
