@@ -27,6 +27,10 @@ def github_downloads(user_repo: str) -> tuple[str]:
 
     if response.status_code == 200:
         return tuple(data["browser_download_url"] for data in response.json()["assets"])
+    if response.status_code == 403 and "rate limit exceeded" in response.reason:
+        raise RuntimeError(
+            "Failed to get latest release from github: Rate limit exceeded! Try again in an hour!"
+        )
     raise RuntimeError(
         f"Failed to get latest release from github: [{response.status_code}] {response.reason}"
     )
