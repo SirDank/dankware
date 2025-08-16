@@ -1,5 +1,5 @@
 from traceback import extract_tb
-
+from os.path import commonprefix
 
 def err(exc_info, mode: str = "default") -> str:
     """
@@ -37,7 +37,7 @@ def err(exc_info, mode: str = "default") -> str:
             if filename == "<string>":
                 filename = str(__name__)
             stack_trace.append(
-                f"    - File: {filename} | Function: {trace[2] if trace[2] != '<module>' else 'top-level'} | Line: {trace[3]}"
+                f"    - File: {filename} | Function: {trace[2] if trace[2] != '<module>' else 'top-level'}{f' | Line: {trace[3]}' if trace[3] else ''}"
             )
         report = f"  - Error Type: {ex_type.__name__}"
         if ex_value:
@@ -45,12 +45,22 @@ def err(exc_info, mode: str = "default") -> str:
         report += "\n  - Error Stack Trace: \n{}".format("\n".join(stack_trace))
 
     elif mode == "mini":
+        filenames = [trace[0] for trace in trace_back]
+        common_prefix = None
+        if filenames:
+            common_prefix = commonprefix(filenames)
+            last_slash_idx = common_prefix.rfind('\\')
+            if last_slash_idx != -1:
+                common_prefix = common_prefix[:last_slash_idx]
+
         for trace in trace_back:
             filename = trace[0]
             if filename == "<string>":
                 filename = str(__name__)
+            elif common_prefix and filename.startswith(common_prefix):
+                filename = "..." + filename[len(common_prefix):]
             stack_trace.append(
-                f"    - {filename} | {trace[2] if trace[2] != '<module>' else 'top-level'} | {trace[3]}"
+                f"    - {filename} | {trace[2] if trace[2] != '<module>' else 'top-level'}{f' | {trace[3]}' if trace[3] else ''}"
             )
         report = f"  - {ex_type.__name__}"
         if ex_value:

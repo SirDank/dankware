@@ -12,6 +12,7 @@ from .ctypes import (
     minimise_window,
     maximise_window,
     restore_window,
+    get_uuid,
 )
 # from .tkinter import file_selector, folder_selector
 

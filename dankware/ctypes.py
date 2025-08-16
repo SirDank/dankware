@@ -1,6 +1,7 @@
 import os
 import time
 from concurrent.futures import ThreadPoolExecutor
+from subprocess import check_output, STDOUT, DEVNULL
 
 if os.name == "nt":
     import ctypes
@@ -153,3 +154,21 @@ def restore_window() -> None:
         raise ValueError(
             f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
         )
+
+
+def get_uuid() -> str:
+    """
+    Gets system UUID
+
+    Returns:
+        str: System UUID
+    """
+
+    if os.name == "nt":
+        try:
+            uuid = str(check_output(r"wmic csproduct get uuid", stderr=STDOUT, stdin=DEVNULL, creationflags=0x08000000).decode().split("\n")[1].strip())
+        except FileNotFoundError:
+            uuid = str(check_output("powershell.exe -ExecutionPolicy bypass -command (Get-CimInstance -Class Win32_ComputerSystemProduct).UUID", stderr=STDOUT, stdin=DEVNULL, creationflags=0x08000000).decode().strip())
+    else:
+        uuid = str(check_output(r"sudo dmidecode -s system-uuid", stderr=STDOUT, stdin=DEVNULL, creationflags=0x08000000).decode().replace("UUID", "").replace(":", "").strip())
+    return uuid

@@ -1,5 +1,4 @@
 import os
-import sys
 import time
 import random
 from colorama import Style, Fore
