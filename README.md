@@ -6,6 +6,7 @@
 
 <p align="center">
   <b>~ Stats ~</b><br><br>
+  <a href="https://deepwiki.com/SirDank/dankware"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
   <img src="https://static.pepy.tech/badge/dankware" />
   <img src="https://static.pepy.tech/badge/dankware/month" />
   <img src="https://static.pepy.tech/badge/dankware/week" />
