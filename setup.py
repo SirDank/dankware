@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     license="MIT",
     name="dankware",
-    version="3.6.9",
+    version="3.6.10",
     author="SirDank",
     author_email="SirDankenstein@protonmail.com",
     description="Python package with various features!",
