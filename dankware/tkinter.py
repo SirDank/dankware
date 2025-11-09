@@ -1,6 +1,6 @@
+import os
 from tkinter import Tk
-from tkinter.filedialog import askdirectory
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askdirectory, askopenfilename
 
 
 def folder_selector(title: str = "Select Folder", icon_path: str = "") -> str:
@@ -11,15 +11,14 @@ def folder_selector(title: str = "Select Folder", icon_path: str = "") -> str:
 
     root = Tk()
     root.withdraw()
-    if icon_path:
+    windows = os.name == "nt"
+    if icon_path and os.path.isfile(icon_path) and windows:
         root.iconbitmap(icon_path)
     folder_path = askdirectory(title=title)
-    return folder_path.replace("/", "\\")
+    return folder_path.replace("/", "\\") if windows else folder_path
 
 
-def file_selector(
-    title: str = "Select File", icon_path: str = "", path: str = "", filetypes=None
-) -> str:
+def file_selector(title: str = "Select File", icon_path: str = "", path: str = "", filetypes=None) -> str:
     """
     Opens file selector and returns selected file path
     - Allows custom title, icon, initial directory, and file types
@@ -27,11 +26,12 @@ def file_selector(
 
     root = Tk()
     root.withdraw()
-    if icon_path:
+    windows = os.name == "nt"
+    if icon_path and os.path.isfile(icon_path) and windows:
         root.iconbitmap(icon_path)
     file_path = askopenfilename(
         title=title,
         initialdir=path,
         filetypes=[("All Files", "*.*")] if not filetypes else filetypes,
     )
-    return file_path.replace("/", "\\")
+    return file_path.replace("/", "\\") if windows else file_path
