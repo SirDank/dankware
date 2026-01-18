@@ -1,5 +1,9 @@
-rich
-colorama
-requests
-pillow
-urllib3>=2.5.0 # not directly required, pinned by Snyk to avoid a vulnerability
+# Core dependencies
+rich>=13.0.0
+requests>=2.31.0
+
+# Optional dependencies (install with pip install dankware[extras])
+# pillow>=10.0.0
+
+# Security fix
+urllib3>=2.5.0  # pinned by Snyk to avoid a vulnerability

@@ -15,6 +15,7 @@ def folder_selector(title: str = "Select Folder", icon_path: str = "") -> str:
     if icon_path and os.path.isfile(icon_path) and windows:
         root.iconbitmap(icon_path)
     folder_path = askdirectory(title=title)
+    root.destroy()  # Cleanup to prevent memory leaks
     return folder_path.replace("/", "\\") if windows else folder_path
 
 
@@ -34,4 +35,5 @@ def file_selector(title: str = "Select File", icon_path: str = "", path: str = "
         initialdir=path,
         filetypes=[("All Files", "*.*")] if not filetypes else filetypes,
     )
+    root.destroy()  # Cleanup to prevent memory leaks
     return file_path.replace("/", "\\") if windows else file_path

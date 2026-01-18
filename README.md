@@ -30,6 +30,32 @@ Update to the latest version with the below command!
 pip install --upgrade dankware
 ```
 
+---
+
+# 📚 Table of Contents
+
+- [Multithreading](#-multithreading-)
+- [Async Utilities](#-async-utilities-new-)
+- [Decorators](#-decorators-new-)
+- [Configuration](#-configuration-new-)
+- [File Utilities](#-file-utilities-new-)
+- [Download with Progress](#-download-with-progress-new-)
+- [Context Managers](#-context-managers-new-)
+- [Colored Input](#-colored-input-new-)
+- [Colored Logging](#-colored-logging-new-)
+- [Export Registry Keys](#-export-registry-keys-)
+- [Splash Screen](#-splash-screen-)
+- [Error Traceback](#-error-traceback-)
+- [GitHub Utilities](#-github-utilities-)
+- [Generate Random IPs](#-generate-random-ips-)
+- [GUI File / Path Selector](#-gui-file--path-selector-)
+- [Path Extractor](#-path-extractor-)
+- [Colour Special Characters](#-colour-special-characters-)
+- [Banners](#-banners-)
+- [Gradient Reworked](#-gradient-reworked--originally-by-venaxyt--)
+
+---
+
 # 🚨 Multithreading 🚨
 
 ```py
@@ -96,6 +122,248 @@ multithread(example, 10, new_list, 5, progress_bar=False) # input_two: 5 | disab
 ```
 
 <img width="60" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153749433-95512c4d-afcd-4ad7-9797-caded6e44239.png"><br>
+
+<p>&nbsp;</p>
+
+---  
+
+# 🚨 Async Utilities (NEW) 🚨
+
+```py
+import asyncio
+from dankware.async_utils import async_multithread
+
+async def fetch_data(url):
+    await asyncio.sleep(1)  # Simulate async operation
+    return f"Fetched: {url}"
+
+async def main():
+    urls = ["url1", "url2", "url3", "url4", "url5"]
+    results = await async_multithread(fetch_data, 5, urls)
+    for result in results:
+        print(result)
+
+asyncio.run(main())
+```
+
+```py
+import asyncio
+from dankware.async_utils import gather_with_concurrency
+
+async def task(i):
+    await asyncio.sleep(1)
+    return i * 2
+
+async def main():
+    # Run 10 tasks with max 3 concurrent
+    coros = [task(i) for i in range(10)]
+    results = await gather_with_concurrency(3, *coros)
+    print(results)
+
+asyncio.run(main())
+```
+
+<p>&nbsp;</p>
+
+---
+
+# 🚨 Decorators (NEW) 🚨
+
+## ♦️ Retry Decorator ♦️
+
+```py
+from dankware.decorators import retry
+
+@retry(max_attempts=3, delay=1.0, backoff=2.0)
+def unstable_api_call():
+    # Will retry up to 3 times on failure
+    response = requests.get("https://api.example.com")
+    return response.json()
+```
+
+## ♦️ Timed Decorator ♦️
+
+```py
+from dankware.decorators import timed
+
+@timed
+def slow_function():
+    time.sleep(2)
+    return "done"
+
+slow_function()  # Prints: "  > slow_function completed in 2.001s"
+```
+
+## ♦️ Deprecated Decorator ♦️
+
+```py
+from dankware.decorators import deprecated
+
+@deprecated("Use new_function() instead")
+def old_function():
+    pass
+
+old_function()  # Emits DeprecationWarning
+```
+
+<p>&nbsp;</p>
+
+---
+
+# 🚨 Configuration (NEW) 🚨
+
+```py
+from dankware.config import configure, get_config
+
+# Configure global settings
+configure(
+    enable_colors=True,
+    default_threads=20,
+    github_token="ghp_your_token_here",  # For higher API rate limits
+    request_timeout=15
+)
+
+# Get current configuration
+config = get_config()
+print(f"Default threads: {config.default_threads}")
+```
+
+<p>&nbsp;</p>
+
+---
+
+# 🚨 File Utilities (NEW) 🚨
+
+```py
+from dankware.files import (
+    get_file_hash,
+    safe_filename,
+    human_readable_size,
+    ensure_dir,
+    list_files
+)
+
+# Calculate file hash
+sha256 = get_file_hash("myfile.txt", "sha256")
+print(sha256)
+
+# Sanitize filename
+safe = safe_filename('file<>:"/\\|?*.txt')
+print(safe)  # "file_________.txt"
+
+# Human readable size
+size = human_readable_size(1500000)
+print(size)  # "1.43 MB"
+
+# Ensure directory exists
+ensure_dir("path/to/new/directory")
+
+# List files matching pattern
+for file in list_files(".", "*.py", recursive=True):
+    print(file)
+```
+
+<p>&nbsp;</p>
+
+---
+
+# 🚨 Download with Progress (NEW) 🚨
+
+```py
+from dankware.download import download_file, download_multiple
+
+# Download with progress bar
+path = download_file(
+    "https://example.com/file.zip",
+    "downloads/",
+    progress=True
+)
+print(f"Downloaded to: {path}")
+
+# Download multiple files
+urls = [
+    "https://example.com/file1.zip",
+    "https://example.com/file2.zip",
+]
+paths = download_multiple(urls, "downloads/")
+```
+
+<p>&nbsp;</p>
+
+---
+
+# 🚨 Context Managers (NEW) 🚨
+
+```py
+from dankware.context import timer, hidden_window, temporary_file, working_directory
+
+# Time an operation
+with timer("Data processing"):
+    process_data()
+# Prints: "  > Data processing completed in 1.234s"
+
+# Hide console window during operation (Windows)
+with hidden_window():
+    do_background_work()
+
+# Create temporary file that auto-deletes
+with temporary_file(suffix=".txt") as filepath:
+    with open(filepath, "w") as f:
+        f.write("temp data")
+    # File is deleted after the block
+
+# Temporarily change working directory
+with working_directory("/some/path"):
+    # Work in /some/path
+    pass
+# Back to original directory
+```
+
+<p>&nbsp;</p>
+
+---
+
+# 🚨 Colored Input (NEW) 🚨
+
+```py
+from dankware.input import colored_input, confirm, select
+
+# Colored input prompt
+name = colored_input("  > Enter your name: ")
+
+# Yes/No confirmation
+if confirm("Delete all files?", default=False):
+    delete_files()
+
+# Selection menu
+idx, choice = select(
+    "Choose an option:",
+    ["Option 1", "Option 2", "Option 3"],
+    default=0
+)
+print(f"You selected: {choice}")
+```
+
+<p>&nbsp;</p>
+
+---
+
+# 🚨 Colored Logging (NEW) 🚨
+
+```py
+from dankware.logging import get_logger, setup_logging
+
+# Get a colored logger
+logger = get_logger("myapp")
+logger.info("Application started")
+logger.warning("This is a warning")
+logger.error("Something went wrong!")
+
+# Or setup global colored logging
+import logging
+setup_logging(level=logging.DEBUG)
+logging.info("Now all logging is colored!")
+```
 
 <p>&nbsp;</p>
 
@@ -171,7 +439,9 @@ except Exception as exc:
 
 ---  
 
-# 🚨 Scraping 🚨
+# 🚨 GitHub Utilities 🚨
+
+## ♦️ Get Download URLs ♦️
 
 ```py
 from dankware import github_downloads
@@ -181,6 +451,8 @@ for url in github_downloads("EssentialsX/Essentials"): print(url)
 
 <img width="700" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/216242124-ed911013-bae4-4622-8c0a-0d11638da750.png"><br>
 
+## ♦️ Filter Downloads ♦️
+
 ```py
 from dankware import github_file_selector
 # full url > https://api.github.com/repos/EssentialsX/Essentials/releases/latest
@@ -188,6 +460,37 @@ for url in github_file_selector("EssentialsX/Essentials", "remove", ('AntiBuild'
 ```
 
 <img width="700" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/216241961-5359d662-a117-4eb4-b74e-e82b41a895bc.png"><br>
+
+## ♦️ Get Release Info (NEW) ♦️
+
+```py
+from dankware.requests import github_release_info
+
+info = github_release_info("SirDank/dankware")
+print(f"Latest: {info['tag_name']}")
+print(f"Published: {info['published_at']}")
+print(f"Changelog: {info['body']}")
+```
+
+## ♦️ Check for Updates (NEW) ♦️
+
+```py
+from dankware.requests import github_check_update
+
+has_update, latest, url = github_check_update("SirDank/dankware", "3.6.0")
+if has_update:
+    print(f"New version available: {latest}")
+    print(f"Download: {url}")
+```
+
+## ♦️ Get Raw File (NEW) ♦️
+
+```py
+from dankware.requests import github_get_raw_file
+
+content = github_get_raw_file("SirDank/dankware", "README.md")
+print(content)
+```
 
 <p>&nbsp;</p>
 
@@ -472,6 +775,38 @@ print(fade(banner, "random"))
 <p align="left">
   <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/58a13389-7620-4c63-b967-c057b022af90" />
 </p>
+
+<p>&nbsp;</p>
+
+---  
+
+# 🚨 System Utilities (NEW) 🚨
+
+```py
+from dankware.system import (
+    get_system_info,
+    is_windows,
+    is_linux,
+    get_username,
+    get_home_dir,
+    get_temp_dir
+)
+
+# Get comprehensive system info
+info = get_system_info()
+print(info)
+
+# Platform checks
+if is_windows():
+    print("Running on Windows")
+elif is_linux():
+    print("Running on Linux")
+
+# Get user info
+print(f"Username: {get_username()}")
+print(f"Home: {get_home_dir()}")
+print(f"Temp: {get_temp_dir()}")
+```
 
 <p>&nbsp;</p>
 

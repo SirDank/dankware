@@ -81,5 +81,6 @@ def splash_screen(img_path: str, duration: int = 3) -> None:
         SplashScreen(img_path)
         root.after(int(duration * 1000), root.quit)
         root.mainloop()
+        root.destroy()  # Cleanup to prevent memory leaks
     except Exception as exc:
         sys.exit(clr(err((type(exc), exc, exc.__traceback__)), 2))

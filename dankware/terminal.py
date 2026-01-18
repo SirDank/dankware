@@ -1,6 +1,9 @@
 import os
+import subprocess
 from . import reset
 from shutil import get_terminal_size
+
+from .exceptions import UnsupportedOSError
 
 
 def cls() -> None:
@@ -10,28 +13,31 @@ def cls() -> None:
 
     print(reset)
     if os.name == "nt":
-        _ = os.system("cls")
+        subprocess.run(["cmd", "/c", "cls"], shell=False, check=False)
     elif os.name == "posix":
-        _ = os.system("clear")
+        subprocess.run(["clear"], shell=False, check=False)
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
-def title(title: str) -> None:
+def title(title_text: str) -> None:
     """
     Changes console window title
+
+    Args:
+        title_text: The new window title.
     """
 
     if os.name == "nt":
-        os.system(f"title {title}")
+        # Use ctypes for more reliable title setting on Windows
+        import ctypes
+
+        ctypes.windll.kernel32.SetConsoleTitleW(title_text)
     elif os.name == "posix":
-        os.system(f"xdotool getactivewindow set_window --name {title}")
+        # Use ANSI escape sequence for terminal title
+        print(f"\033]0;{title_text}\007", end="", flush=True)
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 def rm_line() -> None:
@@ -48,13 +54,15 @@ def sys_open(item: str) -> None:
     - Open the url on the default browser on windows / linux
     - Open directory
     - Start file
+
+    Args:
+        item: Path to file/directory or URL to open.
     """
 
     if os.name == "nt":
-        os.system(f"start {item}")
+        # Use os.startfile on Windows for better security
+        os.startfile(item)  # type: ignore  # Windows only
     elif os.name == "posix":
-        os.system(f"xdg-open {item}")
+        subprocess.run(["xdg-open", item], shell=False, check=False)
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")

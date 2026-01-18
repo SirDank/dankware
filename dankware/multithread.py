@@ -18,8 +18,11 @@ from rich.progress import (
 )
 
 
-def multithread( # pylint: disable=keyword-arg-before-vararg
-    function: callable, threads: int = 1, *args, progress_bar: bool = True # type: ignore
+def multithread(  # pylint: disable=keyword-arg-before-vararg
+    function: callable,
+    threads: int = 1,
+    *args,
+    progress_bar: bool = True,  # type: ignore
 ) -> None:
     """
     Run the given function in multiple threads with the specified inputs.
@@ -36,9 +39,7 @@ def multithread( # pylint: disable=keyword-arg-before-vararg
         if threads < 1:
             raise ValueError("The number of threads must be a positive integer!")
 
-        executor = ThreadPoolExecutor(
-            max_workers=threads, thread_name_prefix="dankware"
-        )
+        executor = ThreadPoolExecutor(max_workers=threads, thread_name_prefix="dankware")
 
         if not args:
             futures = tuple(executor.submit(function) for _ in range(threads))
@@ -52,9 +53,7 @@ def multithread( # pylint: disable=keyword-arg-before-vararg
                     input_lists.append([arg] * threads)
             del args
 
-            futures = tuple(
-                executor.submit(function, *task_args) for task_args in zip(*input_lists)
-            )
+            futures = tuple(executor.submit(function, *task_args) for task_args in zip(*input_lists))
 
             del input_lists
 
@@ -64,16 +63,12 @@ def multithread( # pylint: disable=keyword-arg-before-vararg
                 "{task.description}",
                 SpinnerColumn(),
                 BarColumn(bar_width=width),
-                TextColumn(
-                    "[progress.percentage][bright_green]{task.percentage:>3.0f}%"
-                ),
+                TextColumn("[progress.percentage][bright_green]{task.percentage:>3.0f}%"),
                 "[bright_cyan]ETA",
                 TimeRemainingColumn(),
                 TimeElapsedColumn(),
             )
-            overall_task = job_progress.add_task(
-                "[bright_green]Progress", total=int(len(futures))
-            )
+            overall_task = job_progress.add_task("[bright_green]Progress", total=int(len(futures)))
             progress_table = Table.grid()
             progress_table.add_row(
                 Panel.fit(
@@ -92,9 +87,7 @@ def multithread( # pylint: disable=keyword-arg-before-vararg
                             try:
                                 future.result()
                             except Exception as e:
-                                raise RuntimeError(
-                                    "An error occurred while processing the future result"
-                                ) from e
+                                raise RuntimeError("An error occurred while processing the future result") from e
                             job_progress.advance(overall_task)
 
         else:
@@ -103,13 +96,11 @@ def multithread( # pylint: disable=keyword-arg-before-vararg
                     try:
                         future.result()
                     except Exception as e:
-                        raise RuntimeError(
-                            "An error occurred while processing the future result"
-                        ) from e
+                        raise RuntimeError("An error occurred while processing the future result") from e
 
     except Exception as exc:
         try:
             executor.shutdown(wait=False, cancel_futures=True)
-        except:
+        except Exception:
             pass
         sys.exit(clr(err((type(exc), exc, exc.__traceback__)), 2))

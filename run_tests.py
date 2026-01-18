@@ -1,7 +1,6 @@
 import os
 import time
 import random
-from colorama import Style, Fore
 from datetime import datetime
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -41,11 +40,7 @@ def main():
     COUNTER = 0
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     def example():
         global a
@@ -56,11 +51,7 @@ def main():
     multithread(example, 10)
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     new_list = [1, 2, 3, 4, 5]
 
@@ -73,11 +64,7 @@ def main():
     print(sum)
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     list1 = [1, 2, 3, 4, 5]
     list2 = [5, 4, 3, 2, 1]
@@ -89,11 +76,7 @@ def main():
     multithread(example2, 10, list1, list2)
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     new_list = [1, 2, 3, 4, 5]
 
@@ -104,20 +87,12 @@ def main():
     multithread(example, 10, new_list, 5, progress_bar=False)
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(random_ip())
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     def random_ip_old() -> str:
         excluded_prefixes_one = [
@@ -476,26 +451,14 @@ def main():
             elif any(ip.startswith(prefix) for prefix in excluded_prefixes_three):
                 continue
 
-            if (
-                ip.startswith("172.")
-                and int(ip.split(".")[1]) >= 16
-                and int(ip.split(".")[1]) <= 31
-            ):
+            if ip.startswith("172.") and int(ip.split(".")[1]) >= 16 and int(ip.split(".")[1]) <= 31:
                 continue
             elif ip.startswith("192."):
-                if (
-                    ip.endswith(".170")
-                    or ip.endswith(".171")
-                    or ip.split(".")[2] == "2"
-                ):
+                if ip.endswith(".170") or ip.endswith(".171") or ip.split(".")[2] == "2":
                     continue
             elif ip.startswith("203.") and ip.split(".")[2] == "113":
                 continue
-            elif (
-                ip.startswith("216.83.")
-                and int(ip.split(".")[2]) >= 33
-                and int(ip.split(".")[2]) <= 63
-            ):
+            elif ip.startswith("216.83.") and int(ip.split(".")[2]) >= 33 and int(ip.split(".")[2]) <= 63:
                 continue
             elif ip.endswith(".255.255.255"):
                 continue
@@ -544,11 +507,7 @@ def main():
     print("")
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     try:
         value = 1 / 0
@@ -556,11 +515,7 @@ def main():
         print(clr(err((type(exc), exc, exc.__traceback__)), 2))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     try:
         value = 1 / 0
@@ -568,21 +523,13 @@ def main():
         print(clr(err((type(exc), exc, exc.__traceback__), "mini"), 2))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     for url in github_downloads("EssentialsX/Essentials"):
         print(url)
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     for url in github_file_selector(
         "EssentialsX/Essentials",
@@ -592,11 +539,7 @@ def main():
         print(url)
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     if os.name == "nt":
         locations = (
@@ -616,47 +559,27 @@ def main():
         print(path)
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(clr("\n  > Hey! Long time no see :)"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(clr("\n  > Hey! Long time no see :)", colour_one=magenta, colour_two=white))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(clr("\n  This is a string: True | This is an integer: False"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(clr("\n  EXEC STATUS: [SUCCESS]! | PROGRESS: 100%"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(
         clr(
@@ -666,20 +589,12 @@ def main():
     )
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(clr("\n  > Error in sector [7] redirecting... | INTEGRITY_CHECK: SUCCESS", 2))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(
         clr(
@@ -689,11 +604,7 @@ def main():
     )
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(
         clr(
@@ -711,25 +622,51 @@ def main():
     )
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
+
+    # Demo dankware's color variations
+    from dankware import (
+        red,
+        green,
+        blue,
+        yellow,
+        cyan,
+        magenta,
+        red_bright,
+        green_bright,
+        blue_bright,
+        yellow_bright,
+        cyan_bright,
+        magenta_bright,
+        red_normal,
+        green_normal,
+        blue_normal,
+        yellow_normal,
+        cyan_normal,
+        magenta_normal,
+        red_dim,
+        green_dim,
+        blue_dim,
+        yellow_dim,
+        cyan_dim,
+        magenta_dim,
     )
 
-    codes = vars(Fore)
-    colours = [codes[colour] for colour in codes]
-    for colour in colours:
-        print(colour + Style.BRIGHT + "BRIGHT" + reset)
-        print(colour + Style.NORMAL + "NORMAL" + reset)
-        print(colour + Style.DIM + "DIM" + reset)
+    colors = [
+        ("RED", red_bright, red_normal, red_dim),
+        ("GREEN", green_bright, green_normal, green_dim),
+        ("BLUE", blue_bright, blue_normal, blue_dim),
+        ("YELLOW", yellow_bright, yellow_normal, yellow_dim),
+        ("CYAN", cyan_bright, cyan_normal, cyan_dim),
+        ("MAGENTA", magenta_bright, magenta_normal, magenta_dim),
+    ]
+    for name, bright, normal, dim in colors:
+        print(bright + f"{name} BRIGHT" + reset)
+        print(normal + f"{name} NORMAL" + reset)
+        print(dim + f"{name} DIM" + reset)
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     banner = """
 
@@ -746,30 +683,18 @@ Y88b 888 888  888 888  888 888 "88b Y88b 888 d88P 888  888 888    Y8b.
     print(clr(banner, 4))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(align(banner))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(clr(align(banner), 4))
     print(align(clr(banner, 4)))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     banner = """
 
@@ -791,137 +716,77 @@ Y8b d88P
     print(fade(banner, "random"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "black2white"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "black2white-v"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "yellow2red"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "yellow2red-v"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "green2yellow"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "green2yellow-v"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "green2cyan"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "green2cyan-v"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "blue2cyan"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "blue2cyan-v"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "blue2pink"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "blue2pink-v"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "pink2red"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade(banner, "pink2red-v"))
 
     COUNTER += 1
-    print(
-        clr(
-            f"\n___[{COUNTER}]__________________________________________________________________________________\n"
-        )
-    )
+    print(clr(f"\n___[{COUNTER}]__________________________________________________________________________________\n"))
 
     print(fade("\n  > This is a test string!", "pink2red"))
 

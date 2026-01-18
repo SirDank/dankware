@@ -15,16 +15,14 @@ def is_admin() -> bool:
     if os.name == "nt":
         try:
             return ctypes.windll.shell32.IsUserAnAdmin()
-        except:
+        except Exception:
             return False
     elif os.name == "posix":
         from pwd import getpwuid  # pylint: disable=import-error, import-outside-toplevel
 
         return getpwuid(os.getuid())[0] in ("root", "0")  # pylint: disable=no-member
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise ValueError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 '''
@@ -55,9 +53,7 @@ def hide_window() -> None:
     elif os.name == "posix":
         os.system("xdotool getactivewindow windowminimize")
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise ValueError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 def show_window() -> None:
@@ -74,9 +70,7 @@ def show_window() -> None:
     elif os.name == "posix":
         os.system("xdotool getactivewindow windowactivate")
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise ValueError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 def hide_window_for(duration: int = 3) -> None:
@@ -111,9 +105,7 @@ def minimise_window() -> None:
     elif os.name == "posix":
         os.system("xdotool getactivewindow windowminimize")
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise ValueError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 def maximise_window() -> None:
@@ -131,9 +123,7 @@ def maximise_window() -> None:
     elif os.name == "posix":
         os.system("xdotool getactivewindow windowactivate windowmaximize")
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise ValueError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 def restore_window() -> None:
@@ -151,9 +141,7 @@ def restore_window() -> None:
     elif os.name == "posix":
         os.system("xdotool getactivewindow windowactivate windowrestore")
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise ValueError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 def get_uuid() -> str:
@@ -165,10 +153,32 @@ def get_uuid() -> str:
     """
 
     if os.name == "nt":
-        try:
-            uuid = str(check_output(r"wmic csproduct get uuid", stderr=STDOUT, stdin=DEVNULL, creationflags=0x08000000).decode().split("\n")[1].strip())
-        except FileNotFoundError:
-            uuid = str(check_output("powershell.exe -ExecutionPolicy bypass -command (Get-CimInstance -Class Win32_ComputerSystemProduct).UUID", stderr=STDOUT, stdin=DEVNULL, creationflags=0x08000000).decode().strip())
+        # Use PowerShell as primary method (wmic is deprecated in Windows 11)
+        uuid = str(
+            check_output(
+                [
+                    "powershell.exe",
+                    "-ExecutionPolicy",
+                    "bypass",
+                    "-command",
+                    "(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID",
+                ],
+                stderr=STDOUT,
+                stdin=DEVNULL,
+                creationflags=0x08000000,
+            )
+            .decode()
+            .strip()
+        )
     else:
-        uuid = str(check_output(r"sudo dmidecode -s system-uuid", stderr=STDOUT, stdin=DEVNULL, creationflags=0x08000000).decode().replace("UUID", "").replace(":", "").strip())
+        # Linux - note: creationflags is Windows-only, so don't use it here
+        uuid = str(
+            check_output(
+                ["sudo", "dmidecode", "-s", "system-uuid"],
+                stderr=STDOUT,
+                stdin=DEVNULL,
+            )
+            .decode()
+            .strip()
+        )
     return uuid
