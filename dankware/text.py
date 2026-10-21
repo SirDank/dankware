@@ -1,7 +1,24 @@
 import random
-from colorama import Style, Fore
+import re
 from shutil import get_terminal_size
-from . import white_bright, red, reset, green_bright, red_bright, red_normal
+
+from .colors import (
+    blue_bright,
+    cyan_bright,
+    green_bright,
+    magenta_bright,
+    red,
+    red_bright,
+    red_normal,
+    reset,
+    white_bright,
+    yellow_bright,
+)
+
+__all__ = ["clr", "align", "fade", "random_ip"]
+
+# ANSI escape codes for color stripping and replacement
+_ANSI_ESCAPE = re.compile(r"\033\[[0-9;]*m")
 
 SYMBOLS = (
     "[",
@@ -78,16 +95,18 @@ WORDS_RED = (
     "FAIL",
 )
 COLOURS_TO_REPLACE = (
-    Fore.BLACK,
-    Fore.BLUE,
-    Fore.CYAN,
-    Fore.GREEN,
-    Fore.MAGENTA,
-    Fore.RED,
-    Fore.WHITE,
-    Fore.YELLOW,
-    Style.BRIGHT,
-    Style.RESET_ALL,
+    "\033[30m",  # BLACK
+    "\033[34m",  # BLUE
+    "\033[36m",  # CYAN
+    "\033[32m",  # GREEN
+    "\033[35m",  # MAGENTA
+    "\033[31m",  # RED
+    "\033[37m",  # WHITE
+    "\033[33m",  # YELLOW
+    "\033[1m",  # BRIGHT
+    "\033[0m",  # RESET
+    "\033[2m",  # DIM
+    "\033[22m",  # NORMAL
 )
 COLOURS_ALT = (
     "BBLACKK",
@@ -100,6 +119,8 @@ COLOURS_ALT = (
     "YYELLOWW",
     "BBRIGHTT",
     "RRESETT",
+    "DDIMM",
+    "NNORMALL",
 )
 
 
@@ -110,10 +131,8 @@ def align(text: str) -> str:
     """
 
     width = get_terminal_size().columns
-    aligned = text
-
-    for _ in tuple(vars(Fore).values()) + tuple(vars(Style).values()):
-        aligned = aligned.replace(_, "")
+    # Strip all ANSI escape codes for measuring
+    aligned = _ANSI_ESCAPE.sub("", text)
 
     text = text.splitlines()
     aligned = aligned.splitlines()
@@ -487,9 +506,8 @@ def random_ip() -> str:
             continue
 
         fourth_octet = random.randint(0, 255)
-        if first_octet == 192:
-            if third_octet == 2 or fourth_octet in (170, 171):
-                continue
+        if first_octet == 192 and (third_octet == 2 or fourth_octet in (170, 171)):
+            continue
 
         break
 
@@ -501,7 +519,7 @@ def clr(
     preset: int = 1,
     colour_one: str = white_bright,
     colour_two: str = red,
-    colours: tuple[str] = None,
+    colours: tuple[str, ...] | None = None,
 ) -> str:
     """
 
@@ -540,26 +558,16 @@ def clr(
         for _, __ in zip(COLOURS_TO_REPLACE, COLOURS_ALT):
             text = text.replace(_, __)
         for symbol in SYMBOLS:
-            text = text.replace(
-                symbol, reset + colour_two + symbol + reset + colour_one
-            )
+            text = text.replace(symbol, reset + colour_two + symbol + reset + colour_one)
         for word in WORDS_GREEN:
             text = text.replace(
                 word,
-                reset
-                + green_bright
-                + str(green_bright).join(list(word))
-                + reset
-                + colour_one,
+                reset + green_bright + str(green_bright).join(list(word)) + reset + colour_one,
             )
         for word in WORDS_RED:
             text = text.replace(
                 word,
-                reset
-                + red_bright
-                + str(red_bright).join(list(word))
-                + reset
-                + colour_one,
+                reset + red_bright + str(red_bright).join(list(word)) + reset + colour_one,
             )
         for _, __ in zip(COLOURS_ALT, COLOURS_TO_REPLACE):
             text = text.replace(_, __)
@@ -596,14 +604,7 @@ def clr(
         colour_spl = bool(preset == 3)
 
         if not colours:
-            text.insert(0, str(Style.BRIGHT))
-            codes = vars(Fore)
-            colours = tuple(
-                codes[colour]
-                for colour in codes
-                if colour
-                not in ("BLACK", "WHITE", "LIGHTBLACK_EX", "LIGHTWHITE_EX", "RESET")
-            )
+            colours = (red_bright, green_bright, yellow_bright, blue_bright, magenta_bright, cyan_bright)
 
         for _, char in enumerate(text):
             if char not in (" ", "\n", "\t", "\r", "\b"):
@@ -672,9 +673,7 @@ def fade(text: str, colour: str = "pink2red") -> str:
 
     colour = colour.lower()
     if colour not in available_colours:
-        raise ValueError(
-            f"Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}"
-        )
+        raise ValueError(f"Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}")
 
     faded = ""
     multi_line = bool(len(text.splitlines()) > 1)
@@ -852,9 +851,7 @@ def fade(text: str, colour: str = "pink2red") -> str:
                 faded += "\n"
 
     else:
-        raise ValueError(
-            f"Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}"
-        )
+        raise ValueError(f"Invalid Colour: {colour} | Available Colours: {', '.join(available_colours)}")
 
     if multi_line:
         faded = faded[:-1]

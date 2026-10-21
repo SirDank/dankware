@@ -1,26 +1,49 @@
+# https://github.com/SirDank/dankware
+
+"""
+Windows registry and system folder path utilities.
+"""
+
 import os
-import sys
-from .text import clr
-from .traceback import err
-from .ctypes import is_admin
+
+from .exceptions import UnsupportedOSError
 
 if os.name == "nt":
     import winreg
 
+    from .ctypes import is_admin
+    from .text import clr
+
+__all__ = ["get_path"]
+if os.name == "nt":
+    __all__.append("export_registry_keys")
+
 
 def get_path(location: str) -> str:
     """
-    Returns path from registry or environment variables
-    - Supports: AppData / Desktop / Documents / Favorites / Pictures / Videos / Music / Downloads / Temp
-    """
+    Return path from registry or environment variables.
 
+    Supports:
+        AppData, Desktop, Documents, Favorites, Local AppData,
+        Music, Pictures, Videos, Downloads, Temp.
+
+    Args:
+        location: Target folder location name.
+
+    Returns:
+        Absolute path to the requested location.
+
+    Raises:
+        FileNotFoundError: If the resolved path does not exist.
+        ValueError: If location is not recognized.
+        UnsupportedOSError: If operating system is not supported.
+    """
     if os.name == "nt":
         if location in ("Downloads", "Temp"):
-            match location:
-                case "Downloads":
-                    path = os.path.join(os.environ["USERPROFILE"], "Downloads")
-                case "Temp":
-                    path = os.path.expandvars("%temp%")
+            if location == "Downloads":
+                path = os.path.join(os.environ.get("USERPROFILE", ""), "Downloads")
+            else:
+                path = os.path.expandvars("%temp%")
             if os.path.exists(path):
                 return path
             raise FileNotFoundError(f"{location} path not found!")
@@ -37,25 +60,26 @@ def get_path(location: str) -> str:
         )
 
         if location in valid_locations:
+            reg_loc = location
             if location == "Documents":
-                location = "Personal"
+                reg_loc = "Personal"
             elif location == "Pictures":
-                location = "My Pictures"
+                reg_loc = "My Pictures"
             elif location == "Videos":
-                location = "My Video"
+                reg_loc = "My Video"
             elif location == "Music":
-                location = "My Music"
+                reg_loc = "My Music"
 
-            key = winreg.OpenKey(
+            with winreg.OpenKey(
                 winreg.HKEY_CURRENT_USER,
                 r"Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders",
                 access=winreg.KEY_READ,
-            )
-            path = os.path.expandvars(winreg.QueryValueEx(key, location)[0])
-            return path
+            ) as key:
+                path = os.path.expandvars(winreg.QueryValueEx(key, reg_loc)[0])
+                return path
 
         raise ValueError(
-            f"Invalid location: {location} | Valid locations: {', '.join(valid_locations)}"
+            f"Invalid location: {location} | Valid locations: {', '.join(valid_locations)}, Downloads, Temp"
         )
 
     if os.name == "posix":
@@ -77,13 +101,9 @@ def get_path(location: str) -> str:
             if os.path.exists(path):
                 return path
 
-        raise ValueError(
-            f"Invalid location: {location} | Valid locations: {', '.join(valid_locations)}"
-        )
+        raise ValueError(f"Invalid location: {location} | Valid locations: {', '.join(valid_locations)}")
 
-    raise ValueError(
-        f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-    )
+    raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 def export_registry_keys(
@@ -94,80 +114,72 @@ def export_registry_keys(
     verbose: bool = True,
 ) -> None:
     """
-    Function to export registry keys with or without its subkeys and saves them to export_path
-    - Examples for registry_root: 'HKEY_CLASSES_ROOT', 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE', 'HKEY_USERS', 'HKEY_CURRENT_CONFIG'
-    - Example for registry_path: 'Software\\Google\\Chrome\\PreferenceMACs'
-    - recursive: True (subkeys saved)
-    - recursive: False (subkeys not saved)
-    - export_path: "export.reg" (default)
-    - verbose: True (prints success message)
+    Export registry keys and optional subkeys to a .reg file.
 
-    _______________________________________________________________________________________________________________________________________________________________________
+    Args:
+        registry_root: Hive name (e.g. 'HKEY_CURRENT_USER', 'HKEY_LOCAL_MACHINE').
+        registry_path: Subkey path.
+        recursive: Whether to export all nested subkeys.
+        export_path: Destination file path (must end with .reg).
+        verbose: Print status upon completion.
 
-    [ EXAMPLE ]
-
-    ```python
-    from dankware import export_registry_keys
-    export_registry_keys('HKEY_CURRENT_USER', 'Software\\Google\\Chrome\\PreferenceMACs')
-    ```
+    Raises:
+        UnsupportedOSError: If running on non-Windows OS.
+        ValueError: If export_path is invalid or root is unknown.
+        RuntimeError: If admin privileges are required for the hive but absent.
     """
+    if os.name != "nt":
+        raise UnsupportedOSError("export_registry_keys is only supported on Windows")
 
-    try:
-        key_data = []
-        key_map = {
-            "HKEY_CLASSES_ROOT": winreg.HKEY_CLASSES_ROOT,
-            "HKEY_CURRENT_USER": winreg.HKEY_CURRENT_USER,
-            "HKEY_LOCAL_MACHINE": winreg.HKEY_LOCAL_MACHINE,
-            "HKEY_USERS": winreg.HKEY_USERS,
-            "HKEY_CURRENT_CONFIG": winreg.HKEY_CURRENT_CONFIG,
-        }
+    key_map = {
+        "HKEY_CLASSES_ROOT": winreg.HKEY_CLASSES_ROOT,
+        "HKEY_CURRENT_USER": winreg.HKEY_CURRENT_USER,
+        "HKEY_LOCAL_MACHINE": winreg.HKEY_LOCAL_MACHINE,
+        "HKEY_USERS": winreg.HKEY_USERS,
+        "HKEY_CURRENT_CONFIG": winreg.HKEY_CURRENT_CONFIG,
+    }
 
-        if not export_path.endswith(".reg"):
-            raise ValueError("Invalid Export Path! export_path must end with '.reg'")
-        if registry_root not in key_map:
-            raise ValueError(
-                f"Invalid Registry Root: {registry_root} | Valid Roots: {', '.join(key_map)}"
-            )
-        if not is_admin():
-            raise RuntimeError(
-                "Current user is not an administrator! Exporting registry keys requires admin privileges!"
-            )
-            # If the current user is not an admin, relaunch the script with admin privileges
-            # run_as_admin()
+    if not export_path.endswith(".reg"):
+        raise ValueError("Invalid Export Path! export_path must end with '.reg'")
+    if registry_root not in key_map:
+        raise ValueError(f"Invalid Registry Root: {registry_root} | Valid Roots: {', '.join(key_map)}")
+    if registry_root != "HKEY_CURRENT_USER" and not is_admin():
+        raise RuntimeError("Exporting machine-wide registry keys requires admin privileges!")
 
-        def exporter(key, registry_root, subkey_path, key_data, recursive) -> None:
-            subkey = winreg.OpenKey(
-                key, subkey_path, 0, winreg.KEY_READ | winreg.KEY_WOW64_64KEY
-            )
-            subkey_count = winreg.QueryInfoKey(subkey)[0]
-            key_data.append(f"[{registry_root}\\{subkey_path}]")
+    key_data: list[str] = []
 
-            for i in range(winreg.QueryInfoKey(subkey)[1]):
-                value_name, value_data, value_type = winreg.EnumValue(subkey, i)
-                key_data.append(f'"{value_name}"="{value_data}"')
+    def exporter(root_key: int, root_name: str, subkey_path: str) -> None:
+        try:
+            with winreg.OpenKey(root_key, subkey_path, 0, winreg.KEY_READ | winreg.KEY_WOW64_64KEY) as subkey:
+                num_subkeys, num_values, _ = winreg.QueryInfoKey(subkey)
+                key_data.append(f"[{root_name}\\{subkey_path}]")
 
-            key_data.append("")
-            for i in range(subkey_count):
-                subkey_name = winreg.EnumKey(subkey, i)
-                subkey_full_path = (
-                    subkey_path + "\\" + subkey_name if subkey_path else subkey_name
-                )
+                for i in range(num_values):
+                    val_name, val_data, val_type = winreg.EnumValue(subkey, i)
+                    val_prefix = f'"{val_name}"' if val_name else "@"
+                    if val_type == winreg.REG_SZ:
+                        escaped = str(val_data).replace("\\", "\\\\").replace('"', '\\"')
+                        key_data.append(f'{val_prefix}="{escaped}"')
+                    elif val_type == winreg.REG_DWORD:
+                        key_data.append(f"{val_prefix}=dword:{val_data:08x}")
+                    else:
+                        key_data.append(f'{val_prefix}="{val_data}"')
+
+                key_data.append("")
+
                 if recursive:
-                    exporter(key, registry_root, subkey_full_path, key_data, recursive)
+                    for i in range(num_subkeys):
+                        child_name = winreg.EnumKey(subkey, i)
+                        child_path = f"{subkey_path}\\{child_name}" if subkey_path else child_name
+                        exporter(root_key, root_name, child_path)
+        except OSError:
+            pass
 
-            winreg.CloseKey(subkey)
+    exporter(key_map[registry_root], registry_root, registry_path)
 
-        key = key_map[registry_root]
-        exporter(key, registry_root, registry_path, key_data, recursive)
-        with open(export_path, "w", encoding="utf-16") as file:
-            file.write("Windows Registry Editor Version 5.00\n\n" + "\n".join(key_data))
+    with open(export_path, "w", encoding="utf-16") as file:
+        file.write("Windows Registry Editor Version 5.00\n\n" + "\n".join(key_data))
 
-        if verbose:
-            print(
-                clr(
-                    f'\n  - Successfully exported registry keys to "{os.path.join(os.getcwd(), "export.reg") if export_path == "export.reg" else export_path}"'
-                )
-            )
-
-    except Exception as exc:
-        sys.exit(clr(err((type(exc), exc, exc.__traceback__)), 2))
+    if verbose:
+        resolved_path = os.path.abspath(export_path)
+        print(clr(f'\n  - Successfully exported registry keys to "{resolved_path}"'))

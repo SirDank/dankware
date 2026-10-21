@@ -1,8 +1,10 @@
 import sys
 import tkinter as tk
+
+from PIL import Image, ImageTk
+
 from .text import clr
 from .traceback import err
-from PIL import Image, ImageTk
 
 
 def splash_screen(img_path: str, duration: int = 3) -> None:
@@ -81,5 +83,6 @@ def splash_screen(img_path: str, duration: int = 3) -> None:
         SplashScreen(img_path)
         root.after(int(duration * 1000), root.quit)
         root.mainloop()
+        root.destroy()  # Cleanup to prevent memory leaks
     except Exception as exc:
         sys.exit(clr(err((type(exc), exc, exc.__traceback__)), 2))

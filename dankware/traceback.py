@@ -1,9 +1,29 @@
-from traceback import extract_tb
-from os.path import commonprefix
+# https://github.com/SirDank/dankware
 
-def err(exc_info, mode: str = "default") -> str:
+"""
+Error traceback formatting utilities.
+"""
+
+from os.path import commonprefix
+from traceback import extract_tb
+from typing import Any
+
+__all__ = ["err"]
+
+
+def err(exc_info: tuple[Any, Any, Any], mode: str = "default") -> str:
     """
-    Returns a short traceback
+    Format exception info into a concise traceback string.
+
+    Args:
+        exc_info: Tuple of (type, value, traceback), e.g. from sys.exc_info().
+        mode: Formatting mode ('default' or 'mini').
+
+    Returns:
+        Formatted traceback string.
+
+    Raises:
+        ValueError: If mode is not 'default' or 'mini'.
 
     __________________________________________
 
@@ -12,56 +32,47 @@ def err(exc_info, mode: str = "default") -> str:
     ```python
     import sys
     from dankware import err, clr
-    try: value = 1/0
-    except Exception as exc:
-        print(clr(err((type(exc), exc, exc.__traceback__)),2))
-        # OR
-        print(clr(err(sys.exc_info()),2))
-    # OR
-    try: value = 1/0
-    except Exception as exc:
-        print(clr(err((type(exc), exc, exc.__traceback__),'mini'),2))
-        # OR
-        print(clr(err(sys.exc_info(),"mini"),2))
+
+    try:
+        1 / 0
+    except Exception:
+        print(clr(err(sys.exc_info(), mode="mini"), 2))
     ```
     """
-
     ex_type, ex_value, ex_traceback = exc_info
     trace_back = extract_tb(ex_traceback)
-    mode = mode.lower()
-    stack_trace = []
+    mode_clean = mode.lower()
+    stack_trace: list[str] = []
 
-    if mode == "default":
+    if mode_clean == "default":
         for trace in trace_back:
-            filename = trace[0]
-            if filename == "<string>":
-                filename = str(__name__)
-            stack_trace.append(
-                f"    - File: {filename} | Function: {trace[2] if trace[2] != '<module>' else 'top-level'}{f' | Line: {trace[3]}' if trace[3] else ''}"
-            )
+            filename = str(__name__) if trace[0] == "<string>" else trace[0]
+            func_name = trace[2] if trace[2] != "<module>" else "top-level"
+            line_str = f" | Line: {trace[3]}" if trace[3] else ""
+            stack_trace.append(f"    - File: {filename} | Function: {func_name}{line_str}")
+
         report = f"  - Error Type: {ex_type.__name__}"
         if ex_value:
             report += f"\n  - Error Message: \n    - {ex_value}"
-        report += "\n  - Error Stack Trace: \n{}".format("\n".join(stack_trace))
+        report += "\n  - Error Stack Trace: \n" + "\n".join(stack_trace)
 
-    elif mode == "mini":
+    elif mode_clean == "mini":
         filenames = [trace[0] for trace in trace_back]
-        common_prefix = None
+        common_prefix: str | None = None
         if filenames:
             common_prefix = commonprefix(filenames)
-            last_slash_idx = common_prefix.rfind('\\')
+            last_slash_idx = max(common_prefix.rfind("/"), common_prefix.rfind("\\"))
             if last_slash_idx != -1:
                 common_prefix = common_prefix[:last_slash_idx]
 
         for trace in trace_back:
-            filename = trace[0]
-            if filename == "<string>":
-                filename = str(__name__)
-            elif common_prefix and filename.startswith(common_prefix):
-                filename = "..." + filename[len(common_prefix):]
-            stack_trace.append(
-                f"    - {filename} | {trace[2] if trace[2] != '<module>' else 'top-level'}{f' | {trace[3]}' if trace[3] else ''}"
-            )
+            filename = str(__name__) if trace[0] == "<string>" else trace[0]
+            if common_prefix and filename.startswith(common_prefix):
+                filename = "..." + filename[len(common_prefix) :]
+            func_name = trace[2] if trace[2] != "<module>" else "top-level"
+            line_str = f" | {trace[3]}" if trace[3] else ""
+            stack_trace.append(f"    - {filename} | {func_name}{line_str}")
+
         report = f"  - {ex_type.__name__}"
         if ex_value:
             report += f" | {ex_value}"

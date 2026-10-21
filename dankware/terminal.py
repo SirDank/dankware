@@ -1,60 +1,62 @@
+# https://github.com/SirDank/dankware
+
+"""
+Terminal and console utilities.
+"""
+
 import os
-from . import reset
+import subprocess
 from shutil import get_terminal_size
+
+from .colors import reset
+from .exceptions import UnsupportedOSError
+
+__all__ = ["cls", "title", "rm_line", "sys_open"]
 
 
 def cls() -> None:
-    """
-    Clear screen for multi-os
-    """
-
+    """Clear screen across Windows and POSIX."""
     print(reset)
     if os.name == "nt":
-        _ = os.system("cls")
+        subprocess.run(["cmd", "/c", "cls"], shell=False, check=False)
     elif os.name == "posix":
-        _ = os.system("clear")
+        subprocess.run(["clear"], shell=False, check=False)
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
-def title(title: str) -> None:
+def title(title_text: str) -> None:
     """
-    Changes console window title
-    """
+    Change console window title.
 
+    Args:
+        title_text: The new window title.
+    """
     if os.name == "nt":
-        os.system(f"title {title}")
+        import ctypes
+
+        ctypes.windll.kernel32.SetConsoleTitleW(title_text)
     elif os.name == "posix":
-        os.system(f"xdotool getactivewindow set_window --name {title}")
+        print(f"\033]0;{title_text}\007", end="", flush=True)
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 def rm_line() -> None:
-    """
-    Deletes previous line
-    """
-
+    """Erase previous terminal line."""
     print("\033[A" + " " * (get_terminal_size().columns - 6) + "\033[A")
 
 
 def sys_open(item: str) -> None:
     """
-    Can do the following:
-    - Open the url on the default browser on windows / linux
-    - Open directory
-    - Start file
-    """
+    Open a URL, directory, or file with the system default handler.
 
+    Args:
+        item: Path or URL to open.
+    """
     if os.name == "nt":
-        os.system(f"start {item}")
+        os.startfile(item)  # type: ignore  # Windows only
     elif os.name == "posix":
-        os.system(f"xdg-open {item}")
+        subprocess.run(["xdg-open", item], shell=False, check=False)
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
