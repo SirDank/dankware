@@ -1,7 +1,21 @@
 import random
 import re
 from shutil import get_terminal_size
-from .colors import white_bright, red, reset, green_bright, red_bright, red_normal
+
+from .colors import (
+    blue_bright,
+    cyan_bright,
+    green_bright,
+    magenta_bright,
+    red,
+    red_bright,
+    red_normal,
+    reset,
+    white_bright,
+    yellow_bright,
+)
+
+__all__ = ["clr", "align", "fade", "random_ip"]
 
 # ANSI escape codes for color stripping and replacement
 _ANSI_ESCAPE = re.compile(r"\033\[[0-9;]*m")
@@ -492,9 +506,8 @@ def random_ip() -> str:
             continue
 
         fourth_octet = random.randint(0, 255)
-        if first_octet == 192:
-            if third_octet == 2 or fourth_octet in (170, 171):
-                continue
+        if first_octet == 192 and (third_octet == 2 or fourth_octet in (170, 171)):
+            continue
 
         break
 
@@ -506,7 +519,7 @@ def clr(
     preset: int = 1,
     colour_one: str = white_bright,
     colour_two: str = red,
-    colours: tuple[str] = None,
+    colours: tuple[str, ...] | None = None,
 ) -> str:
     """
 
@@ -591,8 +604,6 @@ def clr(
         colour_spl = bool(preset == 3)
 
         if not colours:
-            # Use the bright colors imported at module level
-            from .colors import yellow_bright, blue_bright, magenta_bright, cyan_bright
             colours = (red_bright, green_bright, yellow_bright, blue_bright, magenta_bright, cyan_bright)
 
         for _, char in enumerate(text):

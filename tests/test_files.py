@@ -2,19 +2,12 @@
 Tests for dankware.files module.
 """
 
-import os
-import pytest
-import tempfile
-from dankware.files import (
-    get_file_hash,
+from dankware import (
     ensure_dir,
-    safe_filename,
-    get_file_size,
+    get_file_hash,
     human_readable_size,
-    read_text,
-    write_text,
-    file_exists,
-    dir_exists,
+    list_files,
+    safe_filename,
 )
 
 
@@ -24,18 +17,18 @@ class TestGetFileHash:
     def test_sha256_hash(self, tmp_path):
         """Test SHA256 hash calculation."""
         test_file = tmp_path / "test.txt"
-        test_file.write_text("Hello World")
+        test_file.write_text("Hello World", encoding="utf-8")
 
         hash_val = get_file_hash(str(test_file), "sha256")
-        assert len(hash_val) == 64  # SHA256 produces 64 hex chars
+        assert len(hash_val) == 64
 
     def test_md5_hash(self, tmp_path):
         """Test MD5 hash calculation."""
         test_file = tmp_path / "test.txt"
-        test_file.write_text("Hello World")
+        test_file.write_text("Hello World", encoding="utf-8")
 
         hash_val = get_file_hash(str(test_file), "md5")
-        assert len(hash_val) == 32  # MD5 produces 32 hex chars
+        assert len(hash_val) == 32
 
 
 class TestEnsureDir:
@@ -47,12 +40,14 @@ class TestEnsureDir:
         result = ensure_dir(str(new_dir))
         assert new_dir.exists()
         assert new_dir.is_dir()
+        assert result == new_dir
 
     def test_create_nested_dirs(self, tmp_path):
         """Test creating nested directories."""
         nested = tmp_path / "a" / "b" / "c"
         result = ensure_dir(str(nested))
         assert nested.exists()
+        assert result == nested
 
 
 class TestSafeFilename:
@@ -91,32 +86,19 @@ class TestHumanReadableSize:
         assert "GB" in human_readable_size(1500000000)
 
 
-class TestReadWriteText:
-    """Tests for read_text and write_text functions."""
+class TestListFiles:
+    """Tests for list_files function."""
 
-    def test_write_and_read(self, tmp_path):
-        """Test writing and reading text file."""
-        test_file = tmp_path / "test.txt"
-        content = "Hello, World!\nLine 2"
+    def test_list_files_shallow_and_recursive(self, tmp_path):
+        """Test listing files with glob patterns."""
+        (tmp_path / "file1.txt").write_text("1", encoding="utf-8")
+        (tmp_path / "file2.py").write_text("2", encoding="utf-8")
+        sub = tmp_path / "sub"
+        sub.mkdir()
+        (sub / "file3.py").write_text("3", encoding="utf-8")
 
-        write_text(str(test_file), content)
-        result = read_text(str(test_file))
+        shallow_py = list(list_files(str(tmp_path), "*.py", recursive=False))
+        assert len(shallow_py) == 1
 
-        assert result == content
-
-
-class TestExistsChecks:
-    """Tests for file_exists and dir_exists functions."""
-
-    def test_file_exists(self, tmp_path):
-        """Test file_exists function."""
-        test_file = tmp_path / "exists.txt"
-        test_file.write_text("test")
-
-        assert file_exists(str(test_file)) is True
-        assert file_exists(str(tmp_path / "not_exists.txt")) is False
-
-    def test_dir_exists(self, tmp_path):
-        """Test dir_exists function."""
-        assert dir_exists(str(tmp_path)) is True
-        assert dir_exists(str(tmp_path / "not_exists")) is False
+        recursive_py = list(list_files(str(tmp_path), "*.py", recursive=True))
+        assert len(recursive_py) == 2

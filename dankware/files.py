@@ -4,10 +4,17 @@
 File utilities for dankware.
 """
 
-import os
 import hashlib
 from pathlib import Path
 from typing import Iterator
+
+__all__ = [
+    "get_file_hash",
+    "ensure_dir",
+    "safe_filename",
+    "human_readable_size",
+    "list_files",
+]
 
 
 def get_file_hash(filepath: str, algorithm: str = "sha256") -> str:
@@ -26,7 +33,7 @@ def get_file_hash(filepath: str, algorithm: str = "sha256") -> str:
     [ EXAMPLE ]
 
     ```python
-    from dankware.files import get_file_hash
+    from dankware import get_file_hash
 
     hash_value = get_file_hash("myfile.txt", "sha256")
     print(hash_value)
@@ -67,25 +74,11 @@ def safe_filename(filename: str) -> str:
     invalid_chars = '<>:"/\\|?*\0'
     for char in invalid_chars:
         filename = filename.replace(char, "_")
-    # Remove leading/trailing spaces and dots
     filename = filename.strip(". ")
     return filename or "unnamed"
 
 
-def get_file_size(filepath: str) -> int:
-    """
-    Get file size in bytes.
-
-    Args:
-        filepath: Path to the file.
-
-    Returns:
-        File size in bytes.
-    """
-    return os.path.getsize(filepath)
-
-
-def human_readable_size(size_bytes: int) -> str:
+def human_readable_size(size_bytes: int | float) -> str:
     """
     Convert bytes to human readable format.
 
@@ -93,18 +86,19 @@ def human_readable_size(size_bytes: int) -> str:
         size_bytes: Size in bytes.
 
     Returns:
-        Human readable size string (e.g., "1.5 MB").
+        Human readable size string (e.g., "1.50 MB").
     """
+    size = float(size_bytes)
     for unit in ("B", "KB", "MB", "GB", "TB"):
-        if size_bytes < 1024.0:
-            return f"{size_bytes:.2f} {unit}"
-        size_bytes /= 1024.0
-    return f"{size_bytes:.2f} PB"
+        if size < 1024.0:
+            return f"{size:.2f} {unit}"
+        size /= 1024.0
+    return f"{size:.2f} PB"
 
 
 def list_files(directory: str, pattern: str = "*", recursive: bool = False) -> Iterator[Path]:
     """
-    List files in a directory.
+    List files in a directory matching a pattern.
 
     Args:
         directory: Directory path.
@@ -119,39 +113,3 @@ def list_files(directory: str, pattern: str = "*", recursive: bool = False) -> I
         yield from p.rglob(pattern)
     else:
         yield from p.glob(pattern)
-
-
-def read_text(filepath: str, encoding: str = "utf-8") -> str:
-    """
-    Read text file contents.
-
-    Args:
-        filepath: Path to the file.
-        encoding: File encoding.
-
-    Returns:
-        File contents as string.
-    """
-    return Path(filepath).read_text(encoding=encoding)
-
-
-def write_text(filepath: str, content: str, encoding: str = "utf-8") -> None:
-    """
-    Write text to file.
-
-    Args:
-        filepath: Path to the file.
-        content: Content to write.
-        encoding: File encoding.
-    """
-    Path(filepath).write_text(content, encoding=encoding)
-
-
-def file_exists(filepath: str) -> bool:
-    """Check if file exists."""
-    return os.path.isfile(filepath)
-
-
-def dir_exists(dirpath: str) -> bool:
-    """Check if directory exists."""
-    return os.path.isdir(dirpath)

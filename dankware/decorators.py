@@ -6,9 +6,11 @@ Utility decorators for dankware.
 
 import time
 from functools import wraps
-from typing import Callable, TypeVar, Any
+from typing import Any, Callable, TypeVar
 
 T = TypeVar("T")
+
+__all__ = ["retry"]
 
 
 def retry(
@@ -18,7 +20,7 @@ def retry(
     exceptions: tuple[type[Exception], ...] = (Exception,),
 ) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
-    Decorator to retry a function on failure.
+    Decorator to retry a function on failure with exponential backoff.
 
     Args:
         max_attempts: Maximum number of retry attempts.
@@ -34,11 +36,11 @@ def retry(
     [ EXAMPLE ]
 
     ```python
-    from dankware.decorators import retry
+    from dankware import retry
 
     @retry(max_attempts=3, delay=1.0)
     def unstable_operation():
-        # This will retry up to 3 times on failure
+        # Retries up to 3 times on failure
         ...
     ```
     """
@@ -61,72 +63,9 @@ def retry(
                     time.sleep(current_delay)
                     current_delay *= backoff
 
-            # This should never be reached, but satisfies type checker
-            raise last_exception  # type: ignore
-
-        return wrapper
-
-    return decorator
-
-
-def timed(func: Callable[..., T]) -> Callable[..., T]:
-    """
-    Decorator to measure and print execution time.
-
-    __________________________________________
-
-    [ EXAMPLE ]
-
-    ```python
-    from dankware.decorators import timed
-
-    @timed
-    def slow_function():
-        time.sleep(2)
-        return "done"
-    ```
-    """
-
-    @wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> T:
-        start = time.perf_counter()
-        result = func(*args, **kwargs)
-        elapsed = time.perf_counter() - start
-        print(f"  > {func.__name__} completed in {elapsed:.3f}s")
-        return result
-
-    return wrapper
-
-
-def deprecated(message: str = "") -> Callable[[Callable[..., T]], Callable[..., T]]:
-    """
-    Decorator to mark a function as deprecated.
-
-    Args:
-        message: Optional message to display.
-
-    __________________________________________
-
-    [ EXAMPLE ]
-
-    ```python
-    from dankware.decorators import deprecated
-
-    @deprecated("Use new_function() instead")
-    def old_function():
-        ...
-    ```
-    """
-    import warnings
-
-    def decorator(func: Callable[..., T]) -> Callable[..., T]:
-        @wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> T:
-            warning_msg = f"{func.__name__} is deprecated."
-            if message:
-                warning_msg += f" {message}"
-            warnings.warn(warning_msg, DeprecationWarning, stacklevel=2)
-            return func(*args, **kwargs)
+            if last_exception is not None:
+                raise last_exception
+            raise RuntimeError("Retry loop exited without result or exception")
 
         return wrapper
 

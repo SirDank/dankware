@@ -1,8 +1,10 @@
 import sys
 import tkinter as tk
+
+from PIL import Image, ImageTk
+
 from .text import clr
 from .traceback import err
-from PIL import Image, ImageTk
 
 
 def splash_screen(img_path: str, duration: int = 3) -> None:

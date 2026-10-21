@@ -1,61 +1,75 @@
-import sys
-import time
-from .text import clr
-from .traceback import err
-from shutil import get_terminal_size
+# https://github.com/SirDank/dankware
+
+"""
+Multithreading utilities with rich progress visualization.
+"""
+
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from shutil import get_terminal_size
+from typing import Any, Callable
 
 from rich.live import Live
 from rich.panel import Panel
-from rich.table import Table
 from rich.progress import (
+    BarColumn,
     Progress,
     SpinnerColumn,
-    BarColumn,
     TextColumn,
-    TimeRemainingColumn,
     TimeElapsedColumn,
+    TimeRemainingColumn,
 )
+from rich.table import Table
+
+__all__ = ["multithread"]
 
 
-def multithread(  # pylint: disable=keyword-arg-before-vararg
-    function: callable,
+def multithread(
+    function: Callable[..., Any],
     threads: int = 1,
-    *args,
-    progress_bar: bool = True,  # type: ignore
+    *args: Any,
+    progress_bar: bool = True,
 ) -> None:
     """
-    Run the given function in multiple threads with the specified inputs.
+    Run the given function across multiple threads with optional arguments.
 
-    ________________________________________________________________________
+    Args:
+        function: The function to execute.
+        threads: Number of worker threads.
+        *args: Inputs for the function (lists/tuples or broadcast scalars).
+        progress_bar: Whether to display a rich terminal progress bar.
 
-    - function: The function to run in multiple threads.
-    - threads: The number of threads to use.
-    - *args: Input(s) for the function. Can be a tuple / list / single value.
-    - progress_bar: Whether to display a progress bar.
+    Raises:
+        ValueError: If threads < 1.
+        Exception: If any worker thread raises an unhandled exception.
+
+    __________________________________________
+
+    [ EXAMPLE ]
+
+    ```python
+    from dankware import multithread
+
+    def worker(num):
+        print(num * 2)
+
+    multithread(worker, 4, [1, 2, 3, 4], progress_bar=False)
+    ```
     """
+    if threads < 1:
+        raise ValueError("The number of threads must be a positive integer!")
 
-    try:
-        if threads < 1:
-            raise ValueError("The number of threads must be a positive integer!")
-
-        executor = ThreadPoolExecutor(max_workers=threads, thread_name_prefix="dankware")
-
+    with ThreadPoolExecutor(max_workers=threads, thread_name_prefix="dankware") as executor:
         if not args:
-            futures = tuple(executor.submit(function) for _ in range(threads))
+            futures = [executor.submit(function) for _ in range(threads)]
         else:
             input_lists = []
-
             for arg in args:
                 if isinstance(arg, (list, tuple)):
                     input_lists.append(arg)
                 else:
                     input_lists.append([arg] * threads)
-            del args
 
-            futures = tuple(executor.submit(function, *task_args) for task_args in zip(*input_lists))
-
-            del input_lists
+            futures = [executor.submit(function, *task_args) for task_args in zip(*input_lists)]
 
         if progress_bar:
             width = get_terminal_size().columns
@@ -68,7 +82,7 @@ def multithread(  # pylint: disable=keyword-arg-before-vararg
                 TimeRemainingColumn(),
                 TimeElapsedColumn(),
             )
-            overall_task = job_progress.add_task("[bright_green]Progress", total=int(len(futures)))
+            overall_task = job_progress.add_task("[bright_green]Progress", total=len(futures))
             progress_table = Table.grid()
             progress_table.add_row(
                 Panel.fit(
@@ -80,27 +94,9 @@ def multithread(  # pylint: disable=keyword-arg-before-vararg
             )
 
             with Live(progress_table, refresh_per_second=10):
-                while not job_progress.finished:
-                    time.sleep(0.1)
-                    for future in as_completed(futures):
-                        if future.done():
-                            try:
-                                future.result()
-                            except Exception as e:
-                                raise RuntimeError("An error occurred while processing the future result") from e
-                            job_progress.advance(overall_task)
-
+                for future in as_completed(futures):
+                    future.result()
+                    job_progress.advance(overall_task)
         else:
             for future in as_completed(futures):
-                if future.done():
-                    try:
-                        future.result()
-                    except Exception as e:
-                        raise RuntimeError("An error occurred while processing the future result") from e
-
-    except Exception as exc:
-        try:
-            executor.shutdown(wait=False, cancel_futures=True)
-        except Exception:
-            pass
-        sys.exit(clr(err((type(exc), exc, exc.__traceback__)), 2))
+                future.result()

@@ -3,7 +3,8 @@ Tests for dankware.text module.
 """
 
 import pytest
-from dankware import clr, align, fade, random_ip
+
+from dankware import align, clr, fade, random_ip
 
 
 class TestClr:

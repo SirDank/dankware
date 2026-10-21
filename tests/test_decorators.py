@@ -3,8 +3,8 @@ Tests for dankware.decorators module.
 """
 
 import pytest
-import time
-from dankware.decorators import retry, timed, deprecated
+
+from dankware import retry
 
 
 class TestRetry:
@@ -61,63 +61,3 @@ class TestRetry:
 
         with pytest.raises(TypeError):
             raises_type_error()
-
-
-class TestTimed:
-    """Tests for the timed decorator."""
-
-    def test_timed_returns_result(self, capsys):
-        """Test that timed returns function result."""
-
-        @timed
-        def add(a, b):
-            return a + b
-
-        result = add(2, 3)
-        assert result == 5
-
-        captured = capsys.readouterr()
-        assert "add completed in" in captured.out
-
-    def test_timed_measures_time(self, capsys):
-        """Test that timed measures execution time."""
-
-        @timed
-        def slow_function():
-            time.sleep(0.1)
-            return "done"
-
-        result = slow_function()
-        assert result == "done"
-
-        captured = capsys.readouterr()
-        # Should report ~0.1 seconds
-        assert "slow_function completed in" in captured.out
-
-
-class TestDeprecated:
-    """Tests for the deprecated decorator."""
-
-    def test_deprecated_warning(self):
-        """Test that deprecated emits warning."""
-
-        @deprecated("Use new_func instead")
-        def old_func():
-            return "old"
-
-        with pytest.warns(DeprecationWarning, match="old_func is deprecated"):
-            result = old_func()
-
-        assert result == "old"
-
-    def test_deprecated_without_message(self):
-        """Test deprecated without custom message."""
-
-        @deprecated()
-        def old_func2():
-            return "old2"
-
-        with pytest.warns(DeprecationWarning, match="old_func2 is deprecated"):
-            result = old_func2()
-
-        assert result == "old2"

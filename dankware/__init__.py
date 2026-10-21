@@ -4,110 +4,131 @@
 dankware - Python package with various features!
 
 A utility library providing terminal coloring, multithreading helpers,
-Windows registry tools, GitHub release scrapers, and more.
+file utilities, downloaders, Windows tools, and GitHub release scrapers.
 """
 
 import os
-from .traceback import err
-from .datetime import get_duration
-from .requests import github_downloads, github_file_selector
-from .ctypes import (
-    is_admin,
-    hide_window,
-    show_window,
-    hide_window_for,
-    minimise_window,
-    maximise_window,
-    restore_window,
-    get_uuid,
+
+from .colors import (
+    black,
+    black_bright,
+    black_dim,
+    black_normal,
+    blue,
+    blue_bright,
+    blue_dim,
+    blue_normal,
+    cyan,
+    cyan_bright,
+    cyan_dim,
+    cyan_normal,
+    green,
+    green_bright,
+    green_dim,
+    green_normal,
+    magenta,
+    magenta_bright,
+    magenta_dim,
+    magenta_normal,
+    red,
+    red_bright,
+    red_dim,
+    red_normal,
+    reset,
+    white,
+    white_bright,
+    white_dim,
+    white_normal,
+    yellow,
+    yellow_bright,
+    yellow_dim,
+    yellow_normal,
 )
-# from .tkinter import file_selector, folder_selector
+from .ctypes import (
+    get_uuid,
+    hide_window,
+    hide_window_for,
+    is_admin,
+    maximise_window,
+    minimise_window,
+    restore_window,
+    show_window,
+)
+from .datetime import get_duration
+from .decorators import retry
+from .download import download_file, download_multiple
+from .exceptions import (
+    DankwareError,
+    DownloadError,
+    RateLimitError,
+    UnsupportedOSError,
+)
+from .files import (
+    ensure_dir,
+    get_file_hash,
+    human_readable_size,
+    list_files,
+    safe_filename,
+)
+from .multithread import multithread
+from .requests import (
+    github_check_update,
+    github_downloads,
+    github_file_selector,
+    github_get_raw_file,
+    github_release_info,
+)
+from .terminal import cls, rm_line, sys_open, title
+from .text import align, clr, fade, random_ip
+from .traceback import err
+from .winreg import get_path
+
+if os.name == "nt":
+    from .winreg import export_registry_keys as export_registry_keys
 
 __version__ = "4.0.0"
 
-# Import colors from dedicated module (avoids circular imports)
-from .colors import (  # noqa: E402
-    reset,
-    black,
-    red,
-    green,
-    yellow,
-    blue,
-    magenta,
-    cyan,
-    white,
-    black_bright,
-    red_bright,
-    green_bright,
-    yellow_bright,
-    blue_bright,
-    magenta_bright,
-    cyan_bright,
-    white_bright,
-    black_normal,
-    red_normal,
-    green_normal,
-    yellow_normal,
-    blue_normal,
-    magenta_normal,
-    cyan_normal,
-    white_normal,
-    black_dim,
-    red_dim,
-    green_dim,
-    yellow_dim,
-    blue_dim,
-    magenta_dim,
-    cyan_dim,
-    white_dim,
-)
-
-from .text import clr, align, fade, random_ip  # pylint: disable=wrong-import-position # noqa: E402
-from .terminal import cls, title, rm_line, sys_open  # pylint: disable=wrong-import-position # noqa: E402
-from .multithread import multithread  # pylint: disable=wrong-import-position # noqa: E402
-
-# from .pillow import splash_screen
-from .winreg import get_path  # pylint: disable=wrong-import-position # noqa: E402
-
-if os.name == "nt":
-    from .winreg import export_registry_keys
-
-# New modules exports
-from .exceptions import (  # pylint: disable=wrong-import-position # noqa: E402
-    DankwareError,
-    UnsupportedOSError,
-    RateLimitError,
-    ConfigurationError,
-    DownloadError,
-    RegistryError,
-)
-from .config import configure, get_config, reset_config  # pylint: disable=wrong-import-position # noqa: E402
-from .decorators import retry, timed, deprecated  # pylint: disable=wrong-import-position # noqa: E402
-
-# Define public API
 __all__ = [
-    # Version
     "__version__",
-    # Text utilities
+    # Text
     "clr",
     "align",
     "fade",
     "random_ip",
-    # Terminal utilities
+    # Terminal
     "cls",
     "title",
     "rm_line",
     "sys_open",
     # Multithreading
     "multithread",
-    # Error handling
+    # Error traceback
     "err",
     # Datetime
     "get_duration",
-    # GitHub utilities
+    # GitHub
     "github_downloads",
     "github_file_selector",
-    # Windows utilities
+    "github_release_info",
+    "github_check_update",
+    "github_get_raw_file",
+    # Files
+    "get_file_hash",
+    "ensure_dir",
+    "safe_filename",
+    "human_readable_size",
+    "list_files",
+    # Downloads
+    "download_file",
+    "download_multiple",
+    # Decorators
+    "retry",
+    # Exceptions
+    "DankwareError",
+    "UnsupportedOSError",
+    "RateLimitError",
+    "DownloadError",
+    # System / Windows ctypes
     "is_admin",
     "hide_window",
     "show_window",
@@ -117,21 +138,6 @@ __all__ = [
     "restore_window",
     "get_uuid",
     "get_path",
-    # Configuration
-    "configure",
-    "get_config",
-    "reset_config",
-    # Decorators
-    "retry",
-    "timed",
-    "deprecated",
-    # Exceptions
-    "DankwareError",
-    "UnsupportedOSError",
-    "RateLimitError",
-    "ConfigurationError",
-    "DownloadError",
-    "RegistryError",
     # Colors - reset
     "reset",
     # Colors - base
@@ -172,6 +178,5 @@ __all__ = [
     "yellow_dim",
 ]
 
-# Conditional exports
 if os.name == "nt":
     __all__.append("export_registry_keys")

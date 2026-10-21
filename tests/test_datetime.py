@@ -2,8 +2,10 @@
 Tests for dankware.datetime module.
 """
 
-import pytest
 from datetime import datetime, timedelta
+
+import pytest
+
 from dankware import get_duration
 
 
@@ -70,6 +72,16 @@ class TestGetDuration:
         assert isinstance(result, str)
         assert "d" in result
         assert "h" in result
+
+    def test_zero_duration_default(self):
+        """Test zero duration for default mode."""
+        now = datetime.now()
+        assert get_duration(now, now=now, interval="default") == "0 seconds"
+
+    def test_zero_duration_default_mini(self):
+        """Test zero duration for default-mini mode."""
+        now = datetime.now()
+        assert get_duration(now, now=now, interval="default-mini") == "0s"
 
     def test_invalid_interval(self):
         """Test that invalid interval raises ValueError."""

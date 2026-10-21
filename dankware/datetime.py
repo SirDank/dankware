@@ -1,49 +1,68 @@
+# https://github.com/SirDank/dankware
+
+"""
+Datetime duration formatting utilities.
+"""
+
 from datetime import datetime
+
+__all__ = ["get_duration"]
 
 
 def get_duration(
-    then: datetime, now: datetime = None, interval: str = "default"
+    then: datetime,
+    now: datetime | None = None,
+    interval: str = "default",
 ) -> int | str:
     """
-    Returns a duration as specified by the 'interval' variable
+    Return the duration between two datetime objects formatted according to interval.
 
-    __________________________________________________________
+    Valid intervals:
+        - year -> int
+        - month -> int
+        - week -> int
+        - day -> int
+        - hour -> int
+        - minute -> int
+        - second -> int
+        - dynamic -> str
+        - dynamic-mini -> str
+        - default -> str
+        - default-mini -> str
 
-    valid intervals:
-    - year -> int
-    - month -> int
-    - week -> int
-    - day -> int
-    - hour -> int
-    - minute -> int
-    - second -> int
-    - dynamic -> str
-    - dynamic-mini -> str
-    - default -> str
-    - default-mini -> str
+    Args:
+        then: Earlier datetime object.
+        now: Later datetime object (defaults to datetime.now()).
+        interval: Formatting interval mode.
+
+    Returns:
+        Duration as integer count or formatted string.
+
+    Raises:
+        ValueError: If interval is not recognized.
     """
-
     if not now:
         now = datetime.now()
-    interval = interval.lower()
+    interval_clean = interval.lower()
     duration = now - then
 
-    if "year" in interval:
+    if "year" in interval_clean:
         return int(duration.days / 365)
-    if "month" in interval:
+    if "month" in interval_clean:
         return int(duration.days / 30)
-    if "week" in interval:
+    if "week" in interval_clean:
         return int(duration.days / 7)
-    if "day" in interval:
+    if "day" in interval_clean:
         return duration.days
-    if "hour" in interval:
+    if "hour" in interval_clean:
         return int(duration.total_seconds() / 3600)
-    if "minute" in interval:
+    if "minute" in interval_clean:
         return int(duration.total_seconds() / 60)
-    if "second" in interval:
+    if "second" in interval_clean:
         return int(duration.total_seconds())
-    if "dynamic" in interval:
-        mini = bool(interval == "dynamic-mini")
+
+    if "dynamic" in interval_clean:
+        mini = interval_clean == "dynamic-mini"
         seconds = duration.total_seconds()
 
         if seconds < 60:
@@ -86,7 +105,7 @@ def get_duration(
             return f"{years}y"
         return f"{years} year{'s' if years > 1 else ''}"
 
-    if "default" in interval:
+    if "default" in interval_clean:
         seconds = duration.total_seconds()
         years = int(seconds / 31536000)
         months = int((seconds % 31536000) / 2592000)
@@ -94,10 +113,10 @@ def get_duration(
         days = int((seconds % 604800) / 86400)
         hours = int((seconds % 86400) / 3600)
         minutes = int((seconds % 3600) / 60)
-        seconds = int(seconds % 60)
+        rem_seconds = int(seconds % 60)
 
         parts = []
-        if interval == "default":
+        if interval_clean == "default":
             if years:
                 parts.append(f"{years} year{'s' if years > 1 else ''}")
             if months:
@@ -110,10 +129,10 @@ def get_duration(
                 parts.append(f"{hours} hour{'s' if hours > 1 else ''}")
             if minutes:
                 parts.append(f"{minutes} minute{'s' if minutes > 1 else ''}")
-            if seconds:
-                parts.append(f"{seconds} second{'s' if seconds > 1 else ''}")
+            if rem_seconds:
+                parts.append(f"{rem_seconds} second{'s' if rem_seconds > 1 else ''}")
 
-        elif interval == "default-mini":
+        elif interval_clean == "default-mini":
             if years:
                 parts.append(f"{years}y")
             if months:
@@ -126,8 +145,11 @@ def get_duration(
                 parts.append(f"{hours}h")
             if minutes:
                 parts.append(f"{minutes}m")
-            if seconds:
-                parts.append(f"{seconds}s")
+            if rem_seconds:
+                parts.append(f"{rem_seconds}s")
+
+        if not parts:
+            return "0s" if interval_clean == "default-mini" else "0 seconds"
 
         return ", ".join(parts)
 

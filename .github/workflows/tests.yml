@@ -2,9 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, dev]
   pull_request:
-    branches: [main, master]
+    branches: [main, master, dev]
 
 jobs:
   test:
@@ -49,4 +49,4 @@ jobs:
 
     - name: Run linter
       run: |
-        ruff check dankware/ --ignore=E501,W503
+        ruff check dankware/ tests/

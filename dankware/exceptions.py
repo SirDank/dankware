@@ -4,6 +4,13 @@
 Custom exceptions for dankware.
 """
 
+__all__ = [
+    "DankwareError",
+    "UnsupportedOSError",
+    "RateLimitError",
+    "DownloadError",
+]
+
 
 class DankwareError(Exception):
     """Base exception for dankware."""
@@ -23,19 +30,7 @@ class RateLimitError(DankwareError):
     pass
 
 
-class ConfigurationError(DankwareError):
-    """Raised when there's a configuration issue."""
-
-    pass
-
-
 class DownloadError(DankwareError):
     """Raised when a download operation fails."""
-
-    pass
-
-
-class RegistryError(DankwareError):
-    """Raised when a Windows registry operation fails."""
 
     pass

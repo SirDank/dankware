@@ -35,14 +35,9 @@ pip install --upgrade dankware
 # 📚 Table of Contents
 
 - [Multithreading](#-multithreading-)
-- [Async Utilities](#-async-utilities-new-)
 - [Decorators](#-decorators-new-)
-- [Configuration](#-configuration-new-)
 - [File Utilities](#-file-utilities-new-)
 - [Download with Progress](#-download-with-progress-new-)
-- [Context Managers](#-context-managers-new-)
-- [Colored Input](#-colored-input-new-)
-- [Colored Logging](#-colored-logging-new-)
 - [Export Registry Keys](#-export-registry-keys-)
 - [Splash Screen](#-splash-screen-)
 - [Error Traceback](#-error-traceback-)
@@ -127,105 +122,19 @@ multithread(example, 10, new_list, 5, progress_bar=False) # input_two: 5 | disab
 
 ---  
 
-# 🚨 Async Utilities (NEW) 🚨
-
-```py
-import asyncio
-from dankware.async_utils import async_multithread
-
-async def fetch_data(url):
-    await asyncio.sleep(1)  # Simulate async operation
-    return f"Fetched: {url}"
-
-async def main():
-    urls = ["url1", "url2", "url3", "url4", "url5"]
-    results = await async_multithread(fetch_data, 5, urls)
-    for result in results:
-        print(result)
-
-asyncio.run(main())
-```
-
-```py
-import asyncio
-from dankware.async_utils import gather_with_concurrency
-
-async def task(i):
-    await asyncio.sleep(1)
-    return i * 2
-
-async def main():
-    # Run 10 tasks with max 3 concurrent
-    coros = [task(i) for i in range(10)]
-    results = await gather_with_concurrency(3, *coros)
-    print(results)
-
-asyncio.run(main())
-```
-
-<p>&nbsp;</p>
-
----
-
 # 🚨 Decorators (NEW) 🚨
 
 ## ♦️ Retry Decorator ♦️
 
 ```py
-from dankware.decorators import retry
+import requests
+from dankware import retry
 
 @retry(max_attempts=3, delay=1.0, backoff=2.0)
 def unstable_api_call():
-    # Will retry up to 3 times on failure
+    # Will retry up to 3 times on failure with exponential backoff
     response = requests.get("https://api.example.com")
     return response.json()
-```
-
-## ♦️ Timed Decorator ♦️
-
-```py
-from dankware.decorators import timed
-
-@timed
-def slow_function():
-    time.sleep(2)
-    return "done"
-
-slow_function()  # Prints: "  > slow_function completed in 2.001s"
-```
-
-## ♦️ Deprecated Decorator ♦️
-
-```py
-from dankware.decorators import deprecated
-
-@deprecated("Use new_function() instead")
-def old_function():
-    pass
-
-old_function()  # Emits DeprecationWarning
-```
-
-<p>&nbsp;</p>
-
----
-
-# 🚨 Configuration (NEW) 🚨
-
-```py
-from dankware.config import configure, get_config
-
-# Configure global settings
-configure(
-    enable_colors=True,
-    default_threads=20,
-    github_token="ghp_your_token_here",  # For higher API rate limits
-    request_timeout=15
-)
-
-# Get current configuration
-config = get_config()
-print(f"Default threads: {config.default_threads}")
 ```
 
 <p>&nbsp;</p>
@@ -235,12 +144,12 @@ print(f"Default threads: {config.default_threads}")
 # 🚨 File Utilities (NEW) 🚨
 
 ```py
-from dankware.files import (
+from dankware import (
     get_file_hash,
     safe_filename,
     human_readable_size,
     ensure_dir,
-    list_files
+    list_files,
 )
 
 # Calculate file hash
@@ -270,7 +179,7 @@ for file in list_files(".", "*.py", recursive=True):
 # 🚨 Download with Progress (NEW) 🚨
 
 ```py
-from dankware.download import download_file, download_multiple
+from dankware import download_file, download_multiple
 
 # Download with progress bar
 path = download_file(
@@ -286,83 +195,6 @@ urls = [
     "https://example.com/file2.zip",
 ]
 paths = download_multiple(urls, "downloads/")
-```
-
-<p>&nbsp;</p>
-
----
-
-# 🚨 Context Managers (NEW) 🚨
-
-```py
-from dankware.context import timer, hidden_window, temporary_file, working_directory
-
-# Time an operation
-with timer("Data processing"):
-    process_data()
-# Prints: "  > Data processing completed in 1.234s"
-
-# Hide console window during operation (Windows)
-with hidden_window():
-    do_background_work()
-
-# Create temporary file that auto-deletes
-with temporary_file(suffix=".txt") as filepath:
-    with open(filepath, "w") as f:
-        f.write("temp data")
-    # File is deleted after the block
-
-# Temporarily change working directory
-with working_directory("/some/path"):
-    # Work in /some/path
-    pass
-# Back to original directory
-```
-
-<p>&nbsp;</p>
-
----
-
-# 🚨 Colored Input (NEW) 🚨
-
-```py
-from dankware.input import colored_input, confirm, select
-
-# Colored input prompt
-name = colored_input("  > Enter your name: ")
-
-# Yes/No confirmation
-if confirm("Delete all files?", default=False):
-    delete_files()
-
-# Selection menu
-idx, choice = select(
-    "Choose an option:",
-    ["Option 1", "Option 2", "Option 3"],
-    default=0
-)
-print(f"You selected: {choice}")
-```
-
-<p>&nbsp;</p>
-
----
-
-# 🚨 Colored Logging (NEW) 🚨
-
-```py
-from dankware.logging import get_logger, setup_logging
-
-# Get a colored logger
-logger = get_logger("myapp")
-logger.info("Application started")
-logger.warning("This is a warning")
-logger.error("Something went wrong!")
-
-# Or setup global colored logging
-import logging
-setup_logging(level=logging.DEBUG)
-logging.info("Now all logging is colored!")
 ```
 
 <p>&nbsp;</p>

@@ -7,7 +7,7 @@ name = "dankware"
 version = "4.0.0"
 description = "Python package with various features!"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "SirDank", email = "SirDankenstein@protonmail.com"}
 ]
@@ -33,7 +33,6 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
     "Development Status :: 5 - Production/Stable",
@@ -51,7 +50,7 @@ dependencies = [
 extras = ["pillow>=10.0.0"]
 dev = [
     "pytest>=7.0.0",
-    "pytest-asyncio>=0.21.0",
+    "ruff>=0.1.0",
 ]
 
 [project.urls]
@@ -61,10 +60,19 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["."]
+include = ["dankware*"]
+exclude = ["tests*"]
 
 [tool.setuptools.package-data]
 dankware = ["py.typed"]
 
 [tool.pytest.ini_options]
-asyncio_mode = "auto"
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]

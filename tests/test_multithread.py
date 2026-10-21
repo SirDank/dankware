@@ -2,8 +2,10 @@
 Tests for dankware.multithread module.
 """
 
-import pytest
 import time
+
+import pytest
+
 from dankware import multithread
 
 
@@ -53,13 +55,22 @@ class TestMultithread:
         assert sorted(results) == [10, 20, 30, 40, 50]
 
     def test_multithread_invalid_threads(self):
-        """Test that invalid thread count raises error."""
+        """Test that invalid thread count raises ValueError."""
 
         def dummy():
             pass
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(ValueError, match="positive integer"):
             multithread(dummy, 0, progress_bar=False)
+
+    def test_multithread_worker_exception(self):
+        """Test that unhandled exception in worker propagates."""
+
+        def failing_worker():
+            raise ZeroDivisionError("boom")
+
+        with pytest.raises(ZeroDivisionError, match="boom"):
+            multithread(failing_worker, 2, progress_bar=False)
 
     def test_multithread_timing(self):
         """Test that multithread is actually parallel."""

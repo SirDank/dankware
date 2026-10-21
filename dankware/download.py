@@ -5,20 +5,22 @@ Download utilities for dankware.
 """
 
 import os
-import requests
-from typing import Optional, Callable
+from typing import Callable, Optional
 
+import requests
 from rich.progress import (
-    Progress,
-    DownloadColumn,
-    TransferSpeedColumn,
     BarColumn,
+    DownloadColumn,
+    Progress,
     TextColumn,
     TimeRemainingColumn,
+    TransferSpeedColumn,
 )
 
 from .exceptions import DownloadError
-from .files import safe_filename, ensure_dir
+from .files import ensure_dir, safe_filename
+
+__all__ = ["download_file", "download_multiple"]
 
 
 def download_file(
@@ -51,7 +53,7 @@ def download_file(
     [ EXAMPLE ]
 
     ```python
-    from dankware.download import download_file
+    from dankware import download_file
 
     path = download_file(
         "https://example.com/file.zip",
@@ -70,7 +72,6 @@ def download_file(
 
         # Determine filename
         if os.path.isdir(destination):
-            # Extract filename from URL or Content-Disposition
             content_disposition = response.headers.get("Content-Disposition", "")
             if "filename=" in content_disposition:
                 filename = content_disposition.split("filename=")[-1].strip("\"'")
@@ -79,7 +80,9 @@ def download_file(
             filename = safe_filename(filename) or "download"
             filepath = os.path.join(destination, filename)
         else:
-            ensure_dir(os.path.dirname(destination))
+            dirname = os.path.dirname(destination)
+            if dirname:
+                ensure_dir(dirname)
             filepath = destination
 
         total = int(response.headers.get("content-length", 0))
@@ -117,7 +120,7 @@ def download_multiple(
     on_complete: Optional[Callable[[str, str], None]] = None,
 ) -> list[str]:
     """
-    Download multiple files.
+    Download multiple files sequentially.
 
     Args:
         urls: List of URLs to download.
