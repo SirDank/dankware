@@ -30,6 +30,27 @@ Update to the latest version with the below command!
 pip install --upgrade dankware
 ```
 
+---
+
+# 📚 Table of Contents
+
+- [Multithreading](#-multithreading-)
+- [Decorators](#-decorators-new-)
+- [File Utilities](#-file-utilities-new-)
+- [Download with Progress](#-download-with-progress-new-)
+- [Export Registry Keys](#-export-registry-keys-)
+- [Splash Screen](#-splash-screen-)
+- [Error Traceback](#-error-traceback-)
+- [GitHub Utilities](#-github-utilities-)
+- [Generate Random IPs](#-generate-random-ips-)
+- [GUI File / Path Selector](#-gui-file--path-selector-)
+- [Path Extractor](#-path-extractor-)
+- [Colour Special Characters](#-colour-special-characters-)
+- [Banners](#-banners-)
+- [Gradient Reworked](#-gradient-reworked--originally-by-venaxyt--)
+
+---
+
 # 🚨 Multithreading 🚨
 
 ```py
@@ -96,6 +117,85 @@ multithread(example, 10, new_list, 5, progress_bar=False) # input_two: 5 | disab
 ```
 
 <img width="60" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/153749433-95512c4d-afcd-4ad7-9797-caded6e44239.png"><br>
+
+<p>&nbsp;</p>
+
+---  
+
+# 🚨 Decorators (NEW) 🚨
+
+## ♦️ Retry Decorator ♦️
+
+```py
+import requests
+from dankware import retry
+
+@retry(max_attempts=3, delay=1.0, backoff=2.0)
+def unstable_api_call():
+    # Will retry up to 3 times on failure with exponential backoff
+    response = requests.get("https://api.example.com")
+    return response.json()
+```
+
+<p>&nbsp;</p>
+
+---
+
+# 🚨 File Utilities (NEW) 🚨
+
+```py
+from dankware import (
+    get_file_hash,
+    safe_filename,
+    human_readable_size,
+    ensure_dir,
+    list_files,
+)
+
+# Calculate file hash
+sha256 = get_file_hash("myfile.txt", "sha256")
+print(sha256)
+
+# Sanitize filename
+safe = safe_filename('file<>:"/\\|?*.txt')
+print(safe)  # "file_________.txt"
+
+# Human readable size
+size = human_readable_size(1500000)
+print(size)  # "1.43 MB"
+
+# Ensure directory exists
+ensure_dir("path/to/new/directory")
+
+# List files matching pattern
+for file in list_files(".", "*.py", recursive=True):
+    print(file)
+```
+
+<p>&nbsp;</p>
+
+---
+
+# 🚨 Download with Progress (NEW) 🚨
+
+```py
+from dankware import download_file, download_multiple
+
+# Download with progress bar
+path = download_file(
+    "https://example.com/file.zip",
+    "downloads/",
+    progress=True
+)
+print(f"Downloaded to: {path}")
+
+# Download multiple files
+urls = [
+    "https://example.com/file1.zip",
+    "https://example.com/file2.zip",
+]
+paths = download_multiple(urls, "downloads/")
+```
 
 <p>&nbsp;</p>
 
@@ -171,7 +271,9 @@ except Exception as exc:
 
 ---  
 
-# 🚨 Scraping 🚨
+# 🚨 GitHub Utilities 🚨
+
+## ♦️ Get Download URLs ♦️
 
 ```py
 from dankware import github_downloads
@@ -181,6 +283,8 @@ for url in github_downloads("EssentialsX/Essentials"): print(url)
 
 <img width="700" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/216242124-ed911013-bae4-4622-8c0a-0d11638da750.png"><br>
 
+## ♦️ Filter Downloads ♦️
+
 ```py
 from dankware import github_file_selector
 # full url > https://api.github.com/repos/EssentialsX/Essentials/releases/latest
@@ -188,6 +292,37 @@ for url in github_file_selector("EssentialsX/Essentials", "remove", ('AntiBuild'
 ```
 
 <img width="700" alt="image" style="border-radius:5%" src="https://user-images.githubusercontent.com/52797753/216241961-5359d662-a117-4eb4-b74e-e82b41a895bc.png"><br>
+
+## ♦️ Get Release Info (NEW) ♦️
+
+```py
+from dankware.requests import github_release_info
+
+info = github_release_info("SirDank/dankware")
+print(f"Latest: {info['tag_name']}")
+print(f"Published: {info['published_at']}")
+print(f"Changelog: {info['body']}")
+```
+
+## ♦️ Check for Updates (NEW) ♦️
+
+```py
+from dankware.requests import github_check_update
+
+has_update, latest, url = github_check_update("SirDank/dankware", "3.6.0")
+if has_update:
+    print(f"New version available: {latest}")
+    print(f"Download: {url}")
+```
+
+## ♦️ Get Raw File (NEW) ♦️
+
+```py
+from dankware.requests import github_get_raw_file
+
+content = github_get_raw_file("SirDank/dankware", "README.md")
+print(content)
+```
 
 <p>&nbsp;</p>
 
@@ -472,6 +607,38 @@ print(fade(banner, "random"))
 <p align="left">
   <img width="400" alt="image" style="border-radius:5%" src="https://github.com/SirDank/dankware/assets/52797753/58a13389-7620-4c63-b967-c057b022af90" />
 </p>
+
+<p>&nbsp;</p>
+
+---  
+
+# 🚨 System Utilities (NEW) 🚨
+
+```py
+from dankware.system import (
+    get_system_info,
+    is_windows,
+    is_linux,
+    get_username,
+    get_home_dir,
+    get_temp_dir
+)
+
+# Get comprehensive system info
+info = get_system_info()
+print(info)
+
+# Platform checks
+if is_windows():
+    print("Running on Windows")
+elif is_linux():
+    print("Running on Linux")
+
+# Get user info
+print(f"Username: {get_username()}")
+print(f"Home: {get_home_dir()}")
+print(f"Temp: {get_temp_dir()}")
+```
 
 <p>&nbsp;</p>
 

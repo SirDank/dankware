@@ -1,174 +1,161 @@
+# https://github.com/SirDank/dankware
+
+"""
+Window manipulation and system privilege utilities.
+"""
+
 import os
+import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
-from subprocess import check_output, STDOUT, DEVNULL
+from subprocess import DEVNULL, STDOUT, check_output
+
+from .exceptions import UnsupportedOSError
 
 if os.name == "nt":
     import ctypes
 
+__all__ = [
+    "is_admin",
+    "hide_window",
+    "show_window",
+    "hide_window_for",
+    "minimise_window",
+    "maximise_window",
+    "restore_window",
+    "get_uuid",
+]
+
 
 def is_admin() -> bool:
     """
-    Checks if executed with admin privileges and returns True if found else False
-    """
+    Check if the script is running with administrator/root privileges.
 
+    Returns:
+        bool: True if elevated, False otherwise.
+    """
     if os.name == "nt":
         try:
-            return ctypes.windll.shell32.IsUserAnAdmin()
-        except:
+            return bool(ctypes.windll.shell32.IsUserAnAdmin())
+        except Exception:
             return False
     elif os.name == "posix":
-        from pwd import getpwuid  # pylint: disable=import-error, import-outside-toplevel
+        from pwd import getpwuid
 
-        return getpwuid(os.getuid())[0] in ("root", "0")  # pylint: disable=no-member
+        return getpwuid(os.getuid())[0] in ("root", "0")
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
-
-
-'''
-def run_as_admin() -> None:
-    
-    """
-    Executes the script with admin privileges
-    """
-    
-    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
-    #sys.exit(clr("\n  > Exiting original un-elevated script...",2))
-'''
-
-# --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 def hide_window() -> None:
-    """
-    Hides console window
-
-    Related to:
-        - show_window()
-    """
-
+    """Hide the console window."""
     if os.name == "nt":
-        hWnd = ctypes.windll.kernel32.GetConsoleWindow()
-        ctypes.windll.user32.ShowWindow(hWnd, 0)
+        hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+        if hwnd:
+            ctypes.windll.user32.ShowWindow(hwnd, 0)
     elif os.name == "posix":
         os.system("xdotool getactivewindow windowminimize")
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 def show_window() -> None:
-    """
-    Shows console window
-
-    Related to:
-        - hide_window()
-    """
-
+    """Show the console window."""
     if os.name == "nt":
-        hWnd = ctypes.windll.kernel32.GetConsoleWindow()
-        ctypes.windll.user32.ShowWindow(hWnd, 1)
+        hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+        if hwnd:
+            ctypes.windll.user32.ShowWindow(hwnd, 1)
     elif os.name == "posix":
         os.system("xdotool getactivewindow windowactivate")
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
-def hide_window_for(duration: int = 3) -> None:
+def hide_window_for(duration: int | float = 3) -> None:
     """
-    Hides console window for the given duration
+    Hide the console window asynchronously for the given duration in seconds.
 
-    Related to:
-        - hide_window()
-        - show_window()
+    Args:
+        duration: Duration in seconds to stay hidden.
     """
 
-    def tmp():
+    def _worker():
         hide_window()
         time.sleep(duration)
         show_window()
 
-    ThreadPoolExecutor(1).submit(tmp)
+    thread = threading.Thread(target=_worker, daemon=True)
+    thread.start()
 
 
 def minimise_window() -> None:
-    """
-    Minimises console window
-
-    Related to:
-        - maximise_window()
-        - restore_window()
-    """
-
+    """Minimise the console window."""
     if os.name == "nt":
-        user32 = ctypes.WinDLL("user32")
-        user32.ShowWindow(user32.GetForegroundWindow(), 6)
+        hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+        if hwnd:
+            ctypes.windll.user32.ShowWindow(hwnd, 6)
     elif os.name == "posix":
         os.system("xdotool getactivewindow windowminimize")
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 def maximise_window() -> None:
-    """
-    Maximises console window
-
-    Related to:
-        - minimise_window()
-        - restore_window()
-    """
-
+    """Maximise the console window."""
     if os.name == "nt":
-        user32 = ctypes.WinDLL("user32")
-        user32.ShowWindow(user32.GetForegroundWindow(), 3)
+        hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+        if hwnd:
+            ctypes.windll.user32.ShowWindow(hwnd, 3)
     elif os.name == "posix":
         os.system("xdotool getactivewindow windowactivate windowmaximize")
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 def restore_window() -> None:
-    """
-    Restores console window to its original size
-
-    Related to:
-        - minimise_window()
-        - maximise_window()
-    """
-
+    """Restore the console window to its original size."""
     if os.name == "nt":
-        user32 = ctypes.WinDLL("user32")
-        user32.ShowWindow(user32.GetForegroundWindow(), 9)
+        hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+        if hwnd:
+            ctypes.windll.user32.ShowWindow(hwnd, 9)
     elif os.name == "posix":
         os.system("xdotool getactivewindow windowactivate windowrestore")
     else:
-        raise ValueError(
-            f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'"
-        )
+        raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
 
 
 def get_uuid() -> str:
     """
-    Gets system UUID
+    Get system UUID.
 
     Returns:
-        str: System UUID
+        str: System UUID string.
     """
-
     if os.name == "nt":
-        try:
-            uuid = str(check_output(r"wmic csproduct get uuid", stderr=STDOUT, stdin=DEVNULL, creationflags=0x08000000).decode().split("\n")[1].strip())
-        except FileNotFoundError:
-            uuid = str(check_output("powershell.exe -ExecutionPolicy bypass -command (Get-CimInstance -Class Win32_ComputerSystemProduct).UUID", stderr=STDOUT, stdin=DEVNULL, creationflags=0x08000000).decode().strip())
+        return str(
+            check_output(
+                [
+                    "powershell.exe",
+                    "-ExecutionPolicy",
+                    "bypass",
+                    "-command",
+                    "(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID",
+                ],
+                stderr=STDOUT,
+                stdin=DEVNULL,
+                creationflags=0x08000000,
+            )
+            .decode()
+            .strip()
+        )
+    elif os.name == "posix":
+        return str(
+            check_output(
+                ["sudo", "dmidecode", "-s", "system-uuid"],
+                stderr=STDOUT,
+                stdin=DEVNULL,
+            )
+            .decode()
+            .strip()
+        )
     else:
-        uuid = str(check_output(r"sudo dmidecode -s system-uuid", stderr=STDOUT, stdin=DEVNULL, creationflags=0x08000000).decode().replace("UUID", "").replace(":", "").strip())
-    return uuid
+        raise UnsupportedOSError(f"Unsupported Operating System: {os.name} | Supported: 'nt', 'posix'")
